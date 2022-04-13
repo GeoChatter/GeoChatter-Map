@@ -1,17 +1,17 @@
 <script context="module">
 	import { writable } from 'svelte/store';
 
-	export const open = writable(false)
-	export const copyAndPaste = writable(false)
+	export const open = writable(false);
+	export const copyAndPaste = writable(false);
 </script>
+
 <script>
-	import {user} from "$lib/supabase.js"
+	import { user } from '$lib/supabase.js';
 	import MapPicker from './MapPicker.svelte';
 	import { LogOutIcon, LogInIcon, MenuIcon } from 'svelte-feather-icons';
 	import Feedback from './Feedback.svelte';
 	import { swipe } from 'svelte-gestures';
 	import Auth from './Auth.svelte';
-
 </script>
 
 <div
@@ -20,7 +20,7 @@
 	}  h-full w-full `}
 >
 	<input
-		on:click={() => $open = !$open}
+		on:click={() => ($open = !$open)}
 		id="my-drawer"
 		type="checkbox"
 		bind:checked={$open}
@@ -47,10 +47,14 @@
 			<!-- Sidebar content here -->
 			<div class="dropdown dropdown-end z-[1000]">
 				<li class="mb-2">
-					<a class=" normal-case text-xl font-bold" target="_blank" href="/">GeoChatter</a>
+					<a
+						class=" normal-case text-xl font-bold"
+						target="_blank"
+						href="https://www.geochatter.tv/">GeoChatter</a
+					>
 				</li>
 				<li class="">
-					<Auth/>
+					<Auth />
 				</li>
 			</div>
 			<MapPicker />
@@ -58,11 +62,11 @@
 			{#if $user}
 				<li class="form-control">
 					<label class="label cursor-pointer">
-					  <span class="label-text">enable copy and paste</span> 
-					  <input type="checkbox" class="toggle" bind:checked={$copyAndPaste}>
+						<span class="label-text">enable copy and paste</span>
+						<input type="checkbox" class="toggle" bind:checked={$copyAndPaste} />
 					</label>
 				</li>
-				{/if}
+			{/if}
 			<li class="sm:mb-0 mb-2 flex sm:hidden">
 				<feedback />
 			</li>
