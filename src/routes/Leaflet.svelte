@@ -1,6 +1,7 @@
 <script>
 	import { user } from '$lib/supabase.js';
-	import  L  from "leaflet"
+	import { browser } from '$app/env';
+	// import L from 'leaflet';
 
 	export let leaflet;
 	export let mapBox;
@@ -14,7 +15,7 @@
 		iconSize: [30, 30],
 		className: 'rounded-full border-2 border-white'
 	});
-	$: copy  = !$user || copyAndPaste
+	$: copy = !$user || copyAndPaste;
 	function initLeaflet(node) {
 		let marker;
 		let layers = {
@@ -38,7 +39,9 @@
 			zoom = mapBox.getZoom();
 			center = mapBox.getCenter();
 		}
-		leaflet = L.map(node, { zoomControl: false }).setView(center, zoom);
+		if (browser) {
+			leaflet = L.map(node, { zoomControl: false }).setView(center, zoom);
+		}
 		L.control
 			.zoom({
 				position: 'topright'
