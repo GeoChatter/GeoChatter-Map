@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [new_map]
+    branches: [testing_map]
 
 env:
   BASE_PATH: /testing_map
@@ -11,6 +11,10 @@ jobs:
   web-deploy:
     name: 🎉 Deploy
     runs-on: ubuntu-latest
+    env:
+      VITE_MAPBOXKEY : ${{ secrets.VITE_MAPBOXKEY}}
+      VITE_SUPABASEANONKEY : ${{ secrets.VITE_SUPABASEANONKEY}}
+      VITE_SUPABASEURL : ${{ secrets.VITE_SUPABASEURL}}
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v2
