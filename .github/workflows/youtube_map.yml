@@ -1,0 +1,36 @@
+
+on:
+  push:
+    branches: [yt_map]
+
+env:
+  BASE_PATH: /yt_map
+
+name: 🚀 Deploy website on push
+
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 17.6
+        uses: actions/setup-node@v2
+        with:
+          node-version: '17.6'
+
+      - name: 🔨 Build Project
+        run: |
+          npm ci
+          npm run build
+
+      - name: 📂 upload to new_map
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+        with:
+          server: ${{ secrets.FTP_IP }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./build/
+          server-dir: ./yt-map/
