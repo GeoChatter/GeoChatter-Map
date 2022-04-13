@@ -4,17 +4,15 @@ on:
 
 env:
   BASE_PATH: /testing_map
-
+  VITE_MAPBOXKEY : ${{ secrets.VITE_MAPBOXKEY}}
+  VITE_SUPABASEANONKEY : ${{ secrets.VITE_SUPABASEANONKEY}}
+  VITE_SUPABASEURL : ${{ secrets.VITE_SUPABASEURL}}
 name: 🚀 Deploy website on push
 
 jobs:
   web-deploy:
     name: 🎉 Deploy
     runs-on: ubuntu-latest
-    env:
-      VITE_MAPBOXKEY : ${{ secrets.VITE_MAPBOXKEY}}
-      VITE_SUPABASEANONKEY : ${{ secrets.VITE_SUPABASEANONKEY}}
-      VITE_SUPABASEURL : ${{ secrets.VITE_SUPABASEURL}}
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v2

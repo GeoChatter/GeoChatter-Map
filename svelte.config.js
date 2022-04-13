@@ -9,7 +9,7 @@ const config = {
 
   kit: {
 
-    prerender: { default: true },
+    prerender: { enabled: true, default: true },
     paths: {
       base: dev ? '' : process.env.BASE_PATH
 
