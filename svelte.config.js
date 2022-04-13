@@ -18,8 +18,8 @@ const config = {
       // default options are shown
       pages: 'build',
       assets: 'build',
-      fallback: null,
-      precompress: false
+      fallback: "/index.html",
+      precompress: true
     })
   }
 };
