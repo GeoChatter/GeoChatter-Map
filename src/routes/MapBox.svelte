@@ -194,7 +194,7 @@
 		bind:value={zoomSensitivity}
 		class="range range-xs"
 	/>
-	{#if mapBox}
+	{#if mapBox && _3DEnabled}
 		<div class="flex w-full">
 			<button
 				class="w-full text-right flex justify-end items-center"
