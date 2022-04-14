@@ -8,6 +8,6 @@
 		class="pointer-events-auto menu menu-horizontal menu-compact 2xl:menu-normal bg-base-100 rounded-box"
 	>
 		<MapPicker />
-		<li on:click={() => ($open = !$open)}><a class="font-bold">...</a></li>
+		<li on:click={() => ($open = !$open)}><a class="font-bold rounded-xl">...</a></li>
 	</ul>
 </div>
