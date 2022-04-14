@@ -159,6 +159,8 @@
 	}
 	let bearing = 0;
 	let pitch = 0;
+
+	const intervalls = [];
 </script>
 
 <div id="mapBox" use:initMapBox class="z-5 w-full h-full" />
@@ -168,17 +170,6 @@
 		on:click={() => toggle3D(!_3DEnabled, mapBox)}
 		>{#if _3DEnabled} disable 3d{:else} enable 3d {/if}</button
 	>
-	{#if _3DEnabled}
-		<label class="text-xs">Exaggeration {exaggeration}x</label>
-		<input
-			on:mouseup={() => changeExaggeration(exaggeration, mapBox)}
-			type="range"
-			min="1"
-			max="10"
-			bind:value={exaggeration}
-			class="range range-xs "
-		/>
-	{/if}
 	<label class="text-xs">Zoom Sensitivity {Math.round((zoomSensitivity / 100) * 10) / 10}</label>
 	<input
 		on:mouseup={() => {
@@ -195,21 +186,49 @@
 		class="range range-xs"
 	/>
 	{#if mapBox && _3DEnabled}
-		<div class="flex w-full">
+		<label class="text-xs">Exaggeration {exaggeration}x</label>
+		<input
+			on:mouseup={() => changeExaggeration(exaggeration, mapBox)}
+			type="range"
+			min="1"
+			max="10"
+			bind:value={exaggeration}
+			class="range range-xs "
+		/>
+		<div
+			class="flex w-full"
+			on:mouseup={() => intervalls.forEach((interval) => clearInterval(interval))}
+      on:mouseleave={() => intervalls.forEach((interval) => clearInterval(interval))}
+		>
 			<button
 				class="w-full text-right flex justify-end items-center"
-				on:click={() => mapBox.setBearing(mapBox.getBearing() - 10)}><ChevronLeftIcon /></button
+				on:mousedown={() => {
+					intervalls.push(setInterval(() => mapBox.setBearing(mapBox.getBearing() + 0.5), 20));
+				}}><ChevronLeftIcon /></button
 			>
 			<div class="grid w-full justify-center h-12">
-				<button on:mousedown={() => mapBox.setPitch(mapBox.getPitch() + 10)}>
-					<ChevronUpIcon /></button
-				>
-				<button on:click={() => mapBox.setPitch(mapBox.getPitch() - 10)}><ChevronDownIcon /></button
-				>
+
+				<button
+					on:mousedown={() => {
+						intervalls.push(setInterval(() => mapBox.setPitch(mapBox.getPitch() - 0.5), 20));
+					}}>
+					<ChevronUpIcon />
+
+        </button>
+
+				<button on:mousedown={() => {intervalls.push(setInterval(() => mapBox.setPitch(mapBox.getPitch() + 0.5), 20))}} >
+
+
+          <ChevronDownIcon />
+
+        </button>
 			</div>
 			<button
 				class="w-full text-right flex justify-start items-center"
-				on:click={() => mapBox.setBearing(mapBox.getBearing() + 10)}><ChevronRightIcon /></button
+				on:mousedown={() => {intervalls.push(setInterval(() => mapBox.setBearing(mapBox.getBearing() - 0.5), 20))}} >
+				<ChevronRightIcon />
+
+      </button
 			>
 		</div>
 	{/if}

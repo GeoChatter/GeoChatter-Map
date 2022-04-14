@@ -34,6 +34,16 @@
 			TERRAIN: L.tileLayer('https://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}&hl=en', {
 				maxZoom: 20,
 				subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+			}),
+			OSM: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 20,
+				attribution:
+					'&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+			}),
+			OPENTOPOMAP: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+				maxZoom: 17,
+				attribution:
+					'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
 			})
 		};
 

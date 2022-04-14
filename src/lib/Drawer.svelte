@@ -8,7 +8,7 @@
 <script>
 	import { user } from '$lib/supabase.js';
 	import MapPicker from './MapPicker.svelte';
-	import { LogOutIcon, LogInIcon, MenuIcon } from 'svelte-feather-icons';
+	import { LogOutIcon, LogInIcon, MenuIcon, MonitorIcon } from 'svelte-feather-icons';
 	import Feedback from './Feedback.svelte';
 	import { swipe } from 'svelte-gestures';
 	import Auth from './Auth.svelte';
@@ -59,19 +59,22 @@
 				</li>
 			</div>
 
+			{#if $close}
+				<li>
+					<button class="" on:click={() => ($close = false)}
+						><MonitorIcon /> open stream popup
+					</button>
+				</li>
+			{/if}
+
 			<MapPicker isDrawer={true} />
 
-			{#if $user}
+			{#if $user && false}
 				<li class="form-control">
 					<label class="label cursor-pointer">
 						<span class="label-text">enable copy and paste</span>
 						<input type="checkbox" class="toggle" bind:checked={$copyAndPaste} />
 					</label>
-				</li>
-			{/if}
-			{#if $close}
-				<li>
-					<button class="" on:click={() => ($close = false)}> open stream popup </button>
 				</li>
 			{/if}
 

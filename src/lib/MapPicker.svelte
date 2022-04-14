@@ -1,5 +1,6 @@
 <script context="module">
 	import { writable } from 'svelte/store';
+	import MediaQuery from './MediaQuery.svelte';
 
 	export const mapType = writable('3D DEFAULT');
 
@@ -11,14 +12,18 @@
 		'3D DARKMODE',
 		'STREETS',
 		'SATELLITE',
-		'TERRAIN'
+		'TERRAIN',
+		'OSM',
+		'OPENTOPOMAP'
 	];
 </script>
 
 <script lang="ts">
 	import { browser } from '$app/env';
+	import { MapIcon } from 'svelte-feather-icons';
 
 	const createMostUsedArray = (): string[] => {
+		// FIXME: return all styles
 		if (!browser) return [];
 		let mapStyleCounter = localStorage.getItem('mapStyleCounter') ?? '{}';
 		mapStyleCounter = JSON.parse(mapStyleCounter);
@@ -27,42 +32,13 @@
 
 		sorted = sorted.sort((x, y) => y[1] - x[1]);
 
-		if (sorted.length < 3) return ['3D DEFAULT', '3D SATELLITE', 'TERRAIN'];
-		return sorted.map((pair) => pair[0]);
+		sorted = sorted.map((pair) => pair[0]);
+		const concatedArray = sorted.concat(styles);
+		const result = [...new Set(concatedArray)];
+		return result;
 	};
 
 	export let isDrawer = false;
-
-	const getRank = (style: string) => {
-		return createMostUsedArray().indexOf(style) + 1;
-	};
-
-	const setHiddenBasedOnRank = (rank: number) => {
-		// example rank 3 =>
-		let classList = '';
-		switch (rank) {
-			case 1: {
-				// classList = classList + ' xs:block';
-				break;
-			}
-			case 2: {
-				// classList = classList + ' xs:block';
-				break;
-			}
-			case 3: {
-				classList = classList + 'hidden md:block';
-				break;
-			}
-			default: {
-				classList = classList + 'hidden xl:block';
-			}
-		}
-		return classList;
-	};
-
-	const getClassList = (style: string): string => {
-		return setHiddenBasedOnRank(getRank(style));
-	};
 
 	const changeStyle = (style: string) => {
 		let mapStyleCounter = localStorage.getItem('mapStyleCounter') ?? '{}';
@@ -74,15 +50,54 @@
 		localStorage.setItem('mapStyleCounter', JSON.stringify(mapStyleCounter));
 		$mapType = style;
 	};
+
+	let mediaQueries = {
+		sm: '640px',
+		// => @media (min-width: 640px) { ... }
+
+		md: '768px',
+		// => @media (min-width: 768px) { ... }
+
+		lg: '1024px',
+		// => @media (min-width: 1024px) { ... }
+
+		xl: '1280px',
+		// => @media (min-width: 1280px) { ... }
+
+		'2xl': '1536px'
+		// => @media (min-width: 1536px) { ... }
+	};
+	const getMediaWidth = (i) => {
+		if (isDrawer) return '0px'; // should always show all maps
+		if (i <= 1) {
+			return '0px';
+		} else if (i === 3) {
+			return mediaQueries['md'];
+		} else if (i <= 6) {
+			return mediaQueries['xl'];
+		} else if (i <= 8) {
+			return mediaQueries['2xl'];
+		} else {
+			return '999999999999px'; // should not be shown
+		}
+	};
+	$: array = createMostUsedArray();
 </script>
 
-{#each styles as style}
-	<li>
-		<a
-			class={($mapType === style ? 'bg-secondary rounded-2xl ' : 'rounded-2xl ') +
-				(!isDrawer ? getClassList(style) : '')}
-			disabled={$mapType === style}
-			on:click={() => changeStyle(style)}>{style}</a
-		>
-	</li>
+{#each array as style, i}
+	<MediaQuery query={`(min-width: ${getMediaWidth(i)})`}>
+		<li>
+			<a
+				class={$mapType === style ? 'bg-secondary rounded-2xl ' : 'rounded-2xl '}
+				disabled={$mapType === style}
+				on:click={() => {
+					changeStyle(style);
+					array = createMostUsedArray();
+				}}
+			>
+				{#if isDrawer} <MapIcon class="inline" />{/if}
+				{style}</a
+			>
+		</li>
+	</MediaQuery>
 {/each}
