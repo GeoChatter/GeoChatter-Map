@@ -15,7 +15,7 @@
 </script>
 
 <div
-	class={`absolute drawer z-[3000] ${
+	class={`absolute drawer z-[6000] ${
 		$open ? 'pointer-events-auto' : 'pointer-events-none'
 	}  h-full w-full `}
 >
