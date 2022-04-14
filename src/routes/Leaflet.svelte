@@ -12,11 +12,13 @@
 	import { copyAndPaste } from '$lib/Drawer.svelte';
 
 	$: copy = !$user || copyAndPaste;
-	let profileIcon = L.icon({
-		iconUrl: $user?.user_metadata?.picture ?? 'test.png',
-		iconSize: [30, 30],
-		className: 'rounded-full border-2 border-white'
-	});
+	if (browser) {
+		let profileIcon = L.icon({
+			iconUrl: $user?.user_metadata?.picture ?? 'test.png',
+			iconSize: [30, 30],
+			className: 'rounded-full border-2 border-white'
+		});
+	}
 	function initLeaflet(node) {
 		let marker;
 		let layers = {
