@@ -1,3 +1,8 @@
+<script context="module">
+	import { writable } from 'svelte/store';
+	export let close = writable(false);
+</script>
+
 <script lang="ts">
 	import { XIcon } from 'svelte-feather-icons';
 	let moving = false;
@@ -53,10 +58,9 @@
 			document.onmousemove = null;
 		}
 	}
-	let close = false;
 </script>
 
-{#if !close}
+{#if !$close}
 	<div
 		id="popup"
 		class="select-none absolute z-[6000] pb-4 bg-base-200 rounded-xl overflow-hidden resize-x shadow-2xl"
@@ -64,7 +68,7 @@
 	>
 		<div class="w-full flex justify-between p-2" id="header">
 			<div>Drag me</div>
-			<button class="btn btn-xs btn-circle" on:click={() => (close = true)}
+			<button class="btn btn-xs btn-circle" on:click={() => ($close = true)}
 				><XIcon size="1x" /></button
 			>
 		</div>

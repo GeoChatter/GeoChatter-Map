@@ -12,6 +12,7 @@
 	import Feedback from './Feedback.svelte';
 	import { swipe } from 'svelte-gestures';
 	import Auth from './Auth.svelte';
+	import { close } from './MovableDiv.svelte';
 </script>
 
 <div
@@ -57,7 +58,8 @@
 					<Auth />
 				</li>
 			</div>
-			<MapPicker />
+
+			<MapPicker isDrawer={true} />
 
 			{#if $user}
 				<li class="form-control">
@@ -67,8 +69,14 @@
 					</label>
 				</li>
 			{/if}
+			{#if $close}
+				<li>
+					<button class="" on:click={() => ($close = false)}> open stream popup </button>
+				</li>
+			{/if}
+
 			<li class="sm:mb-0 mb-2 flex sm:hidden">
-				<feedback />
+				<Feedback />
 			</li>
 		</ul>
 	</div>
