@@ -92,7 +92,7 @@
 				disabled={$mapType === style}
 				on:click={() => {
 					changeStyle(style);
-					array = createMostUsedArray();
+					// array = createMostUsedArray();
 				}}
 			>
 				{#if isDrawer} <MapIcon class="inline" />{/if}
