@@ -76,8 +76,8 @@
 		let zoom = 1;
 		let pitch = 0;
 		let bearing = 0;
-		if (leaflet) {
-			zoom = leaflet.getZoom();
+		if (lastMapType === 'Leaflet') {
+			zoom = leaflet.getZoom() - 1;
 			center = leaflet.getCenter();
 		} else if (lastMapType === 'MapBox') {
 			zoom = mapBox.getZoom();
@@ -198,7 +198,7 @@
 		<div
 			class="flex w-full"
 			on:mouseup={() => intervalls.forEach((interval) => clearInterval(interval))}
-      on:mouseleave={() => intervalls.forEach((interval) => clearInterval(interval))}
+			on:mouseleave={() => intervalls.forEach((interval) => clearInterval(interval))}
 		>
 			<button
 				class="w-full text-right flex justify-end items-center"
@@ -207,29 +207,30 @@
 				}}><ChevronLeftIcon /></button
 			>
 			<div class="grid w-full justify-center h-12">
-
 				<button
 					on:mousedown={() => {
 						intervalls.push(setInterval(() => mapBox.setPitch(mapBox.getPitch() - 0.5), 20));
-					}}>
+					}}
+				>
 					<ChevronUpIcon />
+				</button>
 
-        </button>
-
-				<button on:mousedown={() => {intervalls.push(setInterval(() => mapBox.setPitch(mapBox.getPitch() + 0.5), 20))}} >
-
-
-          <ChevronDownIcon />
-
-        </button>
+				<button
+					on:mousedown={() => {
+						intervalls.push(setInterval(() => mapBox.setPitch(mapBox.getPitch() + 0.5), 20));
+					}}
+				>
+					<ChevronDownIcon />
+				</button>
 			</div>
 			<button
 				class="w-full text-right flex justify-start items-center"
-				on:mousedown={() => {intervalls.push(setInterval(() => mapBox.setBearing(mapBox.getBearing() - 0.5), 20))}} >
-				<ChevronRightIcon />
-
-      </button
+				on:mousedown={() => {
+					intervalls.push(setInterval(() => mapBox.setBearing(mapBox.getBearing() - 0.5), 20));
+				}}
 			>
+				<ChevronRightIcon />
+			</button>
 		</div>
 	{/if}
 </div>

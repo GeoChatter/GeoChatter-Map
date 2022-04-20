@@ -49,13 +49,15 @@
 
 		let center = [0, 0];
 		let zoom = 1;
-		if (mapBox) {
-			zoom = mapBox.getZoom();
+
+		if (lastMapType === 'MapBox') {
+			zoom = mapBox.getZoom() + 1;
 			center = mapBox.getCenter();
 		}
 		if (browser) {
 			leaflet = L.map(node, { zoomControl: false }).setView(center, zoom);
 		}
+
 		L.control
 			.zoom({
 				position: 'topright'
