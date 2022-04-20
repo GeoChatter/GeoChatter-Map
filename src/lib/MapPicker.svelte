@@ -5,16 +5,16 @@
 	export const mapType = writable('3D DEFAULT');
 
 	export let styles = [
-		'3D DEFAULT',
-		'3D SATELLITE',
-		'3D OUTDOORS',
-		'3D LIGHTMODE',
-		'3D DARKMODE',
 		'STREETS',
 		'SATELLITE',
 		'TERRAIN',
 		'OSM',
-		'OPENTOPOMAP'
+		'OPENTOPOMAP',
+		'3D DEFAULT',
+		'3D SATELLITE',
+		'3D OUTDOORS',
+		'3D LIGHTMODE',
+		'3D DARKMODE'
 	];
 </script>
 

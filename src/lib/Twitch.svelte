@@ -1,5 +1,5 @@
 <script>
-// @ts-nocheck
+	// @ts-nocheck
 
 	import { browser } from '$app/env';
 	export let streamer = 'hikikomoriinu';
