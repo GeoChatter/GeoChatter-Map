@@ -95,6 +95,10 @@
 			pitch,
 			bearing
 		});
+		// setting again bc too low values maybe not working in constructor
+		mapBox.setPitch(pitch);
+		mapBox.setBearing(bearing);
+
 		mapBox.on('load', () => {
 			mapBox.addSource(mapBoxDemSrc, {
 				type: 'raster-dem',
