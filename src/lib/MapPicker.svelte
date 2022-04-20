@@ -2,7 +2,7 @@
 	import { writable } from 'svelte/store';
 	import MediaQuery from './MediaQuery.svelte';
 
-	export const mapType = writable('3D DEFAULT');
+	export const mapType = writable('STREETS');
 
 	export let styles = [
 		'STREETS',
