@@ -11,6 +11,8 @@
 	import { open } from '$lib/Drawer.svelte';
 	import QuickSwitch from '$lib/QuickSwitch.svelte';
 	import Alert, { show } from '$lib/Alert.svelte';
+	import MovableDiv from '$lib/MovableDiv.svelte';
+	import Twitch from '$lib/Twitch.svelte';
 	const api = new Api();
 
 	let lastMapType;
@@ -147,6 +149,9 @@
 </script>
 
 {#if api.bot}
+	{#if api.streamer}
+		<MovableDiv><Twitch streamer={api.streamer} /></MovableDiv>
+	{/if}
 	<Alert />
 	<div class="hidden sm:flex absolute bottom-8 left-2 ">
 		<Feedback />
