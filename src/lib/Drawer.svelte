@@ -1,8 +1,19 @@
 <script context="module">
 	import { writable } from 'svelte/store';
+	import { browser } from '$app/env';
 
 	export const open = writable(false);
-	export const copyAndPaste = writable(false);
+	const cpValue = browser ? localStorage.getItem('copyAndPaste') ?? false : false;
+	export const copyAndPaste = writable(cpValue);
+
+	copyAndPaste.subscribe((cp) => {
+		if (!browser) return;
+		if (cp) {
+			localStorage.setItem('copyAndPaste', '1');
+		} else {
+			localStorage.removeItem('copyAndPaste');
+		}
+	});
 </script>
 
 <script>
@@ -69,7 +80,7 @@
 
 			<MapPicker isDrawer={true} />
 
-			{#if $user && false}
+			{#if $user}
 				<li class="form-control">
 					<label class="label cursor-pointer">
 						<span class="label-text">enable copy and paste</span>

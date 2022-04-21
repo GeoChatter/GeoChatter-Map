@@ -10,6 +10,7 @@
 		ChevronUpIcon
 	} from 'svelte-feather-icons';
 	import mapboxgl from 'mapbox-gl';
+	import { show } from '$lib/Alert.svelte';
 
 	if (browser) {
 		try {
@@ -35,7 +36,7 @@
 	export let _3DEnabled = false;
 	export let lastMapType;
 
-	$: copy = !$user || copyAndPaste;
+	$: copy = !$user || $copyAndPaste;
 
 	let mapBoxDemSrc = 'mapbox-dem';
 	export let exaggeration = 1;
@@ -93,12 +94,26 @@
 			center, // starting position [lng, lat]
 			zoom, // starting zoom
 			pitch,
-			bearing
+			bearing,
+			attributionControl: false
 		});
+
+		mapBox.addControl(
+			new mapboxgl.AttributionControl({
+				customAttribution: '<b>GeoChatter.tv</b>',
+				compact: false
+			})
+		);
+		console.log(mapBox);
 		// setting again bc too low values maybe not working in constructor
 		mapBox.setPitch(pitch);
 		mapBox.setBearing(bearing);
 
+		const attributeBtn = document.getElementsByClassName('mapboxgl-ctrl-icon')[0];
+		console.log(attributeBtn);
+		attributeBtn.classList.add('pointer-events-auto');
+		attributeBtn.classList.add('z-[5000]');
+		console.log(attributeBtn);
 		mapBox.on('load', () => {
 			mapBox.addSource(mapBoxDemSrc, {
 				type: 'raster-dem',
@@ -142,6 +157,7 @@
 				)}`;
 				if (copy) {
 					navigator.clipboard.writeText(clipboard);
+					show(0.5, 'guess copied to clipboard');
 				}
 				const el = document.createElement('div');
 				const width = 30;

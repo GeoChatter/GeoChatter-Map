@@ -10,8 +10,9 @@
 	export let bot;
 	export let lastMapType;
 	import { copyAndPaste } from '$lib/Drawer.svelte';
+	import { show } from '$lib/Alert.svelte';
 
-	$: copy = !$user || copyAndPaste;
+	$: copy = !$user || $copyAndPaste;
 	let profileIcon;
 	if (browser) {
 		profileIcon = L.icon({
@@ -25,21 +26,25 @@
 		let layers = {
 			STREETS: L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&hl=en', {
 				maxZoom: 20,
-				subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+				subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+				attribution: '&copy; Google Maps'
 			}),
 			SATELLITE: L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}&hl=en', {
 				maxZoom: 20,
-				subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+				subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+				attribution: '&copy; Google Maps'
 			}),
 			TERRAIN: L.tileLayer('https://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}&hl=en', {
 				maxZoom: 20,
-				subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+				subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+				attribution: '&copy; Google Maps'
 			}),
 			OSM: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 				maxZoom: 20,
 				attribution:
 					'&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
 			}),
+
 			OPENTOPOMAP: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
 				maxZoom: 17,
 				attribution:
@@ -64,6 +69,7 @@
 			})
 			.addTo(leaflet);
 		layers[$mapType].addTo(leaflet);
+		leaflet.attributionControl.addAttribution('<b>GeoChatter.tv</b>');
 
 		let oldLayer = layers[$mapType];
 		mapType.subscribe((type) => {
@@ -93,6 +99,7 @@
 			if (marker) leaflet.removeLayer(marker);
 			if (copy) {
 				navigator.clipboard.writeText(clipboard);
+				show(0.5, 'guess copied to clipboard');
 			}
 			marker = new L.Marker().setLatLng(currentGuess).setIcon(profileIcon).addTo(leaflet);
 		}

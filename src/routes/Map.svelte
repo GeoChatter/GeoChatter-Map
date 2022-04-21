@@ -10,6 +10,7 @@
 	import Api from '$lib/js/api';
 	import { open } from '$lib/Drawer.svelte';
 	import QuickSwitch from '$lib/QuickSwitch.svelte';
+	import Alert, { show } from '$lib/Alert.svelte';
 	const api = new Api();
 
 	let lastMapType;
@@ -50,7 +51,7 @@
 	if (browser) {
 		try {
 			const splitLink = window.location.href.split('?');
-				api.bot = splitLink[1].split('#')[0];
+			api.bot = splitLink[1].split('#')[0];
 		} catch (e) {
 			console.log(e);
 		}
@@ -138,10 +139,15 @@
 		}
 
 		loading = false;
+
+		if (!sendGuessError) {
+			show(1, 'Guess send successfully');
+		}
 	}
 </script>
 
 {#if api.bot}
+	<Alert />
 	<div class="hidden sm:flex absolute bottom-8 left-2 ">
 		<Feedback />
 	</div>
