@@ -12,9 +12,21 @@ const SERVER_POST = 'https://dev.geochatter.tv/guess/'; //'https://guess.geochat
 const SERVER_GUESS_CHECK = 'https://dev.geochatter.tv/guess?id=';
 
 export default class Api {
+  _bot
+  streamer
   constructor(bot) {
     this.bot = bot;
     // this.isButtonEnabled = true
+  }
+
+
+  set bot(bot) {
+    this._bot = bot
+    this.checkIfClientIsConnected()
+
+  }
+  get bot() {
+    return this._bot
   }
 
   async checkIfClientIsConnected() {
@@ -33,6 +45,9 @@ export default class Api {
     } catch (e) {
       error = e;
     }
+    const resObj = await res.json()
+    this.streamer = resObj?.channelName
+    console.log(this.streamer)
 
     return [error, res];
   }
