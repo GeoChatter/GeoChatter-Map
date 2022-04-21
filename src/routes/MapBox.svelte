@@ -12,6 +12,7 @@
 	import mapboxgl from 'mapbox-gl';
 	import { show } from '$lib/Alert.svelte';
 
+	let deviceType;
 	if (browser) {
 		try {
 			mapboxgl.accessToken = dev
@@ -25,6 +26,19 @@
 		} catch {
 			/* console.log('no need to set it again'); */
 		}
+		deviceType = () => {
+			const ua = navigator.userAgent;
+			if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+				return 'tablet';
+			} else if (
+				/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(
+					ua
+				)
+			) {
+				return 'mobile';
+			}
+			return 'desktop';
+		};
 	}
 	const styles = {
 		'3D DEFAULT': 'mapbox://styles/semihm/ckxvy72ks45v114oe7o1cwbxs',
@@ -205,7 +219,7 @@
 		bind:value={zoomSensitivity}
 		class="range range-xs"
 	/>
-	{#if mapBox && _3DEnabled}
+	{#if mapBox && _3DEnabled && deviceType !== 'mobile'}
 		<label class="text-xs">Exaggeration {exaggeration}x</label>
 		<input
 			on:mouseup={() => changeExaggeration(exaggeration, mapBox)}
