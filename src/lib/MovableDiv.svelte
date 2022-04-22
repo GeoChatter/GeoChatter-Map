@@ -63,7 +63,7 @@
 {#if !$close}
 	<div
 		id="popup"
-		class="select-none absolute z-[6000] pb-4 bg-base-200 rounded-xl overflow-hidden resize-x shadow-2xl"
+		class="hidden md:block select-none absolute z-[6000] pb-4 bg-base-200 rounded-xl overflow-hidden resize-x shadow-2xl"
 		use:dragElement
 	>
 		<div class="w-full flex justify-between p-2" id="header">
