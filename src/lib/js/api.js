@@ -3,13 +3,13 @@
 // Failure state of the guessing process
 
 // Check if target client is online
-const SERVER_GET = 'https://dev.geochatter.tv/guess?botname=';
+const SERVER_GET = 'https://api.geochatter.tv/guess?botname=';
 
 // Send guess and read guess ID
-const SERVER_POST = 'https://dev.geochatter.tv/guess/'; //'https://guess.geochatter.tv/api/' //
+const SERVER_POST = 'https://api.geochatter.tv/guess/'; //'https://guess.geochatter.tv/api/' //
 
 // Check guess status : 200 = processed , 100 = being processed , default = failed
-const SERVER_GUESS_CHECK = 'https://dev.geochatter.tv/guess?id=';
+const SERVER_GUESS_CHECK = 'https://api.geochatter.tv/guess?id=';
 
 export default class Api {
   _bot
