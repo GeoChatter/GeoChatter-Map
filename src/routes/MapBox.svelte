@@ -10,7 +10,9 @@
 		ChevronUpIcon
 	} from 'svelte-feather-icons';
 	import mapboxgl from 'mapbox-gl';
+	import { show } from '$lib/Alert.svelte';
 
+	let deviceType;
 	if (browser) {
 		try {
 			mapboxgl.accessToken = dev
@@ -24,6 +26,19 @@
 		} catch {
 			/* console.log('no need to set it again'); */
 		}
+		deviceType = () => {
+			const ua = navigator.userAgent;
+			if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+				return 'tablet';
+			} else if (
+				/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(
+					ua
+				)
+			) {
+				return 'mobile';
+			}
+			return 'desktop';
+		};
 	}
 	const styles = {
 		'3D DEFAULT': 'mapbox://styles/semihm/ckxvy72ks45v114oe7o1cwbxs',
@@ -35,7 +50,7 @@
 	export let _3DEnabled = false;
 	export let lastMapType;
 
-	$: copy = !$user || copyAndPaste;
+	$: copy = !$user || $copyAndPaste;
 
 	let mapBoxDemSrc = 'mapbox-dem';
 	export let exaggeration = 1;
@@ -76,8 +91,8 @@
 		let zoom = 1;
 		let pitch = 0;
 		let bearing = 0;
-		if (leaflet) {
-			zoom = leaflet.getZoom();
+		if (lastMapType === 'Leaflet') {
+			zoom = leaflet.getZoom() - 1;
 			center = leaflet.getCenter();
 		} else if (lastMapType === 'MapBox') {
 			zoom = mapBox.getZoom();
@@ -93,8 +108,26 @@
 			center, // starting position [lng, lat]
 			zoom, // starting zoom
 			pitch,
-			bearing
+			bearing,
+			attributionControl: false
 		});
+
+		mapBox.addControl(
+			new mapboxgl.AttributionControl({
+				customAttribution: '<b>GeoChatter.tv</b>',
+				compact: false
+			})
+		);
+		console.log(mapBox);
+		// setting again bc too low values maybe not working in constructor
+		mapBox.setPitch(pitch);
+		mapBox.setBearing(bearing);
+
+		const attributeBtn = document.getElementsByClassName('mapboxgl-ctrl-icon')[0];
+		console.log(attributeBtn);
+		attributeBtn.classList.add('pointer-events-auto');
+		attributeBtn.classList.add('z-[5000]');
+		console.log(attributeBtn);
 		mapBox.on('load', () => {
 			mapBox.addSource(mapBoxDemSrc, {
 				type: 'raster-dem',
@@ -138,6 +171,7 @@
 				)}`;
 				if (copy) {
 					navigator.clipboard.writeText(clipboard);
+					show(0.5, 'guess copied to clipboard');
 				}
 				const el = document.createElement('div');
 				const width = 30;
@@ -159,6 +193,8 @@
 	}
 	let bearing = 0;
 	let pitch = 0;
+
+	const intervalls = [];
 </script>
 
 <div id="mapBox" use:initMapBox class="z-5 w-full h-full" />
@@ -168,17 +204,6 @@
 		on:click={() => toggle3D(!_3DEnabled, mapBox)}
 		>{#if _3DEnabled} disable 3d{:else} enable 3d {/if}</button
 	>
-	{#if _3DEnabled}
-		<label class="text-xs">Exaggeration {exaggeration}x</label>
-		<input
-			on:mouseup={() => changeExaggeration(exaggeration, mapBox)}
-			type="range"
-			min="1"
-			max="10"
-			bind:value={exaggeration}
-			class="range range-xs "
-		/>
-	{/if}
 	<label class="text-xs">Zoom Sensitivity {Math.round((zoomSensitivity / 100) * 10) / 10}</label>
 	<input
 		on:mouseup={() => {
@@ -194,23 +219,52 @@
 		bind:value={zoomSensitivity}
 		class="range range-xs"
 	/>
-	{#if mapBox}
-		<div class="flex w-full">
+	{#if mapBox && _3DEnabled && deviceType !== 'mobile'}
+		<label class="text-xs">Exaggeration {exaggeration}x</label>
+		<input
+			on:mouseup={() => changeExaggeration(exaggeration, mapBox)}
+			type="range"
+			min="1"
+			max="10"
+			bind:value={exaggeration}
+			class="range range-xs "
+		/>
+		<div
+			class="flex w-full"
+			on:mouseup={() => intervalls.forEach((interval) => clearInterval(interval))}
+			on:mouseleave={() => intervalls.forEach((interval) => clearInterval(interval))}
+		>
 			<button
 				class="w-full text-right flex justify-end items-center"
-				on:click={() => mapBox.setBearing(mapBox.getBearing() - 10)}><ChevronLeftIcon /></button
+				on:mousedown={() => {
+					intervalls.push(setInterval(() => mapBox.setBearing(mapBox.getBearing() + 0.5), 20));
+				}}><ChevronLeftIcon /></button
 			>
 			<div class="grid w-full justify-center h-12">
-				<button on:mousedown={() => mapBox.setPitch(mapBox.getPitch() + 10)}>
-					<ChevronUpIcon /></button
+				<button
+					on:mousedown={() => {
+						intervalls.push(setInterval(() => mapBox.setPitch(mapBox.getPitch() - 0.5), 20));
+					}}
 				>
-				<button on:click={() => mapBox.setPitch(mapBox.getPitch() - 10)}><ChevronDownIcon /></button
+					<ChevronUpIcon />
+				</button>
+
+				<button
+					on:mousedown={() => {
+						intervalls.push(setInterval(() => mapBox.setPitch(mapBox.getPitch() + 0.5), 20));
+					}}
 				>
+					<ChevronDownIcon />
+				</button>
 			</div>
 			<button
 				class="w-full text-right flex justify-start items-center"
-				on:click={() => mapBox.setBearing(mapBox.getBearing() + 10)}><ChevronRightIcon /></button
+				on:mousedown={() => {
+					intervalls.push(setInterval(() => mapBox.setBearing(mapBox.getBearing() - 0.5), 20));
+				}}
 			>
+				<ChevronRightIcon />
+			</button>
 		</div>
 	{/if}
 </div>

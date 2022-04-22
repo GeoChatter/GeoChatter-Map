@@ -12,76 +12,97 @@ const SERVER_POST = 'https://api.geochatter.tv/guess/'; //'https://guess.geochat
 const SERVER_GUESS_CHECK = 'https://api.geochatter.tv/guess?id=';
 
 export default class Api {
-	constructor(bot) {
-		this.bot = bot;
-		// this.isButtonEnabled = true
-	}
+  _bot
+  streamer
+  constructor(bot) {
+    this.bot = bot;
+    // this.isButtonEnabled = true
+  }
 
-	async checkIfClientIsConnected() {
-		let error;
-		let res;
-		try {
-			res = await fetch(SERVER_GET + this.bot,
-				{
-					referrer: "https://geochatter.tv/",
-					mode : "cors"
-				});
-			if (!res.ok) {
-				console.log(res)
-				error = [res.status, res.statusText];
-			}
-		} catch (e) {
-			error = e;
-		}
 
-		return [error, res];
-	}
+  set bot(bot) {
+    this._bot = bot
+    if (this.bot) {
+      this.checkIfClientIsConnected()
+    }
 
-	async sendGuess(data) {
-		let error;
-		let res;
-		try {
-			res = await fetch(
-				SERVER_POST, // Endpoint will change probably
-				{
-					method: 'POST',
-					body: JSON.stringify(data),
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					referrer: "https://geochatter.tv/",
-					mode: "cors"
-				}
-			);
-			if (!res.ok) {
-				console.log(res)
-				error = [res.status, res.statusText];
-			}
-		} catch (e) {
-			error = e;
-		}
+  }
+  get bot() {
+    return this._bot
+  }
 
-		return [error, res];
-	}
+  async checkIfClientIsConnected() {
+    let error;
+    let res;
+    try {
+      res = await fetch(SERVER_GET + this.bot,
+        {
+          referrer: "https://geochatter.tv/",
+          mode: "cors"
+        });
+      if (!res.ok) {
+        console.log(res)
+        error = [res.status, res.statusText];
+      }
+    } catch (e) {
+      error = e;
+    }
+    //disabled
+    // const resObj = await res.json()
+    // const streamer = resObj?.channelName
+    // if (streamer) {
+    //   this.streamer = resObj?.channelName
+    // }
+    // console.log(this.streamer)
 
-	async checkIfGuessIsRegistered(id) {
-		let error;
-		let res;
-		try {
-			res = await fetch(SERVER_GUESS_CHECK + id,
-				{
-					referrer: "https://geochatter.tv/",
-					// mode: "no-cors"
-					mode: "cors"
-				});
-			if (!res.ok) {
-				console.log(res)
-				error = [res.status, res.statusText];
-			}
-		} catch (e) {
-			error = e;
-		}
+    return [error, res];
+  }
 
-		return [error, res];
-	}
+  async sendGuess(data) {
+    let error;
+    let res;
+    try {
+      res = await fetch(
+        SERVER_POST, // Endpoint will change probably
+        {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          referrer: "https://geochatter.tv/",
+          mode: "cors"
+        }
+      );
+      if (!res.ok) {
+        console.log(res)
+        error = [res.status, res.statusText];
+      }
+    } catch (e) {
+      error = e;
+    }
+
+    return [error, res];
+  }
+
+  async checkIfGuessIsRegistered(id) {
+    let error;
+    let res;
+    try {
+      res = await fetch(SERVER_GUESS_CHECK + id,
+        {
+          referrer: "https://geochatter.tv/",
+          // mode: "no-cors"
+          mode: "cors"
+        });
+      if (!res.ok) {
+        console.log(res)
+        error = [res.status, res.statusText];
+      }
+    } catch (e) {
+      error = e;
+    }
+
+    return [error, res];
+  }
 }

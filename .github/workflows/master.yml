@@ -1,10 +1,12 @@
 on:
   push:
-    branches: [master]
+    branches: [main]
 
 env:
   BASE_PATH: /map
-
+  VITE_MAPBOXKEY : ${{ secrets.VITE_MAPBOXKEY}}
+  VITE_SUPABASEANONKEY : ${{ secrets.VITE_SUPABASEANONKEY}}
+  VITE_SUPABASEURL : ${{ secrets.VITE_SUPABASEURL}}
 name: 🚀 Deploy website on push
 
 jobs:
