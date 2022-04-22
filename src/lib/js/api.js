@@ -47,12 +47,13 @@ export default class Api {
     } catch (e) {
       error = e;
     }
-    const resObj = await res.json()
-    const streamer = resObj?.channelName
-    if (streamer) {
-      this.streamer = resObj?.channelName
-    }
-    console.log(this.streamer)
+    //disabled
+    // const resObj = await res.json()
+    // const streamer = resObj?.channelName
+    // if (streamer) {
+    //   this.streamer = resObj?.channelName
+    // }
+    // console.log(this.streamer)
 
     return [error, res];
   }
