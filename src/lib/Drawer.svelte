@@ -59,11 +59,13 @@
 			<!-- Sidebar content here -->
 			<div class="dropdown dropdown-end z-[1000]">
 				<li class="mb-2">
+
 					<a
 						class=" normal-case text-xl font-bold"
 						target="_blank"
 						href="https://www.geochatter.tv/">GeoChatter</a
 					>
+
 				</li>
 				<li class="">
 					<Auth />
