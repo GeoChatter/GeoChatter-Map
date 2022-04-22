@@ -22,7 +22,9 @@ export default class Api {
 
   set bot(bot) {
     this._bot = bot
-    this.checkIfClientIsConnected()
+    if (this.bot) {
+      this.checkIfClientIsConnected()
+    }
 
   }
   get bot() {
@@ -46,7 +48,10 @@ export default class Api {
       error = e;
     }
     const resObj = await res.json()
-    this.streamer = resObj?.channelName
+    const streamer = resObj?.channelName
+    if (streamer) {
+      this.streamer = resObj?.channelName
+    }
     console.log(this.streamer)
 
     return [error, res];
