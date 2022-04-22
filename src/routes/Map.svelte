@@ -95,15 +95,15 @@
 
 		console.log(data);
 		loading = true;
-		let [clientConnectedError, clientConnectedRes] = await api.checkIfClientIsConnected();
+		const [[clientConnectedError, clientConnectedRes], [sendGuessError, sendGuessRes]] =
+			await Promise.all([api.checkIfClientIsConnected(), api.sendGuess(data)]);
+
 		if (clientConnectedError) {
 			alert('could find client based on bot name');
 			console.error(clientConnectedError);
 		} else {
 			console.log(clientConnectedRes);
 		}
-
-		let [sendGuessError, sendGuessRes] = await api.sendGuess(data);
 
 		if (sendGuessError) {
 			console.log(sendGuessError);
