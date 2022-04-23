@@ -2,6 +2,8 @@
 // import fetch from 'node-fetch' // uncomment when using testing
 // Failure state of the guessing process
 
+import { writable } from "svelte/store";
+
 // Check if target client is online
 const SERVER_GET = 'https://api.geochatter.tv/guess?botname=';
 
@@ -13,7 +15,7 @@ const SERVER_GUESS_CHECK = 'https://api.geochatter.tv/guess?id=';
 
 export default class Api {
   _bot
-  streamer
+  streamer = writable("")
   constructor(bot) {
     this.bot = bot;
     // this.isButtonEnabled = true
@@ -47,12 +49,11 @@ export default class Api {
     } catch (e) {
       error = e;
     }
-    //disabled
-    // const resObj = await res.json()
-    // const streamer = resObj?.channelName
-    // if (streamer) {
-    //   this.streamer = resObj?.channelName
-    // }
+    const resObj = await res.json()
+    const streamer = resObj?.channelName
+    if (streamer) {
+      this.streamer.set(resObj?.channelName)
+    }
     // console.log(this.streamer)
 
     return [error, res];

@@ -146,11 +146,12 @@
 			show(1, 'Guess send successfully');
 		}
 	}
+	let streamer = api.streamer;
 </script>
 
 {#if api.bot}
-	{#if api.streamer}
-		<MovableDiv><Twitch streamer={api.streamer} /></MovableDiv>
+	{#if $streamer}
+		<MovableDiv><Twitch streamer={$streamer} /></MovableDiv>
 	{/if}
 	<Alert />
 	<div class="hidden sm:flex absolute bottom-8 left-2 ">
