@@ -99,7 +99,7 @@
 			await Promise.all([api.checkIfClientIsConnected(), api.sendGuess(data)]);
 
 		if (clientConnectedError) {
-			alert('could find client based on bot name');
+			alert('could find client based on bot: ' + api.bot);
 			console.error(clientConnectedError);
 		} else {
 			console.log(clientConnectedRes);
@@ -142,7 +142,7 @@
 
 		loading = false;
 
-		if (!sendGuessError) {
+		if (!sendGuessError && !clientConnectedError) {
 			show(1, 'Guess send successfully');
 		}
 	}
