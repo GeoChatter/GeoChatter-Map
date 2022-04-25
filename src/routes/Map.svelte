@@ -95,15 +95,15 @@
 
 		console.log(data);
 		loading = true;
-		let [clientConnectedError, clientConnectedRes] = await api.checkIfClientIsConnected();
+		const [[clientConnectedError, clientConnectedRes], [sendGuessError, sendGuessRes]] =
+			await Promise.all([api.checkIfClientIsConnected(), api.sendGuess(data)]);
+
 		if (clientConnectedError) {
-			alert('could find client based on bot name');
+			alert('could find client based on bot: ' + api.bot);
 			console.error(clientConnectedError);
 		} else {
 			console.log(clientConnectedRes);
 		}
-
-		let [sendGuessError, sendGuessRes] = await api.sendGuess(data);
 
 		if (sendGuessError) {
 			console.log(sendGuessError);
@@ -142,15 +142,16 @@
 
 		loading = false;
 
-		if (!sendGuessError) {
+		if (!sendGuessError && !clientConnectedError) {
 			show(1, 'Guess send successfully');
 		}
 	}
+	let streamer = api.streamer;
 </script>
 
 {#if api.bot}
-	{#if api.streamer}
-		<MovableDiv><Twitch streamer={api.streamer} /></MovableDiv>
+	{#if $streamer}
+		<MovableDiv><Twitch streamer={$streamer} /></MovableDiv>
 	{/if}
 	<Alert />
 	<div class="hidden sm:flex absolute bottom-8 left-2 ">
