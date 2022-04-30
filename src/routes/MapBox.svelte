@@ -3,6 +3,7 @@
 	import { browser, dev } from '$app/env';
 	import { mapType } from '$lib/MapPicker.svelte';
 	import { copyAndPaste } from '$lib/Drawer.svelte';
+	import { getCountry } from '$lib/js/helpers/getFeature';
 	import {
 		ChevronLeftIcon,
 		ChevronRightIcon,
@@ -11,6 +12,40 @@
 	} from 'svelte-feather-icons';
 	import mapboxgl from 'mapbox-gl';
 	import { show } from '$lib/Alert.svelte';
+	let currSelectedCountry;
+
+	let id = 0;
+	function selectCountry() {
+		const country = getCountry(currentGuess.lat, currentGuess.lng);
+		if (currSelectedCountry) {
+			mapBox.removeLayer(currSelectedCountry + 'line');
+			mapBox.removeLayer(currSelectedCountry);
+			mapBox.removeSource(currSelectedCountry);
+		}
+		id++;
+		mapBox.addSource(`countrySelected${id}`, { type: 'geojson', data: country });
+		currSelectedCountry = `countrySelected${id}`;
+		mapBox.addLayer({
+			id: `countrySelected${id}`,
+			type: 'fill',
+			source: `countrySelected${id}`, // reference the data source
+			layout: {},
+			paint: {
+				'fill-color': '#0080ff', // blue color fill
+				'fill-opacity': 0.2
+			}
+		});
+		mapBox.addLayer({
+			id: currSelectedCountry + 'line',
+			type: 'line',
+			source: currSelectedCountry,
+			layout: {},
+			paint: {
+				'line-color': '#0080ff',
+				'line-width': 3
+			}
+		});
+	}
 
 	let deviceType;
 	if (browser) {
@@ -143,6 +178,7 @@
 			mapBox['scrollZoom'].setWheelZoomRate((0.01 * zoomSensitivity) / 100);
 
 			if (currentGuess) {
+				selectCountry();
 				let clipboard = `/w ${bot} ${window.btoa(
 					currentGuess.lat.toString() + ',' + currentGuess.lng.toString()
 				)}`;
@@ -165,6 +201,7 @@
 
 			function onMapClick(e) {
 				currentGuess = e.lngLat;
+				selectCountry();
 				if (marker) marker.remove();
 				let clipboard = `/w ${bot} ${window.btoa(
 					currentGuess.lat.toString() + ',' + currentGuess.lng.toString()

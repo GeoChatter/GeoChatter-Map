@@ -1,6 +1,8 @@
 <script>
 	import { user } from '$lib/supabase.js';
 	import { browser } from '$app/env';
+	import { getCountry } from '$lib/js/helpers/getFeature';
+
 	// import L from 'leaflet';
 
 	export let leaflet;
@@ -54,6 +56,16 @@
 
 		let center = [0, 0];
 		let zoom = 1;
+		let currSelectedCountry;
+
+		function selectCountry() {
+			const country = getCountry(currentGuess.lat, currentGuess.lng);
+
+			if (currSelectedCountry) {
+				leaflet.removeLayer(currSelectedCountry);
+			}
+			currSelectedCountry = L.geoJSON(country).addTo(leaflet);
+		}
 
 		if (lastMapType === 'MapBox') {
 			zoom = mapBox.getZoom() + 1;
@@ -72,6 +84,7 @@
 		leaflet.attributionControl.addAttribution('<b>GeoChatter.tv</b>');
 
 		let oldLayer = layers[$mapType];
+
 		mapType.subscribe((type) => {
 			if (!type.startsWith('3D')) {
 				leaflet.removeLayer(oldLayer);
@@ -81,6 +94,7 @@
 		});
 
 		if (currentGuess) {
+      selectCountry()
 			let clipboard = `/w ${bot} ${window.btoa(
 				currentGuess.lat.toString() + ',' + currentGuess.lng.toString()
 			)}`;
@@ -96,6 +110,11 @@
 			let clipboard = `/w ${bot} ${window.btoa(
 				currentGuess.lat.toString() + ',' + currentGuess.lng.toString()
 			)}`;
+
+			// adding feature to map
+
+			selectCountry();
+
 			if (marker) leaflet.removeLayer(marker);
 			if (copy) {
 				navigator.clipboard.writeText(clipboard);
@@ -109,4 +128,4 @@
 	}
 </script>
 
-<div class="z-5 w-full h-full" use:initLeaflet />
+<div class="z-5 w-full h-full saturate-150" use:initLeaflet />
