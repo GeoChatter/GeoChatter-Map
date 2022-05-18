@@ -14,9 +14,11 @@
 	import { show } from '$lib/Alert.svelte';
 	let currSelectedCountry;
 
+	let flag = '';
 	let id = 0;
-	function selectCountry() {
-		const country = getCountry(currentGuess.lat, currentGuess.lng);
+	async function selectCountry() {
+		const [country, svg] = await getCountry(currentGuess.lat, currentGuess.lng);
+		flag = svg;
 		if (currSelectedCountry) {
 			mapBox.removeLayer(currSelectedCountry + 'line');
 			mapBox.removeLayer(currSelectedCountry);
@@ -233,6 +235,12 @@
 
 	const intervalls = [];
 </script>
+
+<div class="z-[50000] pointer-events-none absolute top-24 flex justify-center w-full">
+	{#if flag}
+		<div class="pointer-events-none	 w-16 h-16 ">{@html flag}</div>
+	{/if}
+</div>
 
 <div id="mapBox" use:initMapBox class="z-5 w-full h-full" />
 <div class="hidden sm:grid absolute top-3 right-12 bg-base-100 shadow-md rounded-md p-2 gap-y-2">

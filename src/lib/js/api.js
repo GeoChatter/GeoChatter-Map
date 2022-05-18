@@ -33,6 +33,11 @@ export default class Api {
     return this._bot
   }
 
+  async getCountry(lng, lat) {
+    const res = await fetch(`http://localhost:8000/countryJSON?lng=${lng}&lat=${lat}`)
+    console.log(await res.json())
+  }
+
   async checkIfClientIsConnected() {
     let error;
     let res;

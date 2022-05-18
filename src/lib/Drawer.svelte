@@ -6,12 +6,35 @@
 	const cpValue = browser ? localStorage.getItem('copyAndPaste') ?? false : false;
 	export const copyAndPaste = writable(cpValue);
 
+	const bordersValue = browser ? !localStorage.getItem('bordersValue') ?? true : true;
+	const bordersAdminValue = browser ? localStorage.getItem('bordersAdminValue') ?? false : false;
+	export const borders = writable(bordersValue);
+	export const bordersAdmin = writable(bordersAdminValue);
+
 	copyAndPaste.subscribe((cp) => {
 		if (!browser) return;
 		if (cp) {
 			localStorage.setItem('copyAndPaste', '1');
 		} else {
 			localStorage.removeItem('copyAndPaste');
+		}
+	});
+
+	borders.subscribe((b) => {
+		if (!browser) return;
+		if (!b) {
+			localStorage.setItem('bordersValue', '1');
+		} else {
+			localStorage.removeItem('bordersValue');
+		}
+	});
+
+	bordersAdmin.subscribe((b) => {
+		if (!browser) return;
+		if (b) {
+			localStorage.setItem('bordersAdminValue', '1');
+		} else {
+			localStorage.removeItem('bordersAdminValue');
 		}
 	});
 </script>
@@ -59,13 +82,11 @@
 			<!-- Sidebar content here -->
 			<div class="dropdown dropdown-end z-[1000]">
 				<li class="mb-2">
-
 					<a
 						class=" normal-case text-xl font-bold"
 						target="_blank"
 						href="https://www.geochatter.tv/">GeoChatter</a
 					>
-
 				</li>
 				<li class="">
 					<Auth />
@@ -90,6 +111,16 @@
 					</label>
 				</li>
 			{/if}
+			<li class="form-control">
+				<label class="label cursor-pointer">
+					<span class="label-text">enable borders</span>
+					<input type="checkbox" class="toggle" bind:checked={$borders} />
+				</label>
+				<label class="label cursor-pointer">
+					<span class="label-text">Administrator Level 0 Borders</span>
+					<input type="checkbox" class="toggle" bind:checked={$bordersAdmin} />
+				</label>
+			</li>
 
 			<li class="sm:mb-0 mb-2 flex sm:hidden">
 				<Feedback />

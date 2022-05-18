@@ -16,6 +16,7 @@
 
 	$: copy = !$user || $copyAndPaste;
 	let profileIcon;
+	let flag = '';
 	if (browser) {
 		profileIcon = L.icon({
 			iconUrl: $user?.user_metadata?.picture ?? 'test.png',
@@ -58,8 +59,9 @@
 		let zoom = 1;
 		let currSelectedCountry;
 
-		function selectCountry() {
-			const country = getCountry(currentGuess.lat, currentGuess.lng);
+		async function selectCountry() {
+			const [country, svg] = await getCountry(currentGuess.wrap().lat, currentGuess.wrap().lng);
+			flag = svg;
 
 			if (currSelectedCountry) {
 				leaflet.removeLayer(currSelectedCountry);
@@ -72,7 +74,7 @@
 			center = mapBox.getCenter();
 		}
 		if (browser) {
-			leaflet = L.map(node, { zoomControl: false }).setView(center, zoom);
+			leaflet = L.map(node, { zoomControl: false, worldCopyJump: true }).setView(center, zoom);
 		}
 
 		L.control
@@ -94,7 +96,7 @@
 		});
 
 		if (currentGuess) {
-      selectCountry()
+			selectCountry();
 			let clipboard = `/w ${bot} ${window.btoa(
 				currentGuess.lat.toString() + ',' + currentGuess.lng.toString()
 			)}`;
@@ -106,7 +108,7 @@
 		}
 
 		function onMapClick(e) {
-			currentGuess = e.latlng;
+			currentGuess = e.latlng.wrap();
 			let clipboard = `/w ${bot} ${window.btoa(
 				currentGuess.lat.toString() + ',' + currentGuess.lng.toString()
 			)}`;
@@ -128,4 +130,9 @@
 	}
 </script>
 
+<div class="z-[50000] pointer-events-none absolute top-24 flex justify-center w-full">
+	{#if flag}
+		<div class="pointer-events-none	 w-16 h-16 ">{@html flag}</div>
+	{/if}
+</div>
 <div class="z-5 w-full h-full saturate-150" use:initLeaflet />
