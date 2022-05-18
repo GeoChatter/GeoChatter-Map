@@ -7,12 +7,11 @@ import { get } from "svelte/store"
 
 import pointsWithinPolygon from "@turf/points-within-polygon"
 import { point, type FeatureCollection } from "@turf/helpers"
-const BORDER_URL = 'https://service.geochatter.tv/resources/borders/content.zip'
-const FLAGS_URL = 'https://service.geochatter.tv/resources/flags/content.zip'
-// const BORDER_URL = "http://localhost:3000/content.zip"
+// const BORDER_URL = 'https://service.geochatter.tv/resources/borders/content.zip'
+// const FLAGS_URL = 'https://service.geochatter.tv/resources/flags/content.zip'
+const BORDER_URL = "/content.zip"
 
-// const FLAGS_URL = "http://localhost:3000/contentFlags.zip"
-const adminLevel = 0
+const FLAGS_URL = "/contentFlags.zip"
 
 async function downloadAndUnzip() {
   const result_borders: FeatureCollection[] = []
@@ -85,7 +84,7 @@ function convertAlpha3to2(code: string) {
     }
   }
 
-console.log(code,"not found")
+  console.log(code, "not found")
 }
 
 export const getCountry = async (lat: number, lng: number) => {
