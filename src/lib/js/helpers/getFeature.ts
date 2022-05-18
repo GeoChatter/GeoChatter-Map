@@ -9,9 +9,9 @@ import pointsWithinPolygon from "@turf/points-within-polygon"
 import { point, type FeatureCollection } from "@turf/helpers"
 // const BORDER_URL = 'https://service.geochatter.tv/resources/borders/content.zip'
 // const FLAGS_URL = 'https://service.geochatter.tv/resources/flags/content.zip'
-const BORDER_URL = "/content.zip"
+const BORDER_URL = "/testing_map/content.zip"
 
-const FLAGS_URL = "/contentFlags.zip"
+const FLAGS_URL = "/testing_map/contentFlags.zip"
 
 async function downloadAndUnzip() {
   const result_borders: FeatureCollection[] = []
