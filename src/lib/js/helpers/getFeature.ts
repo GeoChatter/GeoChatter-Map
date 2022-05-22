@@ -109,4 +109,5 @@ export const getCountry = async (lat: number, lng: number) => {
       }
     }
   }
+  return [undefined, undefined]
 }
