@@ -61,12 +61,13 @@
 
 		async function selectCountry() {
 			const [country, svg] = await getCountry(currentGuess.wrap().lat, currentGuess.wrap().lng);
+
 			flag = svg;
 
 			if (currSelectedCountry) {
 				leaflet.removeLayer(currSelectedCountry);
 			}
-			currSelectedCountry = L.geoJSON(country).addTo(leaflet);
+			currSelectedCountry = L.geoJSON(country, { style: { fillOpacity: 0.1 } }).addTo(leaflet);
 		}
 
 		if (lastMapType === 'MapBox') {
@@ -130,7 +131,7 @@
 	}
 </script>
 
-<div class="z-[50000] pointer-events-none absolute top-24 flex justify-center w-full">
+<div class="z-[3999] pointer-events-none absolute top-24 flex justify-center w-full">
 	{#if flag}
 		<div class="pointer-events-none	 w-16 h-16 ">{@html flag}</div>
 	{/if}

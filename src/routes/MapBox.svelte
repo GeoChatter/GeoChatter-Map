@@ -16,8 +16,11 @@
 
 	let flag = '';
 	let id = 0;
+	let lastCountry;
 	async function selectCountry() {
 		const [country, svg] = await getCountry(currentGuess.lat, currentGuess.lng);
+		if (country === lastCountry) return;
+		lastCountry = country;
 		flag = svg;
 		if (currSelectedCountry) {
 			mapBox.removeLayer(currSelectedCountry + 'line');
@@ -34,7 +37,7 @@
 			layout: {},
 			paint: {
 				'fill-color': '#0080ff', // blue color fill
-				'fill-opacity': 0.2
+				'fill-opacity': 0.1
 			}
 		});
 		mapBox.addLayer({
