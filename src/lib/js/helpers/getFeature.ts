@@ -8,11 +8,11 @@ import { get } from "svelte/store"
 
 import pointsWithinPolygon from "@turf/points-within-polygon"
 import { point, type FeatureCollection } from "@turf/helpers"
-// const BORDER_URL = 'https://service.geochatter.tv/resources/borders/content.zip'
-// const FLAGS_URL = 'https://service.geochatter.tv/resources/flags/content.zip'
-const BORDER_URL = dev ? "/content.zip" : "/testing_map/content.zip"
+const BORDER_URL = 'https://service.geochatter.tv/resources/borders/content.zip'
+const FLAGS_URL = 'https://service.geochatter.tv/resources/flags/content.zip'
+// const BORDER_URL = dev ? "/content.zip" : "/testing_map/content.zip"
 
-const FLAGS_URL = dev ? "/contentFlags.zip" : "/testing_map/contentFlags.zip"
+// const FLAGS_URL = dev ? "/contentFlags.zip" : "/testing_map/contentFlags.zip"
 
 async function downloadAndUnzip() {
   const result_borders: FeatureCollection[] = []
