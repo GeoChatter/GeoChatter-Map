@@ -53,7 +53,7 @@ async function downloadAndUnzipFlags() {
     for (const countryFile of Object.values(loadedZip.files)) {
       try {
         const content = await countryFile.async("string")
-        svgs[countryFile.name.replace(".svg", "").replace("flags/", "")] = "data:image/svg+xml;base64," + btoa(content)
+        svgs[countryFile.name.replace(".svg", "").replace("flags/", "")] = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(content)))
       }
       catch (e) {
         console.log(e)
