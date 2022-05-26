@@ -92,6 +92,7 @@ const alpha3to2 = async (iso: string) => {
 
 async function getFlagName(feat: Feature) {
   const group = await alpha3to2(feat.properties.shapeGroup)
+  if (get(bordersAdmin)) return group
   switch (group) {
     case "US": {
       const isoExists = await alpha3to2(feat.properties.shapeISO)
