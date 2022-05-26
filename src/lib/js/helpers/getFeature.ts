@@ -107,7 +107,7 @@ async function getFlagName(feat: Feature) {
     case "GB":
       return await alpha3to2(feat.properties.shapeISO) ?? feat.properties.shapeISO;
     default:
-      return await alpha3to2(feat.properties.shapeISO)
+      return await alpha3to2(feat.properties.shapeISO) ?? group
   }
 
 }
@@ -128,7 +128,7 @@ export const getCountry = async (lat: number, lng: number) => {
       }
       if (contains.features.length > 0) {
         const flag = getFlagName(feature)
-        console.log(await flag)
+        console.log(feature)
         const svg = flags[await flag]
         if (get(bordersAdmin)) return [borders, svg]
         else return [feature, svg]
