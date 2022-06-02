@@ -18,7 +18,7 @@ const FLAGS_URL = 'https://service.geochatter.tv/resources/flags/content.zip'
 async function downloadAndUnzip() {
   const result_borders: FeatureCollection[] = []
   try {
-    const response = await fetch(BORDER_URL)
+    const response = await fetch(BORDER_URL, { cache: "no-cache" })
     const blob = await response.blob();
     const loadedZip = await JSZip.loadAsync(blob)
 
@@ -46,7 +46,7 @@ async function downloadAndUnzip() {
 async function downloadAndUnzipFlags() {
   const svgs = {}
   try {
-    const response = await fetch(FLAGS_URL)
+    const response = await fetch(FLAGS_URL, { cache: "no-cache" })
     const blob = await response.blob();
     const loadedZip = await JSZip.loadAsync(blob)
 
@@ -117,8 +117,7 @@ export const getCountry = async (lat: number, lng: number) => {
   if (!bordersFeatureCollections) return
   // api.getCountry(lat, lng)
   // geometries[country]?.feature?.geometry
-  const flags = await svgs
-  const allBorders = await bordersFeatureCollections
+  const [flags, allBorders] = await Promise.all([svgs, bordersFeatureCollections])
   for (const borders of allBorders) {
     // console.log(borders)
     for (const feature of borders.features) {
