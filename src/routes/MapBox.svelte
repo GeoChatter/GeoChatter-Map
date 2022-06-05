@@ -241,7 +241,9 @@
 
 <div class="z-[50000] pointer-events-none absolute top-24 flex justify-center w-full">
 	{#if flag}
-		<div class="pointer-events-none	 w-16 h-16 ">{@html flag}</div>
+		<div
+			style={`background-size: contain;background-position: 50%;background-repeat: no-repeat;background-image: url('${flag}'); height:100px;width:100px`}
+		/>
 	{/if}
 </div>
 
