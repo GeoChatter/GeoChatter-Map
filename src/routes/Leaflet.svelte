@@ -101,7 +101,7 @@
 			let clipboard = `/w ${bot} ${window.btoa(
 				currentGuess.lat.toString() + ',' + currentGuess.lng.toString()
 			)}`;
-			if (marker) leaflet.removeLayer(marker);
+			// if (marker) leaflet.removeLayer(marker);
 			if (copy) {
 				navigator.clipboard.writeText(clipboard);
 			}
