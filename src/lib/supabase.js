@@ -6,6 +6,12 @@ export const supabase = createClient(
 	import.meta.env.VITE_SUPABASEURL,
 	// @ts-ignore
 	import.meta.env.VITE_SUPABASEANONKEY,	
+	 {
+			autoRefreshToken: true,
+			persistSession: true,
+			detectSessionInUrl: true
+
+	}
 );
 
 export const user = readable(supabase.auth.user(), (set) => {
