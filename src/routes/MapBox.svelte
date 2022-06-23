@@ -12,14 +12,19 @@
 	} from 'svelte-feather-icons';
 	import mapboxgl from 'mapbox-gl';
 	import { show } from '$lib/Alert.svelte';
+	import Flag from '$lib/Flag.svelte';
 	let currSelectedCountry;
 
 	let flag = '';
 	let id = 0;
 	let lastCountry;
+	let countryName = '';
 	async function selectCountry() {
-		const [country, svg] = await getCountry(currentGuess.lat, currentGuess.lng);
+		const [country, svg, countryNameResponse] = await getCountry(currentGuess.lat, currentGuess.lng);
+		console.log(country);
 		if (country === lastCountry) return;
+
+		countryName = country.properties?.shapeName ?? countryNameResponse
 		lastCountry = country;
 		flag = svg;
 		if (currSelectedCountry) {
@@ -51,7 +56,6 @@
 			}
 		});
 	}
-
 	let deviceType;
 	if (browser) {
 		try {
@@ -239,13 +243,7 @@
 	const intervalls = [];
 </script>
 
-<div class="z-[50000] pointer-events-none absolute top-24 flex justify-center w-full">
-	{#if flag}
-		<div
-			style={`background-size: contain;background-position: 50%;background-repeat: no-repeat;background-image: url('${flag}'); height:100px;width:100px`}
-		/>
-	{/if}
-</div>
+<Flag {flag} {countryName} />
 
 <div id="mapBox" use:initMapBox class="z-5 w-full h-full" />
 <div class="hidden sm:grid absolute top-3 right-12 bg-base-100 shadow-md rounded-md p-2 gap-y-2">

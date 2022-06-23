@@ -115,12 +115,17 @@ async function getFlagName(feat: Feature) {
 
 }
 
+const getCountryNameByISO = async (iso: string) => { 
+  const isoObj = await isos
+  return isoObj.find(country => country.Alpha2 === iso)?.name
+}
+
 export const getCountry = async (lat: number, lng: number) => {
-  if (!get(borders)) return [undefined, undefined]
+  if (!get(borders)) return [undefined, undefined, undefined]
   if (!bordersFeatureCollections) return
   // api.getCountry(lat, lng)
   // geometries[country]?.feature?.geometry
-  const [flags, allBorders] = await Promise.all([svgs, bordersFeatureCollections])
+  const [flags, allBorders, downloadISO] = await Promise.all([svgs, bordersFeatureCollections, isos])
   for (const borders of allBorders) {
     // console.log(borders)
     for (const feature of borders.features) {
@@ -129,13 +134,13 @@ export const getCountry = async (lat: number, lng: number) => {
         contains = pointsWithinPolygon(point([lng, lat]), feature)
       }
       if (contains.features.length > 0) {
-        const flag = getFlagName(feature)
-        console.log(feature)
-        const svg = flags[await flag]
-        if (get(bordersAdmin)) return [borders, svg]
-        else return [feature, svg]
+        const flagIso = await getFlagName(feature)
+        const svg = flags[flagIso]
+        const countryName = await getCountryNameByISO(flagIso)
+        if (get(bordersAdmin)) return [borders, svg, countryName]
+        else return [feature, svg, countryName]
       }
     }
   }
-  return [undefined, undefined]
+  return [undefined, undefined, undefined]
 }

@@ -13,6 +13,7 @@
 	export let lastMapType;
 	import { copyAndPaste } from '$lib/Drawer.svelte';
 	import { show } from '$lib/Alert.svelte';
+import Flag from '$lib/Flag.svelte';
 
 	$: copy = !$user || $copyAndPaste;
 	let profileIcon;
@@ -24,6 +25,7 @@
 			className: 'rounded-full border-2 border-white'
 		});
 	}
+	let countryName = '';
 	function initLeaflet(node) {
 		let marker;
 		let layers = {
@@ -60,7 +62,12 @@
 		let currSelectedCountry;
 
 		async function selectCountry() {
-			const [country, svg] = await getCountry(currentGuess.wrap().lat, currentGuess.wrap().lng);
+			const [country, svg, countryNameResponse] = await getCountry(
+				currentGuess.wrap().lat,
+				currentGuess.wrap().lng
+			);
+
+			countryName = country.properties?.shapeName ?? countryNameResponse
 
 			flag = svg;
 
@@ -131,11 +138,5 @@
 	}
 </script>
 
-<div class="z-[3999] pointer-events-none absolute top-24 flex justify-center w-full">
-	{#if flag}
-		<div
-			style={`background-size: contain;background-position: 50%;background-repeat: no-repeat;background-image: url('${flag}'); height:100px;width:100px`}
-		/>
-	{/if}
-</div>
+<Flag {countryName}  {flag}/>
 <div class="z-5 w-full h-full saturate-150" use:initLeaflet />
