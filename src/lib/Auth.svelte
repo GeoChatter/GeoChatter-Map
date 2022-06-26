@@ -1,5 +1,5 @@
 <script>
-	import { user, supabase, auth } from '$lib/supabase.js';
+	import { user, supabase, auth } from '$lib/supabase';
 
 	import { LogOutIcon, LogInIcon } from 'svelte-feather-icons';
 </script>

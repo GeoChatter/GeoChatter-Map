@@ -1,12 +1,13 @@
 <script>
 	import { user, auth, supabase } from '$lib/supabase';
-	import { browser } from '$app/env';
+	// @ts-ignore
+import { browser } from '$app/env';
 	import { mapType, styles } from '$lib/MapPicker.svelte';
 	import { LogInIcon } from 'svelte-feather-icons';
 	import Leaflet from './Leaflet.svelte';
 	import MapBox from './MapBox.svelte';
 	import Feedback from '$lib/Feedback.svelte';
-	import { shortcut } from '$lib/shortcut.js';
+	import { shortcut } from '$lib/shortcut';
 	import Api from '$lib/js/api';
 	import { open } from '$lib/Drawer.svelte';
 	import QuickSwitch from '$lib/QuickSwitch.svelte';

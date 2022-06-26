@@ -14,9 +14,9 @@ const SERVER_POST = 'https://api.geochatter.tv/guess/'; //'https://guess.geochat
 const SERVER_GUESS_CHECK = 'https://api.geochatter.tv/guess?id=';
 
 export default class Api {
-  _bot
+  _bot: string | undefined;
   streamer = writable("")
-  constructor(bot) {
+  constructor(bot?: string | undefined) {
     this.bot = bot;
     // this.isButtonEnabled = true
   }
@@ -33,14 +33,19 @@ export default class Api {
     return this._bot
   }
 
+  /**
+   * @deprecated
+   * @param lng 
+   * @param lat 
+   */
   async getCountry(lng, lat) {
     const res = await fetch(`http://localhost:8000/countryJSON?lng=${lng}&lat=${lat}`)
     console.log(await res.json())
   }
 
   async checkIfClientIsConnected() {
-    let error;
-    let res;
+    let error: [number, string];
+    let res: Response;
     try {
       res = await fetch(SERVER_GET + this.bot,
         {
@@ -64,9 +69,18 @@ export default class Api {
     return [error, res];
   }
 
-  async sendGuess(data) {
-    let error;
-    let res;
+  async sendGuess(data: {
+    bot: string;
+    lat: number;
+    lng: number;
+    tkn: string;
+    id: string;
+    name: string;
+    display: string;
+    pic: string,
+  }): Promise<([[number, string], Response])> {
+    let error: [number, string];
+    let res: Response;
     try {
       res = await fetch(
         SERVER_POST, // Endpoint will change probably
@@ -91,9 +105,9 @@ export default class Api {
     return [error, res];
   }
 
-  async checkIfGuessIsRegistered(id) {
-    let error;
-    let res;
+  async checkIfGuessIsRegistered(id: string): Promise<([[number, string], Response])> {
+    let error: [number, string];
+    let res: Response;
     try {
       res = await fetch(SERVER_GUESS_CHECK + id,
         {

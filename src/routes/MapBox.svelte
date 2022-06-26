@@ -1,6 +1,7 @@
 <script>
 	import { user } from '$lib/supabase';
-	import { browser, dev } from '$app/env';
+	// @ts-ignore
+import { browser, dev } from '$app/env';
 	import { mapType } from '$lib/MapPicker.svelte';
 	import { copyAndPaste } from '$lib/Drawer.svelte';
 	import { getCountry } from '$lib/js/helpers/getFeature';
@@ -60,7 +61,9 @@
 	if (browser) {
 		try {
 			mapboxgl.accessToken = dev
+				// @ts-ignore
 				? import.meta.env.VITE_MAPBOXKEYDEV
+				// @ts-ignore
 				: import.meta.env.VITE_MAPBOXKEY;
 			mapboxgl.setRTLTextPlugin(
 				'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js',
@@ -108,7 +111,7 @@
 	function toggle3D(enable, mapBox) {
 		_3DEnabled = enable;
 		if (enable) {
-			localStorage.setItem('3d', 1);
+			localStorage.setItem('3d', String(1));
 		} else {
 			localStorage.removeItem('3d');
 		}
@@ -252,6 +255,7 @@
 		on:click={() => toggle3D(!_3DEnabled, mapBox)}
 		>{#if _3DEnabled} disable 3d{:else} enable 3d {/if}</button
 	>
+	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="text-xs">Zoom Sensitivity {Math.round((zoomSensitivity / 100) * 10) / 10}</label>
 	<input
 		on:mouseup={() => {
@@ -259,7 +263,7 @@
 				zoomSensitivity = 10;
 			}
 			mapBox['scrollZoom'].setWheelZoomRate((0.01 * zoomSensitivity) / 100);
-			localStorage.setItem('sens', zoomSensitivity);
+			localStorage.setItem('sens', String(zoomSensitivity));
 		}}
 		type="range"
 		min="0"
@@ -268,6 +272,7 @@
 		class="range range-xs"
 	/>
 	{#if mapBox && _3DEnabled && deviceType !== 'mobile'}
+		<!-- svelte-ignore a11y-label-has-associated-control -->
 		<label class="text-xs">Exaggeration {exaggeration}x</label>
 		<input
 			on:mouseup={() => changeExaggeration(exaggeration, mapBox)}

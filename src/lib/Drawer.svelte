@@ -1,9 +1,10 @@
-<script context="module">
+<script context="module" lang="ts">
 	import { writable } from 'svelte/store';
+	// @ts-ignore
 	import { browser } from '$app/env';
 
 	export const open = writable(false);
-	const cpValue = browser ? localStorage.getItem('copyAndPaste') ?? false : false;
+	const cpValue = browser ? !!(localStorage.getItem('copyAndPaste')) ?? false : false;
 	export const copyAndPaste = writable(cpValue);
 
 	const bordersValue = browser ? !localStorage.getItem('bordersValue') ?? true : true;
@@ -40,7 +41,7 @@
 </script>
 
 <script>
-	import { user } from '$lib/supabase.js';
+	import { user } from '$lib/supabase';
 	import MapPicker from './MapPicker.svelte';
 	import { LogOutIcon, LogInIcon, MenuIcon, MonitorIcon } from 'svelte-feather-icons';
 	import Feedback from './Feedback.svelte';

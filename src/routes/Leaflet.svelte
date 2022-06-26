@@ -1,5 +1,5 @@
 <script>
-	import { user } from '$lib/supabase.js';
+	import { user } from '$lib/supabase';
 	import { browser } from '$app/env';
 	import { getCountry } from '$lib/js/helpers/getFeature';
 
@@ -13,7 +13,7 @@
 	export let lastMapType;
 	import { copyAndPaste } from '$lib/Drawer.svelte';
 	import { show } from '$lib/Alert.svelte';
-import Flag from '$lib/Flag.svelte';
+	import Flag from '$lib/Flag.svelte';
 
 	$: copy = !$user || $copyAndPaste;
 	let profileIcon;
@@ -67,7 +67,7 @@ import Flag from '$lib/Flag.svelte';
 				currentGuess.wrap().lng
 			);
 
-			countryName = country.properties?.shapeName ?? countryNameResponse
+			countryName = country?.properties?.shapeName ?? countryNameResponse;
 
 			flag = svg;
 
@@ -138,5 +138,5 @@ import Flag from '$lib/Flag.svelte';
 	}
 </script>
 
-<Flag {countryName}  {flag}/>
+<Flag {countryName} {flag} />
 <div class="z-5 w-full h-full saturate-150" use:initLeaflet />

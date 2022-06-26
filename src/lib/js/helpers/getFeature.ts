@@ -1,7 +1,5 @@
 
-import convert3to2alpha from '../../../variables/convertIso';
 import JSZip from "jszip";
-import { dev } from "$app/env"
 
 import { borders, bordersAdmin } from '$lib/Drawer.svelte';
 import { get } from "svelte/store"
