@@ -1,4 +1,5 @@
 import { writable, type Writable } from "svelte/store"
+// @ts-ignore
 import { browser } from "$app/env"
 
 export class Settings {

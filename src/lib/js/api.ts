@@ -59,6 +59,7 @@ export default class Api {
     } catch (e) {
       error = e;
     }
+    
     const resObj = await res.json()
     const streamer = resObj?.channelName
     if (streamer) {
@@ -71,8 +72,8 @@ export default class Api {
 
   async sendGuess(data: {
     bot: string;
-    lat: number;
-    lng: number;
+    lat: string;
+    lng: string;
     tkn: string;
     id: string;
     name: string;
