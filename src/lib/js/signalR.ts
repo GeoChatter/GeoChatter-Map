@@ -1,7 +1,10 @@
 import * as signalR from '@microsoft/signalr';
 
 
-const connection = new signalR.HubConnectionBuilder().withUrl("https://dev.geochatter.tv/guess/geoChatterHub").build();
+const connection = new signalR.HubConnectionBuilder().withUrl("https://dev.geochatter.tv/guess/geoChatterHub", {
+    // skipNegotiation: true,
+    // transport: signalR.HttpTransportType.WebSockets
+}).build();
 
 
 
@@ -35,9 +38,9 @@ export const getCurrentState = async (botName: string) => {
     return await connection.invoke("GetClientState", botName)
 }
 
-export const sendGuess = async (botName: string, guess: unknown) => {
+export const sendGuess = async (guess: unknown) => {
     try {
-        await connection.invoke("SendGuessToClients", botName, guess)
+        await connection.invoke("SendGuessToClients", guess)
     }
     catch (err) {
         console.log(err)
@@ -49,9 +52,10 @@ export const sendGuess = async (botName: string, guess: unknown) => {
 
 
 
-export const senfFlagToClients = async (botName: string, flag: string, userId: string) => {
+export const senfFlagToClients = async (data) => {
     try {
-        const res = await connection.invoke("SendFlagToClients", botName, userId, flag)
+        const res = await connection.invoke("SendFlagToClients", data)
+
         console.log(res)
     } catch (err) {
         console.log(err)

@@ -3,6 +3,7 @@
 // Failure state of the guessing process
 
 import { writable } from "svelte/store";
+import { getCurrentState, startConnection, sendGuess } from "./signalR";
 
 // Check if target client is online
 const SERVER_GET = 'https://api.geochatter.tv/guess?botname=';
@@ -25,7 +26,7 @@ export default class Api {
   set bot(bot) {
     this._bot = bot
     if (this.bot) {
-      this.checkIfClientIsConnected()
+      startConnection(this.bot)
     }
 
   }
@@ -33,33 +34,16 @@ export default class Api {
     return this._bot
   }
 
-  /**
-   * @deprecated
-   * @param lng 
-   * @param lat 
-   */
-  async getCountry(lng, lat) {
-    const res = await fetch(`http://localhost:8000/countryJSON?lng=${lng}&lat=${lat}`)
-    console.log(await res.json())
-  }
 
-  async checkIfClientIsConnected() {
-    let error: [number, string];
-    let res: Response;
+  async getCurrentState() {
+    let error: string;
+    let res
     try {
-      res = await fetch(SERVER_GET + this.bot,
-        {
-          referrer: "https://geochatter.tv/",
-          mode: "cors"
-        });
-      if (!res.ok) {
-        console.log(res)
-        error = [res.status, res.statusText];
-      }
+      res = await getCurrentState(this.bot)
     } catch (e) {
       error = e;
     }
-    
+
     const resObj = await res.json()
     const streamer = resObj?.channelName
     if (streamer) {
@@ -79,26 +63,12 @@ export default class Api {
     name: string;
     display: string;
     pic: string,
-  }): Promise<([[number, string], Response])> {
-    let error: [number, string];
-    let res: Response;
+  }): Promise<([string, Response])> {
+    let error: string;
+    let res: any;
     try {
-      res = await fetch(
-        SERVER_POST, // Endpoint will change probably
-        {
-          method: 'POST',
-          body: JSON.stringify(data),
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          referrer: "https://geochatter.tv/",
-          mode: "cors"
-        }
-      );
-      if (!res.ok) {
-        console.log(res)
-        error = [res.status, res.statusText];
-      }
+      res = await sendGuess( data);
+      console.log(res)
     } catch (e) {
       error = e;
     }
@@ -106,24 +76,4 @@ export default class Api {
     return [error, res];
   }
 
-  async checkIfGuessIsRegistered(id: string): Promise<([[number, string], Response])> {
-    let error: [number, string];
-    let res: Response;
-    try {
-      res = await fetch(SERVER_GUESS_CHECK + id,
-        {
-          referrer: "https://geochatter.tv/",
-          // mode: "no-cors"
-          mode: "cors"
-        });
-      if (!res.ok) {
-        console.log(res)
-        error = [res.status, res.statusText];
-      }
-    } catch (e) {
-      error = e;
-    }
-
-    return [error, res];
-  }
 }

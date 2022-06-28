@@ -1,7 +1,7 @@
 <script>
 	import { user, auth, supabase } from '$lib/supabase';
 	// @ts-ignore
-import { browser } from '$app/env';
+	import { browser } from '$app/env';
 	import { mapType, styles } from '$lib/MapPicker.svelte';
 	import { LogInIcon } from 'svelte-feather-icons';
 	import Leaflet from './Leaflet.svelte';
@@ -96,41 +96,33 @@ import { browser } from '$app/env';
 
 		console.log(data);
 		loading = true;
-		const [[clientConnectedError, clientConnectedRes], [sendGuessError, sendGuessRes]] =
-			await Promise.all([api.checkIfClientIsConnected(), api.sendGuess(data)]);
-
-		if (clientConnectedError) {
-			alert('could find client based on bot: ' + api.bot);
-			console.error(clientConnectedError);
-		} else {
-			console.log(clientConnectedRes);
-		}
+		const [sendGuessError, sendGuessRes] = await api.sendGuess(data);
 
 		if (sendGuessError) {
 			console.log(sendGuessError);
 			alert('some thing went wrong while sending your guess');
 		} else {
-			let guessId = await sendGuessRes.text();
-			let counter = 0;
-			const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+			// let guessId = await sendGuessRes.text();
+			// let counter = 0;
+			// const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-			let maxCount = 6;
-			let guessRegisteredError, guessRegisteredRes;
-			while (counter >= maxCount) {
-				let [guessRegisteredError, guessRegisteredRes] = await api.checkIfGuessIsRegistered(
-					guessId
-				);
-				if (guessRegisteredRes.status !== 200 && !guessRegisteredError) {
-					await sleep(1500);
-				} else {
-					break;
-				}
-			}
-			if (guessRegisteredError) {
-				console.error(guessRegisteredError);
-			} else {
-				console.log(guessRegisteredRes);
-			}
+			// let maxCount = 6;
+			// // let guessRegisteredError, guessRegisteredRes;
+			// // while (counter >= maxCount) {
+			// 	let [guessRegisteredError, guessRegisteredRes] = await api.checkIfGuessIsRegistered(
+			// 		guessId
+			// 	);
+			// 	if (guessRegisteredRes.status !== 200 && !guessRegisteredError) {
+			// 		await sleep(1500);
+			// 	} else {
+			// 		break;
+			// 	}
+			// }
+			// if (guessRegisteredError) {
+			// 	console.error(guessRegisteredError);
+			// } else {
+			// 	console.log(guessRegisteredRes);
+			// }
 
 			console.log(sendGuessRes);
 			currentGuess = undefined;
@@ -143,7 +135,7 @@ import { browser } from '$app/env';
 
 		loading = false;
 
-		if (!sendGuessError && !clientConnectedError) {
+		if (!sendGuessError ) {
 			show(1, 'Guess send successfully');
 		}
 	}
