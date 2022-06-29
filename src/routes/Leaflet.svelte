@@ -11,11 +11,12 @@
 	export let currentGuess;
 	export let bot;
 	export let lastMapType;
-	import { copyAndPaste } from '$lib/Drawer.svelte';
 	import { show } from '$lib/Alert.svelte';
 	import Flag from '$lib/Flag.svelte';
+	import settings from '$lib/js/settings';
 
-	$: copy = !$user || $copyAndPaste;
+	$: copy = !$user || $settings.values.copyAndPaste;
+
 	let profileIcon;
 	let flag = '';
 	if (browser) {

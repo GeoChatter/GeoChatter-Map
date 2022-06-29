@@ -1,8 +1,7 @@
-
+// @ts-ignore
 import JSZip from "jszip";
 
-import { borders, bordersAdmin } from '$lib/Drawer.svelte';
-import { get } from "svelte/store"
+import settings from "../settings";
 
 import pointsWithinPolygon from "@turf/points-within-polygon"
 import { point, type Feature, type FeatureCollection } from "@turf/helpers"
@@ -93,7 +92,7 @@ const alpha3to2 = async (iso: string) => {
 
 async function getFlagName(feat: Feature) {
   const group = await alpha3to2(feat.properties.shapeGroup)
-  if (get(bordersAdmin)) return group
+  if (settings.values.borderAdmin) return group
   switch (group) {
     case "US": {
       const isoExists = await alpha3to2(feat.properties.shapeISO)
@@ -113,13 +112,13 @@ async function getFlagName(feat: Feature) {
 
 }
 
-const getCountryNameByISO = async (iso: string) => { 
+const getCountryNameByISO = async (iso: string) => {
   const isoObj = await isos
   return isoObj.find(country => country.Alpha2 === iso)?.name
 }
 
 export const getCountry = async (lat: number, lng: number) => {
-  if (!get(borders)) return [undefined, undefined, undefined]
+  if (!settings.values.borders) return [undefined, undefined, undefined]
   if (!bordersFeatureCollections) return
   // api.getCountry(lat, lng)
   // geometries[country]?.feature?.geometry
@@ -135,7 +134,7 @@ export const getCountry = async (lat: number, lng: number) => {
         const flagIso = await getFlagName(feature)
         const svg = flags[flagIso]
         const countryName = await getCountryNameByISO(flagIso)
-        if (get(bordersAdmin)) return [borders, svg, countryName]
+        if (settings.values.borderAdmin) return [borders, svg, countryName]
         else return [feature, svg, countryName]
       }
     }

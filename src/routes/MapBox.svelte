@@ -1,9 +1,9 @@
-<script>
+<script lang="ts">
 	import { user } from '$lib/supabase';
+	import settings from '$lib/js/settings';
 	// @ts-ignore
-import { browser, dev } from '$app/env';
+	import { browser, dev } from '$app/env';
 	import { mapType } from '$lib/MapPicker.svelte';
-	import { copyAndPaste } from '$lib/Drawer.svelte';
 	import { getCountry } from '$lib/js/helpers/getFeature';
 	import {
 		ChevronLeftIcon,
@@ -16,16 +16,21 @@ import { browser, dev } from '$app/env';
 	import Flag from '$lib/Flag.svelte';
 	let currSelectedCountry;
 
+	let globeView = $settings.values.globeView;
+
 	let flag = '';
 	let id = 0;
 	let lastCountry;
 	let countryName = '';
 	async function selectCountry() {
-		const [country, svg, countryNameResponse] = await getCountry(currentGuess.lat, currentGuess.lng);
+		const [country, svg, countryNameResponse] = await getCountry(
+			currentGuess.lat,
+			currentGuess.lng
+		);
 		console.log(country);
 		if (country === lastCountry) return;
 
-		countryName = country.properties?.shapeName ?? countryNameResponse
+		countryName = country.properties?.shapeName ?? countryNameResponse;
 		lastCountry = country;
 		flag = svg;
 		if (currSelectedCountry) {
@@ -61,10 +66,10 @@ import { browser, dev } from '$app/env';
 	if (browser) {
 		try {
 			mapboxgl.accessToken = dev
-				// @ts-ignore
-				? import.meta.env.VITE_MAPBOXKEYDEV
-				// @ts-ignore
-				: import.meta.env.VITE_MAPBOXKEY;
+				? // @ts-ignore
+				  import.meta.env.VITE_MAPBOXKEYDEV
+				: // @ts-ignore
+				  import.meta.env.VITE_MAPBOXKEY;
 			mapboxgl.setRTLTextPlugin(
 				'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js',
 				null,
@@ -97,23 +102,23 @@ import { browser, dev } from '$app/env';
 	export let _3DEnabled = false;
 	export let lastMapType;
 
-	$: copy = !$user || $copyAndPaste;
+	$: copy = !$user || $settings.values.copyAndPaste;
 
 	let mapBoxDemSrc = 'mapbox-dem';
 	export let exaggeration = 1;
 	export let zoomSensitivity = 100;
 
 	function changeExaggeration(val, mapBox) {
-		localStorage.setItem('ex', val);
+		$settings.change('ex', val);
 		mapBox.setTerrain(null);
 		mapBox.setTerrain({ source: mapBoxDemSrc, exaggeration: val });
 	}
 	function toggle3D(enable, mapBox) {
 		_3DEnabled = enable;
 		if (enable) {
-			localStorage.setItem('3d', String(1));
+			$settings.change('_3d', true);
 		} else {
-			localStorage.removeItem('3d');
+			$settings.change('_3d', false);
 		}
 
 		if (!enable) {
@@ -151,12 +156,22 @@ import { browser, dev } from '$app/env';
 		mapBox = new mapboxgl.Map({
 			container: node, // container ID
 			style: styles[$mapType], //'mapbox://styles/mapbox/streets-v11', // style URL
+			projection: globeView ? 'globe' : 'mercator',
 			// style: defaultMapStyle, // style URL
 			center, // starting position [lng, lat]
 			zoom, // starting zoom
 			pitch,
 			bearing,
 			attributionControl: false
+		});
+		mapBox.on('style.load', () => {
+			mapBox.setFog({
+				color: 'rgb(186, 210, 235)', // Lower atmosphere
+				'high-color': 'rgb(36, 92, 223)', // Upper atmosphere
+				'horizon-blend': 0.02, // Atmosphere thickness (default 0.2 at low zooms)
+				'space-color': 'rgb(11, 11, 25)', // Background color
+				'star-intensity': 0.6 // Background star brightness (default 0.35 at low zoooms )
+			});
 		});
 
 		mapBox.addControl(
@@ -255,6 +270,21 @@ import { browser, dev } from '$app/env';
 		on:click={() => toggle3D(!_3DEnabled, mapBox)}
 		>{#if _3DEnabled} disable 3d{:else} enable 3d {/if}</button
 	>
+
+	<button
+		class={globeView ? 'btn btn-xs' : 'btn btn-xs btn-primary'}
+		on:click={() => {
+			globeView = !globeView;
+			$settings.change('globeView', globeView);
+
+			if (globeView) {
+				mapBox.setProjection('globe');
+			} else {
+				mapBox.setProjection('mercator');
+			}
+		}}
+		>{#if globeView} disable GlobeView{:else} enable GlobeView {/if}</button
+	>
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="text-xs">Zoom Sensitivity {Math.round((zoomSensitivity / 100) * 10) / 10}</label>
 	<input
@@ -263,7 +293,8 @@ import { browser, dev } from '$app/env';
 				zoomSensitivity = 10;
 			}
 			mapBox['scrollZoom'].setWheelZoomRate((0.01 * zoomSensitivity) / 100);
-			localStorage.setItem('sens', String(zoomSensitivity));
+
+			$settings.change('sens', zoomSensitivity);
 		}}
 		type="range"
 		min="0"

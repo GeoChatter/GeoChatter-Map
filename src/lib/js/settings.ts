@@ -4,6 +4,8 @@ import { browser } from "$app/env"
 
 export class Settings {
 
+
+
   set: Writable<typeof this>['set'];
   subscribe: Writable<typeof this>['subscribe'];
   update: Writable<typeof this>['update'];
@@ -21,7 +23,17 @@ export class Settings {
     this.set(this);
   };
   // write you can add defaults here 
-  values = {}
+  values = {
+    _3d: true,
+    sens: 100,
+    ex: 1,
+    globe: false,
+    copyAndPaste: false,
+    borderAdmin: false,
+    borders: true,
+    drawerOpen: false,
+    globeView: true
+  }
 
   constructor() {
     this.load()
@@ -47,6 +59,7 @@ export class Settings {
     if (typeof this.values[key] !== undefined) {
       this.values[key] = newVal
       this.save()
+      this.refresh()
     }
     else {
       console.log(

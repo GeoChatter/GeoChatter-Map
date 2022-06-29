@@ -9,11 +9,11 @@
 	import Feedback from '$lib/Feedback.svelte';
 	import { shortcut } from '$lib/shortcut';
 	import Api from '$lib/js/api';
-	import { open } from '$lib/Drawer.svelte';
 	import QuickSwitch from '$lib/QuickSwitch.svelte';
 	import Alert, { show } from '$lib/Alert.svelte';
 	import MovableDiv from '$lib/MovableDiv.svelte';
 	import Twitch from '$lib/Twitch.svelte';
+	import settings from '$lib/js/settings';
 	const api = new Api();
 
 	let lastMapType;
@@ -24,9 +24,9 @@
 	function setSettingsFromLocalStorage() {
 		if (browser) {
 			let mapTypeCookie = localStorage.getItem('mapType');
-			let _3d = localStorage.getItem('3d');
-			let sens = localStorage.getItem('sens');
-			let ex = localStorage.getItem('ex');
+			let _3d = $settings.values._3d;
+			let sens = $settings.values.sens;
+			let ex = $settings.values.ex;
 			if (mapTypeCookie) {
 				if (styles.includes(mapTypeCookie)) {
 					$mapType = mapTypeCookie;
@@ -38,10 +38,10 @@
 				_3DEnabled = false;
 			}
 			if (sens) {
-				zoomSensitivity = parseInt(sens);
+				zoomSensitivity = sens;
 			}
 			if (ex) {
-				exaggeration = parseInt(ex);
+				exaggeration = ex;
 			}
 			mapType.subscribe((type) => localStorage.setItem('mapType', type));
 		}
@@ -170,7 +170,7 @@
 				{/if}
 			</button>
 		{:else}
-			<button class="btn btn-primary  absolute bottom-8 right-5" on:click={() => ($open = !$open)}>
+			<button class="btn btn-primary  absolute bottom-8 right-5" on:click={() => $settings.change("drawerOpen",true)}>
 				<LogInIcon class="mr-3" size="1x" />sign in to guess on site</button
 			>
 		{/if}
