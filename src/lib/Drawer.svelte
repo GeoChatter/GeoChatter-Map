@@ -1,7 +1,6 @@
 <script context="module" lang="ts">
 	import { writable } from 'svelte/store';
 	// @ts-ignore
-
 </script>
 
 <script lang="ts">
@@ -13,6 +12,7 @@
 	import { swipe } from 'svelte-gestures';
 	import Auth from './Auth.svelte';
 	import { close } from './MovableDiv.svelte';
+	import ColorPicker from './ColorPicker.svelte';
 </script>
 
 <div
@@ -67,6 +67,16 @@
 				</li>
 			{/if}
 
+			<div class="p-2 border-[1px] border-black rounded-md flex justify-center h-fit w-fit mb-2">
+				<div>
+					<ColorPicker
+						handleColor={(color) => {
+							console.log(color);
+						}}
+					/>
+				</div>
+			</div>
+
 			<MapPicker isDrawer={true} />
 
 			{#if $user}
@@ -82,6 +92,7 @@
 					</label>
 				</li>
 			{/if}
+
 			<li class="form-control">
 				<label class="label cursor-pointer">
 					<span class="label-text">enable borders</span>
@@ -102,7 +113,6 @@
 					/>
 				</label>
 			</li>
-
 			<li class="sm:mb-0 mb-2 flex sm:hidden">
 				<Feedback />
 			</li>

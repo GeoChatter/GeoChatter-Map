@@ -46,6 +46,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@jaames/iro": "^5.5.2",
     "@microsoft/signalr": "^6.0.6",
     "@supabase/supabase-js": "^1.33.3",
     "@turf/helpers": "^6.5.0",
@@ -56,6 +57,7 @@
     "daisyui": "^2.13.6",
     "jszip": "^3.10.0",
     "mapbox-gl": "^2.9.1",
+    "svelte-color-picker": "^1.0.7",
     "svelte-feather-icons": "^4.0.0",
     "svelte-gestures": "^1.4.1"
   }

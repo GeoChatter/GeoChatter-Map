@@ -4,7 +4,7 @@ import JSZip from "jszip";
 import settings from "../settings";
 
 import pointsWithinPolygon from "@turf/points-within-polygon"
-import { point, type Feature, type FeatureCollection } from "@turf/helpers"
+import { point, type Feature, type FeatureCollection, type GeometryCollection, type MultiPolygon, type Point } from "@turf/helpers"
 const BORDER_URL = 'https://service.geochatter.tv/resources/borders/content.zip'
 const FLAGS_URL = 'https://service.geochatter.tv/resources/flags/content.zip'
 // const BORDER_URL = dev ? "/content.zip" : "/testing_map/content.zip"
@@ -13,7 +13,7 @@ const FLAGS_URL = 'https://service.geochatter.tv/resources/flags/content.zip'
 
 
 async function downloadAndUnzip() {
-  const result_borders: FeatureCollection[] = []
+  const result_borders: FeatureCollection<MultiPolygon>[] = []
   try {
     const response = await fetch(BORDER_URL, { cache: "no-cache" })
     const blob = await response.blob();
@@ -126,7 +126,7 @@ export const getCountry = async (lat: number, lng: number) => {
   for (const borders of allBorders) {
     // console.log(borders)
     for (const feature of borders.features) {
-      let contains: FeatureCollection
+      let contains: FeatureCollection<Point, { [name: string]: any; }>
       if (feature?.geometry) {
         contains = pointsWithinPolygon(point([lng, lat]), feature)
       }
