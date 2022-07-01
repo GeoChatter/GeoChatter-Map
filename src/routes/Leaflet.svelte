@@ -46,7 +46,7 @@
 				attribution: '&copy; Google Maps'
 			}),
 			OSM: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-				maxZoom: 20,
+				maxZoom: 19,
 				attribution:
 					'&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
 			}),

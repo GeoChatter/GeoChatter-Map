@@ -1,18 +1,16 @@
-<script context="module" lang="ts">
-	import { writable } from 'svelte/store';
-	// @ts-ignore
-</script>
-
 <script lang="ts">
-	import settings from './js/settings';
 	import { user } from '$lib/supabase';
-	import MapPicker from './MapPicker.svelte';
-	import { LogOutIcon, LogInIcon, MenuIcon, MonitorIcon } from 'svelte-feather-icons';
-	import Feedback from './Feedback.svelte';
+	import { XIcon, MenuIcon, MonitorIcon } from 'svelte-feather-icons';
 	import { swipe } from 'svelte-gestures';
 	import Auth from './Auth.svelte';
-	import { close } from './MovableDiv.svelte';
 	import ColorPicker from './ColorPicker.svelte';
+	import Feedback from './Feedback.svelte';
+	import settings from './js/settings';
+	import MapPicker from './MapPicker.svelte';
+	import { close } from './MovableDiv.svelte';
+	import { svgs } from '$lib/js/helpers/getFeature';
+
+	let chooseFlag = false;
 </script>
 
 <div
@@ -67,16 +65,47 @@
 				</li>
 			{/if}
 
-			<div class="p-2 border-[1px] border-black rounded-md flex justify-center h-fit w-fit mb-2">
-				<div>
-					<ColorPicker
-						handleColor={(color) => {
-							console.log(color);
+			{#if $user}
+				<div class="flex items-center justify-center h-fit w-fit mb-2">
+					<div>
+						<ColorPicker
+							handleColor={(color) => {
+								console.log(color);
+							}}
+						/>
+					</div>
+					<button
+						class="btn  w-36"
+						on:click={() => {
+							chooseFlag = !chooseFlag;
 						}}
-					/>
+					>
+						{#if chooseFlag}<XIcon />close{:else} choose flag {/if}
+					</button>
 				</div>
-			</div>
 
+				{#if chooseFlag}
+					{#await svgs then flags}
+						{#each Object.entries(flags) as [code, flag]}
+							{#if code}
+								<li
+									on:click={() => {
+										chooseFlag = false;
+									}}
+								>
+									<div class="flex">
+										<div
+											style={`background-size: contain;background-position: 50%;background-repeat: no-repeat;background-image: url('${flag}'); height:20px;width:20px`}
+										/>
+
+										{code}
+									</div>
+								</li>
+							{/if}
+						{/each}
+					{/await}
+				{/if}
+			{/if}
 			<MapPicker isDrawer={true} />
 
 			{#if $user}

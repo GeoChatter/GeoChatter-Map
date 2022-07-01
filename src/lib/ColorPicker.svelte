@@ -8,7 +8,7 @@
 	function init(node) {
 		const colorPicker = iro.ColorPicker(node, {
 			width: 100,
-			layoutDirection: 'horizontal',
+			// layoutDirection: 'horizontal',
 			sliderSize: 10
 		});
 		colorPicker.on('color:change', (color) => {
@@ -22,4 +22,4 @@
 	}
 </script>
 
-<div use:init />
+<div class="p-2" use:init />

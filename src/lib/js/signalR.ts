@@ -1,17 +1,13 @@
 import * as signalR from '@microsoft/signalr';
 
 
-const connection = new signalR.HubConnectionBuilder().withUrl("https://dev.geochatter.tv/guess/geoChatterHub", {
-    // skipNegotiation: true,
-    // transport: signalR.HttpTransportType.WebSockets
-}).build();
+const connection = new signalR.HubConnectionBuilder().withUrl("https://dev.geochatter.tv/guess/geoChatterHub", {}).build();
 
 
 
 
-const listenToMapFeatures = () => connection.on("SetMapFeatures", function (ShowStreamOverlay, ShowFlags, ShowBorders) {
-    console.log(ShowStreamOverlay, ShowFlags, ShowBorders)
-
+const listenToMapFeatures = () => connection.on("SetMapFeatures", function (options) {
+    console.log(options)
 });
 
 
@@ -21,8 +17,8 @@ export const startConnection = async (botName: string) => {
     try {
         const startRes = await connection.start()
         console.log("connection started")
-        await connection.invoke("MapLogin", botName)
-        console.log("connected to client")
+        const res = await connection.invoke("MapLogin", botName)
+        console.log("logged in to map", res)
         listenToMapFeatures()
         console.log("listening to map features")
     }
@@ -38,7 +34,20 @@ export const getCurrentState = async (botName: string) => {
     return await connection.invoke("GetClientState", botName)
 }
 
-export const sendGuess = async (guess: unknown) => {
+export type Guess = {
+    bot: string;
+    lat: string;
+    lng: string;
+    tkn: string;
+    id: string;
+    name: string;
+    display: string;
+    pic: string;
+    isTemporary: boolean;
+    isRandom: boolean;
+};
+
+export const sendGuess = async (guess: Guess) => {
     try {
         await connection.invoke("SendGuessToClients", guess)
     }

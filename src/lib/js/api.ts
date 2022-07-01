@@ -1,9 +1,13 @@
 
-// import fetch from 'node-fetch' // uncomment when using testing
-// Failure state of the guessing process
+
+import { show } from '$lib/Alert.svelte';
 
 import { writable } from "svelte/store";
-import { getCurrentState, startConnection, sendGuess } from "./signalR";
+import { getCurrentState, startConnection, sendGuess, type Guess } from "./signalR";
+import { user, auth, supabase } from '$lib/supabase';
+import { get } from "svelte/store";
+
+// TODO: REMOVE FOR SIGNALR API 
 
 // Check if target client is online
 const SERVER_GET = 'https://api.geochatter.tv/guess?botname=';
@@ -35,6 +39,58 @@ export default class Api {
   }
 
 
+  async sendGuessToBackend(lat: string, lng: string, confirmed = true, random = false) {
+    let data: Guess;
+    const userStore = get(user)
+    // FIXME: add confirmed guess
+    switch (userStore.app_metadata.provider) {
+
+      case 'twitch':
+        data = {
+          bot: this.bot,
+          lat: lat,
+          lng: lng,
+          tkn: auth.session()?.access_token,
+          id: userStore.user_metadata.sub,
+          name: userStore.user_metadata.name,
+          display: userStore.user_metadata.slug,
+          pic: userStore.user_metadata.picture,
+          isTemporary: !confirmed,
+          isRandom: false
+        };
+        break;
+      case 'google':
+        console.log(userStore.user_metadata);
+        data = {
+          bot: this.bot,
+          lat: lat,
+          lng: lng,
+          tkn: auth.session()?.access_token,
+          id: userStore.user_metadata.sub,
+          name: userStore.user_metadata.full_name,
+          display: userStore.user_metadata.name,
+          pic: userStore.user_metadata.avatar_url,
+          isTemporary: !confirmed,
+          isRandom: false
+        };
+        break;
+    }
+
+    console.log(data);
+    // loading = true;
+    const [sendGuessError, sendGuessRes] = await this.sendGuess(data);
+
+    if (sendGuessError) {
+      console.log(sendGuessError);
+      alert('some thing went wrong while sending your guess');
+    }
+
+    if (!sendGuessError) {
+      show(1, 'Guess send ');
+    }
+  }
+
+  // might be depreacated soon?
   async getCurrentState() {
     let error: string;
     let res
@@ -54,20 +110,12 @@ export default class Api {
     return [error, res];
   }
 
-  async sendGuess(data: {
-    bot: string;
-    lat: string;
-    lng: string;
-    tkn: string;
-    id: string;
-    name: string;
-    display: string;
-    pic: string,
-  }): Promise<([string, Response])> {
+  // add confirmed or not or random guess?
+  async sendGuess(data: Guess): Promise<([string, Response])> {
     let error: string;
     let res: any;
     try {
-      res = await sendGuess( data);
+      res = await sendGuess(data);
       console.log(res)
     } catch (e) {
       error = e;

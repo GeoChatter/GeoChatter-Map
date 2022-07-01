@@ -72,7 +72,7 @@ async function downloadAndUnzipFlags() {
   return svgs
 }
 
-let svgs = downloadAndUnzipFlags()
+export const svgs = downloadAndUnzipFlags()
 
 let bordersFeatureCollections = downloadAndUnzip()
 // download iso.json

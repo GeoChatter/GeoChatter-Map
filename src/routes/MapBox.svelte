@@ -28,6 +28,19 @@
 			currentGuess.lng
 		);
 		console.log(country);
+
+		// if (typeof country === 'undefined' && currSelectedCountry) {
+		// 	try {
+		// 		mapBox.removeLayer(currSelectedCountry + 'line');
+		// 		mapBox.removeLayer(currSelectedCountry);
+		// 		mapBox.removeSource(currSelectedCountry);
+		// 	} catch (e) {
+		// 		console.log(e);
+		// 	}
+		// 	flag = undefined;
+		// 	return;
+		// }
+
 		if (country === lastCountry) return;
 
 		countryName = country.properties?.shapeName ?? countryNameResponse;

@@ -64,81 +64,7 @@
 
 	let loading = false;
 	let newBot;
-	async function sendGuessToBackend() {
-		let data;
-		switch ($user.app_metadata.provider) {
-			case 'twitch':
-				data = {
-					bot: api.bot,
-					lat: currentGuess.lat.toString(),
-					lng: currentGuess.lng.toString(),
-					tkn: auth.session()?.access_token,
-					id: $user.user_metadata.sub,
-					name: $user.user_metadata.name,
-					display: $user.user_metadata.slug,
-					pic: $user.user_metadata.picture
-				};
-				break;
-			case 'google':
-				console.log($user.user_metadata);
-				data = {
-					bot: api.bot,
-					lat: currentGuess.lat.toString(),
-					lng: currentGuess.lng.toString(),
-					tkn: auth.session()?.access_token,
-					id: $user.user_metadata.sub,
-					name: $user.user_metadata.full_name,
-					display: $user.user_metadata.name,
-					pic: $user.user_metadata.avatar_url
-				};
-				break;
-		}
 
-		console.log(data);
-		loading = true;
-		const [sendGuessError, sendGuessRes] = await api.sendGuess(data);
-
-		if (sendGuessError) {
-			console.log(sendGuessError);
-			alert('some thing went wrong while sending your guess');
-		} else {
-			// let guessId = await sendGuessRes.text();
-			// let counter = 0;
-			// const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
-			// let maxCount = 6;
-			// // let guessRegisteredError, guessRegisteredRes;
-			// // while (counter >= maxCount) {
-			// 	let [guessRegisteredError, guessRegisteredRes] = await api.checkIfGuessIsRegistered(
-			// 		guessId
-			// 	);
-			// 	if (guessRegisteredRes.status !== 200 && !guessRegisteredError) {
-			// 		await sleep(1500);
-			// 	} else {
-			// 		break;
-			// 	}
-			// }
-			// if (guessRegisteredError) {
-			// 	console.error(guessRegisteredError);
-			// } else {
-			// 	console.log(guessRegisteredRes);
-			// }
-
-			console.log(sendGuessRes);
-			currentGuess = undefined;
-			try {
-				leaflet.closePopup();
-			} catch {
-				console.log('not in leaflet');
-			}
-		}
-
-		loading = false;
-
-		if (!sendGuessError ) {
-			show(1, 'Guess send successfully');
-		}
-	}
 	let streamer = api.streamer;
 </script>
 
@@ -157,7 +83,13 @@
 				disabled={!currentGuess || !$user || loading}
 				use:shortcut={{ code: 'Space', default: true }}
 				class="btn pointer-events-auto   z-[3000] btn-wide btn-primary disabled:opacity-100   absolute bottom-8 right-5"
-				on:click={sendGuessToBackend}
+				on:click={() => {
+					loading = true;
+					setTimeout(() => {
+						loading = false;
+					}, 1000);
+					api.sendGuessToBackend(currentGuess.lat.toString(), currentGuess.lng.toString());
+				}}
 			>
 				{#if !loading}
 					{#if $user}
@@ -170,7 +102,10 @@
 				{/if}
 			</button>
 		{:else}
-			<button class="btn btn-primary  absolute bottom-8 right-5" on:click={() => $settings.change("drawerOpen",true)}>
+			<button
+				class="btn btn-primary  absolute bottom-8 right-5"
+				on:click={() => $settings.change('drawerOpen', true)}
+			>
 				<LogInIcon class="mr-3" size="1x" />sign in to guess on site</button
 			>
 		{/if}
