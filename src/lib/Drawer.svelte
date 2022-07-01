@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { fade } from 'svelte/transition';
 	import { user } from '$lib/supabase';
 	import { XIcon, MenuIcon, MonitorIcon } from 'svelte-feather-icons';
 	import Auth from './Auth.svelte';
@@ -16,7 +17,7 @@
 <div
 	class={`absolute drawer z-[6000] ${
 		$settings.values.drawerOpen ? 'pointer-events-auto' : 'pointer-events-none'
-	}  h-full w-full `}
+	}  h-full w-full`}
 >
 	<input
 		on:click={() => $settings.change('drawerOpen', !$settings.values.drawerOpen)}
@@ -31,7 +32,7 @@
 			><MenuIcon size="1.5x" /></label
 		>
 	</div>
-	<div class="drawer-side">
+	<div class="drawer-side ">
 		<label for="my-drawer" class="drawer-overlay" />
 		<ul class="menu p-4 overflow-y-auto w-80 bg-base-100 text-base-content">
 			<!-- Sidebar content here -->
@@ -75,11 +76,13 @@
 					</button>
 				</div>
 
-				{#if chooseFlag}
-					{#await svgs then flags}
+				{#await svgs then flags}
+					<div class={!chooseFlag ? 'hidden' : 'border-2 rounded-md p-2'}>
 						{#each Object.entries(flags) as [code, flag]}
 							{#if code}
 								<li
+									class={!chooseFlag ? 'hidden' : ''}
+									transition:fade
 									on:click={() => {
 										api.sendFlag(code);
 										chooseFlag = false;
@@ -87,7 +90,7 @@
 								>
 									<div class="flex">
 										<div
-											style={`background-size: contain;background-position: 50%;background-repeat: no-repeat;background-image: url('${flag}'); height:20px;width:20px`}
+											style={`background-size: contain;background-position: 50%;background-repeat: no-repeat;background-image: url('${flag}'); height:30px;width:30px`}
 										/>
 
 										{code}
@@ -95,8 +98,8 @@
 								</li>
 							{/if}
 						{/each}
-					{/await}
-				{/if}
+					</div>
+				{/await}
 			{/if}
 			<MapPicker isDrawer={true} />
 
@@ -162,3 +165,4 @@
 		</ul>
 	</div>
 </div>
+
