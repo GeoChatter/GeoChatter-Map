@@ -78,6 +78,7 @@ class Api {
 
     console.log(data);
     // loading = true;
+    console.log(data)
     const [sendGuessError, sendGuessRes] = await this.sendGuess(data);
 
     if (sendGuessError) {

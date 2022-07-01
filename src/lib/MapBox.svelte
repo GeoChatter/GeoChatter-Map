@@ -247,7 +247,7 @@
 				let clipboard = `/w ${bot} ${window.btoa(
 					currentGuess.lat.toString() + ',' + currentGuess.lng.toString()
 				)}`;
-				api.sendGuessToBackend(currentGuess.lat, currentGuess.lng, false, false);
+				api.sendGuessToBackend(currentGuess.lat.toString(), currentGuess.lng.toString(), false, false);
 				if (copy) {
 					navigator.clipboard.writeText(clipboard);
 					show(0.5, 'guess copied to clipboard');

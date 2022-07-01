@@ -122,8 +122,13 @@
 			let clipboard = `/w ${bot} ${window.btoa(
 				currentGuess.lat.toString() + ',' + currentGuess.lng.toString()
 			)}`;
-			api.sendGuessToBackend(currentGuess.lat, currentGuess.lng, false, false);
 
+			api.sendGuessToBackend(
+				currentGuess.lat.toString(),
+				currentGuess.lng.toString(),
+				false,
+				false
+			);
 			// adding feature to map
 
 			selectCountry();
