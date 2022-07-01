@@ -19,7 +19,11 @@
 </script>
 
 {#if $showing}
-	<div in:fly out:fly class="absolute p-2  w-full flex justify-center z-[80000]">
+	<div
+		in:fly
+		out:fly
+		class="absolute p-2 pointer-events-none  w-full flex justify-center z-[80000]"
+	>
 		<div class="w-fit alert alert-success shadow-2xl">
 			<div>
 				<svg

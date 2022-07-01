@@ -86,8 +86,8 @@ class Api {
       alert('some thing went wrong while sending your guess');
     }
 
-    if (!sendGuessError) {
-      show(1, random ? "random guess send" : confirmed ? 'guess send' : 'unconfirmed guess send');
+    if (!sendGuessError && confirmed) {
+      show(1, random ? "random guess send" : 'guess send');
     }
   }
 
