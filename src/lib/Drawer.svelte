@@ -118,6 +118,7 @@
 				<label class="label cursor-pointer">
 					<span class="label-text">enable borders</span>
 					<input
+						disabled={!$settings.streamerSettings.borders}
 						type="checkbox"
 						class="toggle"
 						on:click={() => $settings.change('borders', !$settings.values.borders)}
@@ -127,6 +128,7 @@
 				<label class="label cursor-pointer">
 					<span class="label-text">Administrator Level 0 Borders</span>
 					<input
+						disabled={!$settings.streamerSettings.borderAdmin}
 						type="checkbox"
 						class="toggle"
 						on:click={() => $settings.change('borderAdmin', !$settings.values.borderAdmin)}
@@ -136,6 +138,7 @@
 				<label class="label cursor-pointer">
 					<span class="label-text">enable flags</span>
 					<input
+						disabled={!$settings.streamerSettings.flags}
 						type="checkbox"
 						class="toggle"
 						on:click={() => $settings.change('flags', !$settings.values.flags)}
@@ -145,6 +148,7 @@
 				<label class="label cursor-pointer">
 					<span class="label-text">enable stream popup</span>
 					<input
+						disabled={!$settings.streamerSettings.streamOverlay}
 						type="checkbox"
 						class="toggle"
 						on:click={() => $settings.change('streamOverlay', !$settings.values.streamOverlay)}

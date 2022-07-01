@@ -57,7 +57,12 @@ export const getGameSummary = async (gameId: string) => {
 }
 const setStreamerSettings = (options) =>
     Object.entries(options).forEach(([key, value]) => {
+
         key = key.replace("show", "").toLowerCase()
+        if (key === "isusstreak") {
+            key = "borderAdmin"
+            value = !value
+        }
         settings.changeStreamerSettings(key, value)
     })
 
