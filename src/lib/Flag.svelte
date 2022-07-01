@@ -3,7 +3,7 @@
 	export let countryName = '';
 </script>
 
-<div class="z-[5999] pointer-events-none absolute top-24 flex justify-center w-full">
+<div class="z-[3999] pointer-events-none absolute top-24 flex justify-center w-full">
 	{#if flag}
 		<div class="tooltip tooltip-open tooltip-top pointer-events-auto" data-tip={countryName}>
 			<div
