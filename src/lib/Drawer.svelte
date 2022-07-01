@@ -135,6 +135,15 @@
 					/>
 				</label>
 				<label class="label cursor-pointer">
+					<span class="label-text">Administrator Level 0 Borders</span>
+					<input
+						type="checkbox"
+						class="toggle"
+						on:click={() => $settings.change('borderAdmin', !$settings.values.borderAdmin)}
+						checked={$settings.values.borderAdmin}
+					/>
+				</label>
+				<label class="label cursor-pointer">
 					<span class="label-text">enable flags</span>
 					<input
 						type="checkbox"
@@ -150,15 +159,6 @@
 						class="toggle"
 						on:click={() => $settings.change('streamOverlay', !$settings.values.streamOverlay)}
 						checked={$settings.values.streamOverlay}
-					/>
-				</label>
-				<label class="label cursor-pointer">
-					<span class="label-text">Administrator Level 0 Borders</span>
-					<input
-						type="checkbox"
-						class="toggle"
-						on:click={() => $settings.change('borderAdmin', !$settings.values.borderAdmin)}
-						checked={$settings.values.borderAdmin}
 					/>
 				</label>
 			</li>
