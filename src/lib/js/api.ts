@@ -3,7 +3,7 @@
 import { show } from '$lib/Alert.svelte';
 
 import { writable } from "svelte/store";
-import { getCurrentState, startConnection, sendGuess, type Guess } from "./signalR";
+import { getCurrentState, startConnection, sendGuess, type Guess, type Flag, SendFlagToClients, sendColor } from "./signalR";
 import { user, auth, supabase } from '$lib/supabase';
 import { get } from "svelte/store";
 
@@ -18,7 +18,7 @@ const SERVER_POST = 'https://api.geochatter.tv/guess/'; //'https://guess.geochat
 // Check guess status : 200 = processed , 100 = being processed , default = failed
 const SERVER_GUESS_CHECK = 'https://api.geochatter.tv/guess?id=';
 
-export default class Api {
+class Api {
   _bot: string | undefined;
   streamer = writable("")
   constructor(bot?: string | undefined) {
@@ -86,10 +86,42 @@ export default class Api {
     }
 
     if (!sendGuessError) {
-      show(1, 'Guess send ');
+      show(1, random ? "random guess send" : confirmed ? 'guess send' : 'unconfirmed guess send');
     }
   }
 
+  async sendFlag(flag: string) {
+
+    const userStore = get(user)
+    const data = {
+      bot: this._bot,
+      tkn: auth.session()?.access_token,
+      id: userStore.user_metadata.sub,
+      name: userStore.user_metadata.full_name,
+      display: userStore.user_metadata.name,
+      pic: userStore.user_metadata.avatar_url,
+      flag: flag,
+    };
+    const res = await SendFlagToClients(data);
+
+    return res;
+  }
+  async sendColor(color: string) {
+
+    const userStore = get(user)
+    const data = {
+      bot: this._bot,
+      tkn: auth.session()?.access_token,
+      id: userStore.user_metadata.sub,
+      name: userStore.user_metadata.full_name,
+      display: userStore.user_metadata.name,
+      pic: userStore.user_metadata.avatar_url,
+      color: color,
+    };
+    const res = await sendColor(data);
+
+    return res;
+  }
   // might be depreacated soon?
   async getCurrentState() {
     let error: string;
@@ -125,3 +157,5 @@ export default class Api {
   }
 
 }
+const api = new Api()
+export default api

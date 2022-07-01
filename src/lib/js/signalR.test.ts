@@ -1,4 +1,4 @@
-import { getCurrentState, sendGuess, senfFlagToClients, startConnection } from "./signalR"
+import { getCurrentState, sendGuess, SendFlagToClients, startConnection } from "./signalR"
 
 const bot = "nobotisperfect"
 export const createFakeGuess = (bot: string) => {

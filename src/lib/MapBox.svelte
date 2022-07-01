@@ -14,6 +14,7 @@
 	import mapboxgl from 'mapbox-gl';
 	import { show } from '$lib/Alert.svelte';
 	import Flag from '$lib/Flag.svelte';
+	import api from './js/api';
 	let currSelectedCountry;
 
 	let globeView = $settings.values.globeView;
@@ -246,6 +247,7 @@
 				let clipboard = `/w ${bot} ${window.btoa(
 					currentGuess.lat.toString() + ',' + currentGuess.lng.toString()
 				)}`;
+				api.sendGuessToBackend(currentGuess.lat, currentGuess.lng, false, false);
 				if (copy) {
 					navigator.clipboard.writeText(clipboard);
 					show(0.5, 'guess copied to clipboard');

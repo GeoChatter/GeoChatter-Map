@@ -3,18 +3,17 @@
 	// @ts-ignore
 	import { browser } from '$app/env';
 	import { mapType, styles } from '$lib/MapPicker.svelte';
-	import { LogInIcon } from 'svelte-feather-icons';
+	import { LogInIcon, EyeOffIcon } from 'svelte-feather-icons';
 	import Leaflet from './Leaflet.svelte';
 	import MapBox from './MapBox.svelte';
 	import Feedback from '$lib/Feedback.svelte';
 	import { shortcut } from '$lib/shortcut';
-	import Api from '$lib/js/api';
+	import api from '$lib/js/api';
 	import QuickSwitch from '$lib/QuickSwitch.svelte';
 	import Alert, { show } from '$lib/Alert.svelte';
 	import MovableDiv from '$lib/MovableDiv.svelte';
 	import Twitch from '$lib/Twitch.svelte';
 	import settings from '$lib/js/settings';
-	const api = new Api();
 
 	let lastMapType;
 	let _3DEnabled = false;
@@ -69,7 +68,7 @@
 </script>
 
 {#if api.bot}
-	{#if $streamer}
+	{#if $streamer && $settings.values.streamOverlay}
 		<MovableDiv><Twitch streamer={$streamer} /></MovableDiv>
 	{/if}
 	<Alert />
@@ -82,7 +81,7 @@
 			<button
 				disabled={!currentGuess || !$user || loading}
 				use:shortcut={{ code: 'Space', default: true }}
-				class="btn pointer-events-auto   z-[3000] btn-wide btn-primary disabled:opacity-100   absolute bottom-8 right-5"
+				class="btn pointer-events-auto   z-[3000] btn-wide btn-primary disabled:opacity-100   absolute bottom-8 right-24"
 				on:click={() => {
 					loading = true;
 					setTimeout(() => {
@@ -101,6 +100,23 @@
 					loading...
 				{/if}
 			</button>
+			<button
+				disabled={loading}
+				on:click={() => {
+					loading = true;
+					setTimeout(() => {
+						loading = false;
+					}, 1000);
+					api.sendGuessToBackend(
+						currentGuess.lat.toString(),
+						currentGuess.lng.toString(),
+						true,
+						true
+					);
+				}}
+				class="btn pointer-events-auto   z-[3000]  btn-secondary disabled:opacity-100 absolute bottom-8 right-5"
+				><EyeOffIcon /></button
+			>
 		{:else}
 			<button
 				class="btn btn-primary  absolute bottom-8 right-5"

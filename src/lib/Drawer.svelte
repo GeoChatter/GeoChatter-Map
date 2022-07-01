@@ -9,6 +9,7 @@
 	import MapPicker from './MapPicker.svelte';
 	import { close } from './MovableDiv.svelte';
 	import { svgs } from '$lib/js/helpers/getFeature';
+	import api from './js/api';
 
 	let chooseFlag = false;
 </script>
@@ -70,7 +71,7 @@
 					<div>
 						<ColorPicker
 							handleColor={(color) => {
-								console.log(color);
+								api.sendColor(color);
 							}}
 						/>
 					</div>
@@ -90,6 +91,7 @@
 							{#if code}
 								<li
 									on:click={() => {
+										api.sendFlag(code);
 										chooseFlag = false;
 									}}
 								>
@@ -130,6 +132,24 @@
 						class="toggle"
 						on:click={() => $settings.change('borders', !$settings.values.borders)}
 						checked={$settings.values.borders}
+					/>
+				</label>
+				<label class="label cursor-pointer">
+					<span class="label-text">enable flags</span>
+					<input
+						type="checkbox"
+						class="toggle"
+						on:click={() => $settings.change('flags', !$settings.values.flags)}
+						checked={$settings.values.flags}
+					/>
+				</label>
+				<label class="label cursor-pointer">
+					<span class="label-text">enable stream popup</span>
+					<input
+						type="checkbox"
+						class="toggle"
+						on:click={() => $settings.change('streamOverlay', !$settings.values.streamOverlay)}
+						checked={$settings.values.streamOverlay}
 					/>
 				</label>
 				<label class="label cursor-pointer">

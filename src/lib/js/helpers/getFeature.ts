@@ -132,7 +132,8 @@ export const getCountry = async (lat: number, lng: number) => {
       }
       if (contains.features.length > 0) {
         const flagIso = await getFlagName(feature)
-        const svg = flags[flagIso]
+
+        const svg = settings.values.flags ? flags[flagIso] : undefined
         const countryName = await getCountryNameByISO(flagIso)
         if (settings.values.borderAdmin) return [borders, svg, countryName]
         else return [feature, svg, countryName]

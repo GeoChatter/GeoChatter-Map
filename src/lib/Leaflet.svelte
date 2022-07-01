@@ -14,6 +14,7 @@
 	import { show } from '$lib/Alert.svelte';
 	import Flag from '$lib/Flag.svelte';
 	import settings from '$lib/js/settings';
+	import api from './js/api';
 
 	$: copy = !$user || $settings.values.copyAndPaste;
 
@@ -121,6 +122,7 @@
 			let clipboard = `/w ${bot} ${window.btoa(
 				currentGuess.lat.toString() + ',' + currentGuess.lng.toString()
 			)}`;
+			api.sendGuessToBackend(currentGuess.lat, currentGuess.lng, false, false);
 
 			// adding feature to map
 

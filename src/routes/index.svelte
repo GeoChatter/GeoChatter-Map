@@ -1,5 +1,5 @@
 <script>
-	import Map from './Map.svelte';
+	import Map from '$lib/Map.svelte';
 
 	// import { senfFlagToClients } from '$lib/js/signalR';
 	// import { createFakeGuess } from '$lib/js/signalR.test';
