@@ -55,12 +55,14 @@ export const getGameSummary = async (gameId: string) => {
     return res
 
 }
-
-const listenToMapFeatures = () => connection.on("SetMapFeatures", function (options) {
+const setStreamerSettings = (options) =>
     Object.entries(options).forEach(([key, value]) => {
         key = key.replace("show", "").toLowerCase()
         settings.changeStreamerSettings(key, value)
     })
+
+const listenToMapFeatures = () => connection.on("SetMapFeatures", function (options) {
+    setStreamerSettings(options)
 });
 
 
@@ -71,6 +73,9 @@ export const startConnection = async (botName: string) => {
         const startRes = await connection.start()
         console.log("connection started")
         const res = await connection.invoke("MapLogin", botName)
+        if (res) {
+            setStreamerSettings(res)
+        }
         console.log("logged in to map", res)
         listenToMapFeatures()
         console.log("listening to map features")
