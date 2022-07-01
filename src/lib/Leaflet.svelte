@@ -1,5 +1,5 @@
 <script>
-	import { user } from '$lib/supabase.js';
+	import { user } from '$lib/supabase';
 	import { browser } from '$app/env';
 	import { getCountry } from '$lib/js/helpers/getFeature';
 
@@ -11,11 +11,13 @@
 	export let currentGuess;
 	export let bot;
 	export let lastMapType;
-	import { copyAndPaste } from '$lib/Drawer.svelte';
 	import { show } from '$lib/Alert.svelte';
-import Flag from '$lib/Flag.svelte';
+	import Flag from '$lib/Flag.svelte';
+	import settings from '$lib/js/settings';
+	import api from './js/api';
 
-	$: copy = !$user || $copyAndPaste;
+	$: copy = !$user || $settings.values.copyAndPaste;
+
 	let profileIcon;
 	let flag = '';
 	if (browser) {
@@ -45,7 +47,7 @@ import Flag from '$lib/Flag.svelte';
 				attribution: '&copy; Google Maps'
 			}),
 			OSM: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-				maxZoom: 20,
+				maxZoom: 19,
 				attribution:
 					'&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
 			}),
@@ -67,7 +69,7 @@ import Flag from '$lib/Flag.svelte';
 				currentGuess.wrap().lng
 			);
 
-			countryName = country.properties?.shapeName ?? countryNameResponse
+			countryName = country?.properties?.shapeName ?? countryNameResponse;
 
 			flag = svg;
 
@@ -121,6 +123,12 @@ import Flag from '$lib/Flag.svelte';
 				currentGuess.lat.toString() + ',' + currentGuess.lng.toString()
 			)}`;
 
+			api.sendGuessToBackend(
+				currentGuess.lat.toString(),
+				currentGuess.lng.toString(),
+				false,
+				false
+			);
 			// adding feature to map
 
 			selectCountry();
@@ -138,5 +146,5 @@ import Flag from '$lib/Flag.svelte';
 	}
 </script>
 
-<Flag {countryName}  {flag}/>
+<Flag {countryName} {flag} />
 <div class="z-5 w-full h-full saturate-150" use:initLeaflet />

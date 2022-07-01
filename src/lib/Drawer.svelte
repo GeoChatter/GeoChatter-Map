@@ -1,64 +1,29 @@
-<script context="module">
-	import { writable } from 'svelte/store';
-	import { browser } from '$app/env';
-
-	export const open = writable(false);
-	const cpValue = browser ? localStorage.getItem('copyAndPaste') ?? false : false;
-	export const copyAndPaste = writable(cpValue);
-
-	const bordersValue = browser ? !localStorage.getItem('bordersValue') ?? true : true;
-	const bordersAdminValue = browser ? localStorage.getItem('bordersAdminValue') ?? false : false;
-	export const borders = writable(bordersValue);
-	export const bordersAdmin = writable(bordersAdminValue);
-
-	copyAndPaste.subscribe((cp) => {
-		if (!browser) return;
-		if (cp) {
-			localStorage.setItem('copyAndPaste', '1');
-		} else {
-			localStorage.removeItem('copyAndPaste');
-		}
-	});
-
-	borders.subscribe((b) => {
-		if (!browser) return;
-		if (!b) {
-			localStorage.setItem('bordersValue', '1');
-		} else {
-			localStorage.removeItem('bordersValue');
-		}
-	});
-
-	bordersAdmin.subscribe((b) => {
-		if (!browser) return;
-		if (b) {
-			localStorage.setItem('bordersAdminValue', '1');
-		} else {
-			localStorage.removeItem('bordersAdminValue');
-		}
-	});
-</script>
-
-<script>
-	import { user } from '$lib/supabase.js';
-	import MapPicker from './MapPicker.svelte';
-	import { LogOutIcon, LogInIcon, MenuIcon, MonitorIcon } from 'svelte-feather-icons';
-	import Feedback from './Feedback.svelte';
+<script lang="ts">
+	import { user } from '$lib/supabase';
+	import { XIcon, MenuIcon, MonitorIcon } from 'svelte-feather-icons';
 	import { swipe } from 'svelte-gestures';
 	import Auth from './Auth.svelte';
+	import ColorPicker from './ColorPicker.svelte';
+	import Feedback from './Feedback.svelte';
+	import settings from './js/settings';
+	import MapPicker from './MapPicker.svelte';
 	import { close } from './MovableDiv.svelte';
+	import { svgs } from '$lib/js/helpers/getFeature';
+	import api from './js/api';
+
+	let chooseFlag = false;
 </script>
 
 <div
 	class={`absolute drawer z-[6000] ${
-		$open ? 'pointer-events-auto' : 'pointer-events-none'
+		$settings.values.drawerOpen ? 'pointer-events-auto' : 'pointer-events-none'
 	}  h-full w-full `}
 >
 	<input
-		on:click={() => ($open = !$open)}
+		on:click={() => $settings.change('drawerOpen', !$settings.values.drawerOpen)}
 		id="my-drawer"
 		type="checkbox"
-		bind:checked={$open}
+		bind:checked={$settings.values.drawerOpen}
 		class="z-[4000] drawer-toggle pointer-events-auto"
 	/>
 	<div class="drawer-content">
@@ -74,7 +39,7 @@
 			on:swipe={(event) => {
 				console.log(event);
 				if (event.detail.direction === 'left') {
-					$open = false;
+					$settings.change('drawerOpen', false);
 				}
 			}}
 			class="menu p-4 overflow-y-auto w-80 bg-base-100 text-base-content"
@@ -101,27 +66,102 @@
 				</li>
 			{/if}
 
+			{#if $user}
+				<div class="flex items-center justify-center h-fit w-fit mb-2">
+					<div>
+						<ColorPicker
+							handleColor={(color) => {
+								api.sendColor(color);
+							}}
+						/>
+					</div>
+					<button
+						class="btn  w-36"
+						on:click={() => {
+							chooseFlag = !chooseFlag;
+						}}
+					>
+						{#if chooseFlag}<XIcon />close{:else} choose flag {/if}
+					</button>
+				</div>
+
+				{#if chooseFlag}
+					{#await svgs then flags}
+						{#each Object.entries(flags) as [code, flag]}
+							{#if code}
+								<li
+									on:click={() => {
+										api.sendFlag(code);
+										chooseFlag = false;
+									}}
+								>
+									<div class="flex">
+										<div
+											style={`background-size: contain;background-position: 50%;background-repeat: no-repeat;background-image: url('${flag}'); height:20px;width:20px`}
+										/>
+
+										{code}
+									</div>
+								</li>
+							{/if}
+						{/each}
+					{/await}
+				{/if}
+			{/if}
 			<MapPicker isDrawer={true} />
 
 			{#if $user}
 				<li class="form-control">
 					<label class="label cursor-pointer">
 						<span class="label-text">enable copy and paste</span>
-						<input type="checkbox" class="toggle" bind:checked={$copyAndPaste} />
+						<input
+							type="checkbox"
+							class="toggle"
+							on:click={() => $settings.change('copyAndPaste', !$settings.values.copyAndPaste)}
+							checked={$settings.values.copyAndPaste}
+						/>
 					</label>
 				</li>
 			{/if}
+
 			<li class="form-control">
 				<label class="label cursor-pointer">
 					<span class="label-text">enable borders</span>
-					<input type="checkbox" class="toggle" bind:checked={$borders} />
+					<input
+						type="checkbox"
+						class="toggle"
+						on:click={() => $settings.change('borders', !$settings.values.borders)}
+						checked={$settings.values.borders}
+					/>
 				</label>
 				<label class="label cursor-pointer">
 					<span class="label-text">Administrator Level 0 Borders</span>
-					<input type="checkbox" class="toggle" bind:checked={$bordersAdmin} />
+					<input
+						type="checkbox"
+						class="toggle"
+						on:click={() => $settings.change('borderAdmin', !$settings.values.borderAdmin)}
+						checked={$settings.values.borderAdmin}
+					/>
+				</label>
+				<label class="label cursor-pointer">
+					<span class="label-text">enable flags</span>
+					<input
+						type="checkbox"
+						class="toggle"
+						on:click={() => $settings.change('flags', !$settings.values.flags)}
+						checked={$settings.values.flags}
+					/>
+				</label>
+				<label class="label cursor-pointer">
+					<span class="label-text">enable stream popup</span>
+					<input
+						type="checkbox"
+						class="toggle"
+						on:click={() => $settings.change('streamOverlay', !$settings.values.streamOverlay)}
+						checked={$settings.values.streamOverlay}
+					/>
 				</label>
 			</li>
-
 			<li class="sm:mb-0 mb-2 flex sm:hidden">
 				<Feedback />
 			</li>

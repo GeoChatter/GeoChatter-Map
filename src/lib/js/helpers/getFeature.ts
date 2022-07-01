@@ -1,13 +1,10 @@
-
-import convert3to2alpha from '../../../variables/convertIso';
+// @ts-ignore
 import JSZip from "jszip";
-import { dev } from "$app/env"
 
-import { borders, bordersAdmin } from '$lib/Drawer.svelte';
-import { get } from "svelte/store"
+import settings from "../settings";
 
 import pointsWithinPolygon from "@turf/points-within-polygon"
-import { point, type Feature, type FeatureCollection } from "@turf/helpers"
+import { point, type Feature, type FeatureCollection, type GeometryCollection, type MultiPolygon, type Point } from "@turf/helpers"
 const BORDER_URL = 'https://service.geochatter.tv/resources/borders/content.zip'
 const FLAGS_URL = 'https://service.geochatter.tv/resources/flags/content.zip'
 // const BORDER_URL = dev ? "/content.zip" : "/testing_map/content.zip"
@@ -16,7 +13,7 @@ const FLAGS_URL = 'https://service.geochatter.tv/resources/flags/content.zip'
 
 
 async function downloadAndUnzip() {
-  const result_borders: FeatureCollection[] = []
+  const result_borders: FeatureCollection<MultiPolygon>[] = []
   try {
     const response = await fetch(BORDER_URL, { cache: "no-cache" })
     const blob = await response.blob();
@@ -75,7 +72,7 @@ async function downloadAndUnzipFlags() {
   return svgs
 }
 
-let svgs = downloadAndUnzipFlags()
+export const svgs = downloadAndUnzipFlags()
 
 let bordersFeatureCollections = downloadAndUnzip()
 // download iso.json
@@ -95,7 +92,7 @@ const alpha3to2 = async (iso: string) => {
 
 async function getFlagName(feat: Feature) {
   const group = await alpha3to2(feat.properties.shapeGroup)
-  if (get(bordersAdmin)) return group
+  if (settings.values.borderAdmin) return group
   switch (group) {
     case "US": {
       const isoExists = await alpha3to2(feat.properties.shapeISO)
@@ -115,13 +112,13 @@ async function getFlagName(feat: Feature) {
 
 }
 
-const getCountryNameByISO = async (iso: string) => { 
+const getCountryNameByISO = async (iso: string) => {
   const isoObj = await isos
   return isoObj.find(country => country.Alpha2 === iso)?.name
 }
 
 export const getCountry = async (lat: number, lng: number) => {
-  if (!get(borders)) return [undefined, undefined, undefined]
+  if (!settings.values.borders) return [undefined, undefined, undefined]
   if (!bordersFeatureCollections) return
   // api.getCountry(lat, lng)
   // geometries[country]?.feature?.geometry
@@ -129,15 +126,16 @@ export const getCountry = async (lat: number, lng: number) => {
   for (const borders of allBorders) {
     // console.log(borders)
     for (const feature of borders.features) {
-      let contains: FeatureCollection
+      let contains: FeatureCollection<Point, { [name: string]: any; }>
       if (feature?.geometry) {
         contains = pointsWithinPolygon(point([lng, lat]), feature)
       }
       if (contains.features.length > 0) {
         const flagIso = await getFlagName(feature)
-        const svg = flags[flagIso]
+
+        const svg = settings.values.flags ? flags[flagIso] : undefined
         const countryName = await getCountryNameByISO(flagIso)
-        if (get(bordersAdmin)) return [borders, svg, countryName]
+        if (settings.values.borderAdmin) return [borders, svg, countryName]
         else return [feature, svg, countryName]
       }
     }

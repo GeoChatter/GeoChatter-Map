@@ -1,4 +1,4 @@
-export const shortcut = (node, params) => {
+export const shortcut = ( node: HTMLElement, params: {code?: string, default?: boolean, callback? : (...any)=> any}): { update: () => void; destroy: () => void; } => {
 	let handler;
 	const removeHandler = () => window.removeEventListener('keydown', handler),
 		setHandler = () => {
