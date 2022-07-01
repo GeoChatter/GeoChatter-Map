@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { user } from '$lib/supabase';
 	import { XIcon, MenuIcon, MonitorIcon } from 'svelte-feather-icons';
-	import { swipe } from 'svelte-gestures';
 	import Auth from './Auth.svelte';
 	import ColorPicker from './ColorPicker.svelte';
 	import Feedback from './Feedback.svelte';
@@ -34,16 +33,7 @@
 	</div>
 	<div class="drawer-side">
 		<label for="my-drawer" class="drawer-overlay" />
-		<ul
-			use:swipe={{ timeframe: 400, minSwipeDistance: 10 }}
-			on:swipe={(event) => {
-				console.log(event);
-				if (event.detail.direction === 'left') {
-					$settings.change('drawerOpen', false);
-				}
-			}}
-			class="menu p-4 overflow-y-auto w-80 bg-base-100 text-base-content"
-		>
+		<ul class="menu p-4 overflow-y-auto w-80 bg-base-100 text-base-content">
 			<!-- Sidebar content here -->
 			<div class="dropdown dropdown-end z-[1000]">
 				<li class="mb-2">
