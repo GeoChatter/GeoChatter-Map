@@ -89,9 +89,11 @@
 									}}
 								>
 									<div class="flex">
-										<div
-											style={`background-size: contain;background-position: 50%;background-repeat: no-repeat;background-image: url('${flag}'); height:30px;width:30px`}
-										/>
+										{#if $settings.streamerSettings.flags}
+											<div
+												style={`background-size: contain;background-position: 50%;background-repeat: no-repeat;background-image: url('${flag}'); height:30px;width:30px`}
+											/>
+										{/if}
 
 										{code}
 									</div>
