@@ -129,13 +129,13 @@
 					/>
 				</label>
 				<label class="label cursor-pointer">
-					<span class="label-text">Administrator Level 0 Borders</span>
+					<span class="label-text">Show State/Province borders</span>
 					<input
 						disabled={!$settings.streamerSettings.borderAdmin}
 						type="checkbox"
 						class="toggle"
 						on:click={() => $settings.change('borderAdmin', !$settings.values.borderAdmin)}
-						checked={$settings.values.borderAdmin}
+						checked={!$settings.values.borderAdmin}
 					/>
 				</label>
 				<label class="label cursor-pointer">
@@ -165,4 +165,3 @@
 		</ul>
 	</div>
 </div>
-
