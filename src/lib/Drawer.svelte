@@ -129,7 +129,7 @@
 					/>
 				</label>
 				<label class="label cursor-pointer">
-					<span class="label-text">Show State/Province borders</span>
+					<span class="label-text">Show State/Province borders (US/UK/CA for now)</span>
 					<input
 						disabled={!$settings.streamerSettings.borderAdmin}
 						type="checkbox"
