@@ -76,7 +76,9 @@
 			if (currSelectedCountry) {
 				leaflet.removeLayer(currSelectedCountry);
 			}
-			currSelectedCountry = L.geoJSON(country, { style: { fillOpacity: 0.1 } }).addTo(leaflet);
+			if ($settings.values.borders) {
+				currSelectedCountry = L.geoJSON(country, { style: { fillOpacity: 0.1 } }).addTo(leaflet);
+			}
 		}
 
 		if (lastMapType === 'MapBox') {

@@ -118,7 +118,7 @@ const getCountryNameByISO = async (iso: string) => {
 }
 
 export const getCountry = async (lat: number, lng: number) => {
-  if (!settings.values.borders) return [undefined, undefined, undefined]
+  // if (!settings.values.borders) return [undefined, undefined, undefined]
   if (!bordersFeatureCollections) return
   // api.getCountry(lat, lng)
   // geometries[country]?.feature?.geometry

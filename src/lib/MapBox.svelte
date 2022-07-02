@@ -44,37 +44,43 @@
 
 		if (country === lastCountry) return;
 
-		countryName = country.properties?.shapeName ?? countryNameResponse;
+		countryName = country?.properties?.shapeName ?? countryNameResponse;
 		lastCountry = country;
 		flag = svg;
 		if (currSelectedCountry) {
-			mapBox.removeLayer(currSelectedCountry + 'line');
-			mapBox.removeLayer(currSelectedCountry);
-			mapBox.removeSource(currSelectedCountry);
+			try {
+				mapBox.removeLayer(currSelectedCountry + 'line');
+				mapBox.removeLayer(currSelectedCountry);
+				mapBox.removeSource(currSelectedCountry);
+			} catch (e) {
+				console.log(e);
+			}
 		}
-		id++;
-		mapBox.addSource(`countrySelected${id}`, { type: 'geojson', data: country });
-		currSelectedCountry = `countrySelected${id}`;
-		mapBox.addLayer({
-			id: `countrySelected${id}`,
-			type: 'fill',
-			source: `countrySelected${id}`, // reference the data source
-			layout: {},
-			paint: {
-				'fill-color': '#0080ff', // blue color fill
-				'fill-opacity': 0.1
-			}
-		});
-		mapBox.addLayer({
-			id: currSelectedCountry + 'line',
-			type: 'line',
-			source: currSelectedCountry,
-			layout: {},
-			paint: {
-				'line-color': '#0080ff',
-				'line-width': 3
-			}
-		});
+		if ($settings.values.borders) {
+			id++;
+			mapBox.addSource(`countrySelected${id}`, { type: 'geojson', data: country });
+			currSelectedCountry = `countrySelected${id}`;
+			mapBox.addLayer({
+				id: `countrySelected${id}`,
+				type: 'fill',
+				source: `countrySelected${id}`, // reference the data source
+				layout: {},
+				paint: {
+					'fill-color': '#0080ff', // blue color fill
+					'fill-opacity': 0.1
+				}
+			});
+			mapBox.addLayer({
+				id: currSelectedCountry + 'line',
+				type: 'line',
+				source: currSelectedCountry,
+				layout: {},
+				paint: {
+					'line-color': '#0080ff',
+					'line-width': 3
+				}
+			});
+		}
 	}
 	let deviceType;
 	if (browser) {
@@ -240,7 +246,7 @@
 					.addTo(mapBox);
 			}
 
-			 function onMapClick(e) {
+			function onMapClick(e) {
 				currentGuess = e.lngLat;
 				selectCountry();
 				if (marker) marker.remove();

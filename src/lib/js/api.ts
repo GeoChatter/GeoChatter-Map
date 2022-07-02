@@ -42,6 +42,7 @@ class Api {
   async sendGuessToBackend(lat: string, lng: string, confirmed = true, random = false) {
     let data: Guess;
     const userStore = get(user)
+    if (!userStore) return;
     // FIXME: add confirmed guess
     switch (userStore.app_metadata.provider) {
 
