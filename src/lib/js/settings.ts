@@ -34,13 +34,13 @@ export class Settings {
     drawerOpen: false,
     globeView: true,
     flags: true,
-    streamoverlay: true,
+    streamOverlay: true,
   }
 
   streamerSettings = {
     borders: true,
     flags: true,
-    streamoverlay: true,
+    streamOverlay: true,
     borderAdmin: true,
   }
 
