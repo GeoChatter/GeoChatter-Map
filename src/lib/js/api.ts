@@ -57,7 +57,7 @@ class Api {
           display: userStore.user_metadata.slug,
           pic: userStore.user_metadata.picture,
           isTemporary: !confirmed,
-          isRandom: false
+          isRandom: random
         };
         break;
       case 'google':
@@ -72,7 +72,7 @@ class Api {
           display: userStore.user_metadata.name,
           pic: userStore.user_metadata.avatar_url,
           isTemporary: !confirmed,
-          isRandom: false
+          isRandom: random
         };
         break;
     }
