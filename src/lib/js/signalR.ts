@@ -69,6 +69,7 @@ const setStreamerSettings = (options) =>
 
 const listenToMapFeatures = () => connection.on("SetMapFeatures", function (options) {
     setStreamerSettings(options)
+    console.log(options)
 });
 
 
