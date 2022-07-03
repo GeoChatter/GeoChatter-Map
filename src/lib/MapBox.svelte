@@ -117,7 +117,8 @@
 		'3D SATELLITE': 'mapbox://styles/semihm/ckyn214e69hp214ppbwu09w59?optimize=true',
 		'3D LIGHTMODE': 'mapbox://styles/mapbox/light-v10?optimize=true',
 		'3D DARKMODE': 'mapbox://styles/mapbox/dark-v10?optimize=true',
-		'3D OUTDOORS': 'mapbox://styles/mapbox/outdoors-v11?optimize=true'
+		'3D OUTDOORS': 'mapbox://styles/mapbox/outdoors-v11?optimize=true',
+		'3D SATELLITE (NO LABELS)': 'mapbox://styles/semihm/cl55552r9000414pe8sxseuz0'
 	};
 	export let _3DEnabled = false;
 	export let lastMapType;

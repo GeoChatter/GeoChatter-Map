@@ -14,7 +14,8 @@
 		'3D SATELLITE',
 		'3D OUTDOORS',
 		'3D LIGHTMODE',
-		'3D DARKMODE'
+		'3D DARKMODE',
+		'3D SATELLITE (NO LABELS)'
 	];
 </script>
 
