@@ -69,7 +69,7 @@
 
 {#if api.bot}
 	{#if $streamer && $settings.values.streamOverlay}
-		<MovableDiv><Twitch streamer={$streamer} /></MovableDiv>
+		<MovableDiv><Twitch  /></MovableDiv>
 	{/if}
 	<Alert />
 	<div class="hidden sm:flex absolute bottom-8 left-2 ">

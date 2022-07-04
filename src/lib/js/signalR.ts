@@ -81,6 +81,7 @@ export const startConnection = async (botName: string) => {
         console.log("connection started")
         const res = await connection.invoke("MapLogin", botName)
         if (res) {
+            console.log(res)
             setStreamerSettings(res)
         }
         console.log("logged in to map", res)

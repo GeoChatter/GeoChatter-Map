@@ -44,6 +44,7 @@ export class Settings {
     streamOverlay: true,
     borderAdmin: true,
     temporaryGuesses: true,
+    streamer: undefined
   }
 
   changeStreamerSettings(key: keyof typeof this.streamerSettings, newVal) {
