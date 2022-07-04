@@ -6,6 +6,7 @@ import { writable } from "svelte/store";
 import { getCurrentState, startConnection, sendGuess, type Guess, type Flag, SendFlagToClients, sendColor } from "./signalR";
 import { user, auth, supabase } from '$lib/supabase';
 import { get } from "svelte/store";
+import settings from './settings';
 
 // TODO: REMOVE FOR SIGNALR API 
 
@@ -40,6 +41,11 @@ class Api {
 
 
   async sendGuessToBackend(lat: string, lng: string, confirmed = true, random = false) {
+    // if temporary and temporaryGuessing is not enabled return early
+    if (!confirmed && !settings.values.temporaryGuesses) {
+      console.log("temporary guessing is not enabled")
+      return
+    }
     let data: Guess;
     const userStore = get(user)
     if (!userStore) return;

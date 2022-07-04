@@ -117,6 +117,19 @@
 						/>
 					</label>
 				</li>
+				<li class="form-control">
+					<label class="label cursor-pointer">
+						<span class="label-text">enable temporary guess</span>
+						<input
+							type="checkbox"
+							class="toggle"
+							disabled={!$settings.streamerSettings.temporaryGuesses}
+							on:click={() =>
+								$settings.change('temporaryGuesses', !$settings.values.temporaryGuesses)}
+							checked={$settings.values.temporaryGuesses}
+						/>
+					</label>
+				</li>
 			{/if}
 
 			<li class="form-control">

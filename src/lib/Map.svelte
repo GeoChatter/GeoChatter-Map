@@ -86,7 +86,7 @@
 					loading = true;
 					setTimeout(() => {
 						loading = false;
-					}, 1000);
+					}, 5000);
 					api.sendGuessToBackend(currentGuess.lat.toString(), currentGuess.lng.toString());
 				}}
 			>
@@ -106,7 +106,7 @@
 					loading = true;
 					setTimeout(() => {
 						loading = false;
-					}, 1000);
+					}, 5000);
 					api.sendGuessToBackend('0', '0', true, true);
 				}}
 				class="btn pointer-events-auto   z-[3000]  btn-secondary disabled:opacity-100 absolute bottom-8 right-5"

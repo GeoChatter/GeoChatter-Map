@@ -35,6 +35,7 @@ export class Settings {
     globeView: true,
     flags: true,
     streamOverlay: true,
+    temporaryGuesses: true,
   }
 
   streamerSettings = {
@@ -42,6 +43,7 @@ export class Settings {
     flags: true,
     streamOverlay: true,
     borderAdmin: true,
+    temporaryGuesses: true,
   }
 
   changeStreamerSettings(key: keyof typeof this.streamerSettings, newVal) {
