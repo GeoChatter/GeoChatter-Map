@@ -13,6 +13,7 @@
 	}
 	if (browser) {
 		(async () => {
+			if (supabase.auth.user() === null) return;
 			let pic = supabase.auth.user().user_metadata.picture;
 			let res = await fetch(pic);
 			console.log('pfp not found. trying to sign in again');

@@ -23,8 +23,13 @@ async function downloadAndUnzip() {
       try {
         (async () => {
           const content = await countryFile.async("string")
-          const json = JSON.parse(content)
-          result_borders.push(json)
+          try {
+            const json = JSON.parse(content)
+            result_borders.push(json)
+
+          } catch {
+
+          }
         })()
       }
       catch (e) {
