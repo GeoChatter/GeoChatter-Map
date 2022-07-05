@@ -21,7 +21,6 @@ const SERVER_GUESS_CHECK = 'https://api.geochatter.tv/guess?id=';
 
 class Api {
   _bot: string | undefined;
-  streamer = writable("")
   constructor(bot?: string | undefined) {
     this.bot = bot;
     // this.isButtonEnabled = true
@@ -131,24 +130,21 @@ class Api {
     return res;
   }
   // might be depreacated soon?
-  async getCurrentState() {
-    let error: string;
-    let res
-    try {
-      res = await getCurrentState(this.bot)
-    } catch (e) {
-      error = e;
-    }
+  // async getCurrentState() {
+  //   let error: string;
+  //   let res
+  //   try {
+  //     res = await getCurrentState(this.bot)
+  //   } catch (e) {
+  //     error = e;
+  //   }
 
-    const resObj = await res.json()
-    const streamer = resObj?.channelName
-    if (streamer) {
-      this.streamer.set(resObj?.channelName)
-    }
-    // console.log(this.streamer)
+  //   const resObj = await res.json()
+  //   const streamer = resObj?.channelName
+  //   // console.log(this.streamer)
 
-    return [error, res];
-  }
+  //   return [error, res];
+  // }
 
   // add confirmed or not or random guess?
   async sendGuess(data: Guess): Promise<([string, Response])> {

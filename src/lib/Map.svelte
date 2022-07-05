@@ -63,13 +63,11 @@
 
 	let loading = false;
 	let newBot;
-
-	let streamer = api.streamer;
 </script>
 
 {#if api.bot}
-	{#if $streamer && $settings.values.streamOverlay}
-		<MovableDiv><Twitch  /></MovableDiv>
+	{#if $settings.values.streamOverlay}
+		<MovableDiv><Twitch /></MovableDiv>
 	{/if}
 	<Alert />
 	<div class="hidden sm:flex absolute bottom-8 left-2 ">
