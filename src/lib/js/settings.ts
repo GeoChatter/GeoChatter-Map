@@ -39,11 +39,11 @@ export class Settings {
   }
 
   streamerSettings = {
-    borders: true,
-    flags: true,
-    streamOverlay: true,
-    borderAdmin: true,
-    temporaryGuesses: true,
+    borders: false,
+    flags: false,
+    streamOverlay: false,
+    borderAdmin: false,
+    temporaryGuesses: false,
     streamer: undefined
   }
 

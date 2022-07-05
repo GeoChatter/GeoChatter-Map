@@ -60,7 +60,7 @@ const setStreamerSettings = (options) =>
 
         key = key.replace("show", "")
         key = key.charAt(0).toLowerCase() + key.slice(1)
-        if (key === "isusstreak") {
+        if (key === "isUSStreak") {
             key = "borderAdmin"
             value = !value
         }
