@@ -2,7 +2,7 @@ import * as signalR from '@microsoft/signalr';
 import settings from './settings';
 
 
-const connection = new signalR.HubConnectionBuilder().withUrl("https://dev.geochatter.tv/guess/geoChatterHub", {}).build();
+const connection = new signalR.HubConnectionBuilder().withUrl("https://api.geochatter.tv/guess/geoChatterHub", {}).build();
 
 export declare module ScoreBoard {
 
