@@ -262,7 +262,7 @@
 				);
 				if (copy) {
 					navigator.clipboard.writeText(clipboard);
-					show(0.5, 'guess copied to clipboard');
+					show(1, 'Guess copied to clipboard');
 				}
 				const el = document.createElement('div');
 				const width = 30;

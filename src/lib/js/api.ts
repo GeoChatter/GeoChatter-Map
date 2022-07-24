@@ -93,7 +93,7 @@ class Api {
     }
 
     if (!sendGuessError && confirmed) {
-      show(1, random ? "random guess send" : 'guess send');
+      show(1, random ? "Random guess send" : 'Guess send');
     }
   }
 

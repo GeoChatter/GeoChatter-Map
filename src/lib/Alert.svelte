@@ -22,7 +22,7 @@
 	<div
 		in:fly
 		out:fly
-		class="absolute p-2 pointer-events-none  w-full flex justify-center z-[80000]"
+		class="absolute bottom-24 md:bottom-8 pointer-events-none  w-full flex justify-center z-[80000]"
 	>
 		<div class="w-fit alert alert-success shadow-2xl">
 			<div>
