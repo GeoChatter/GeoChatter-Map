@@ -7,7 +7,7 @@ env:
   VITE_MAPBOXKEY : ${{ secrets.VITE_MAPBOXKEY}}
   VITE_SUPABASEANONKEY : ${{ secrets.VITE_SUPABASEANONKEY}}
   VITE_SUPABASEURL : ${{ secrets.VITE_SUPABASEURL}}
-  VITE_GEOCHATTERURL: https://dev.geochatter.tv/guess/geoChatterHub
+  VITE_GEOCHATTERURL: https://api.geochatter.tv/guess/geoChatterHub
 name: 🚀 Deploy website on push
 
 jobs:
