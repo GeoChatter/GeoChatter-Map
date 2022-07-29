@@ -11,6 +11,7 @@
 	import { svgs } from '$lib/js/helpers/getFeature';
 	import api from './js/api';
 
+	import autoAnimate from '@formkit/auto-animate';
 	let chooseFlag = false;
 </script>
 
@@ -34,7 +35,7 @@
 	</div>
 	<div class="drawer-side ">
 		<label for="my-drawer" class="drawer-overlay" />
-		<ul class="menu p-4 overflow-y-auto w-80 bg-base-100 text-base-content">
+		<ul use:autoAnimate class="menu p-4 overflow-y-auto w-80 bg-base-100 text-base-content">
 			<!-- Sidebar content here -->
 			<div class="dropdown dropdown-end z-[1000]">
 				<li class="mb-2">
