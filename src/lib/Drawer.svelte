@@ -10,6 +10,7 @@
 	import { close } from './MovableDiv.svelte';
 	import { svgs } from '$lib/js/helpers/getFeature';
 	import api from './js/api';
+	import { killConnection} from "./js/signalR"
 
 	import autoAnimate from '@formkit/auto-animate';
 	let chooseFlag = false;
@@ -177,6 +178,9 @@
 			</li>
 			<li class="sm:mb-0 mb-2 flex sm:hidden">
 				<Feedback />
+			</li>
+			<li>
+				<button class="btn btn-warning" on:click={killConnection}>close socket connection</button>
 			</li>
 		</ul>
 	</div>

@@ -3,7 +3,9 @@ import settings from './settings';
 
 
 const connection = new signalR.HubConnectionBuilder().withUrl(import.meta.env.VITE_GEOCHATTERURL, {}).build();
-
+export const killConnection = async () => {
+    await connection.stop()
+}
 export declare module ScoreBoard {
 
     export interface Player {
@@ -72,6 +74,25 @@ const listenToMapFeatures = () => connection.on("SetMapFeatures", function (opti
     console.log(options)
 });
 
+const reconnect = async (botName?: string) => {
+    if (!botName) return 
+    console.log("reconnecting")
+    await connection.start()
+    const res = await connection.invoke("MapLogin", botName)
+    if (res) {
+        setStreamerSettings(res)
+    }
+}
+
+const listenToProblems = (botName: string) => {
+    connection.onreconnecting = () => {
+        console.log("default reconnecting from singalR")
+    }
+    connection.onclose = () => {
+        console.log("signalR connection closed trying to reconnect manually")
+        setTimeout(() => reconnect(botName), 1000)
+    }
+}
 
 export const startConnection = async (botName: string) => {
 
@@ -87,6 +108,7 @@ export const startConnection = async (botName: string) => {
         console.log("logged in to map", res)
         listenToMapFeatures()
         console.log("listening to map features")
+        listenToProblems(botName)
     }
     catch (err) {
         console.log(err)
@@ -115,10 +137,17 @@ export type Guess = {
 
 export const sendGuess = async (guess: Guess) => {
     try {
-        await connection.invoke("SendGuessToClients", guess)
+        if (connection.state !== "Connected") {
+            console.log("not connected trying to reconnect before sending guess")
+            reconnect(guess.bot).then(() => {
+                console.log("sending guess after reconnect")
+                connection.invoke("SendGuessToClients", guess)
+            }).catch(e => {console.log(e)})
+        } else{
+            await connection.invoke("SendGuessToClients", guess)
+        }
     }
     catch (err) {
-        console.log(err)
         return err
     }
 }
@@ -140,7 +169,6 @@ export const SendFlagToClients = async (data: Flag) => {
         const res = await connection.invoke("SendFlagToClients", data)
         return res
 
-        console.log(res)
     } catch (err) {
         console.log(err)
         return err
