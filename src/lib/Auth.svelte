@@ -30,7 +30,7 @@
 				)}>sign in with twitch <LogInIcon size="1x" /></button
 		>
 	</li>
-	<!-- <li class="btn btn-primary text-white text-left mb-2">
+	 <li class="btn btn-primary text-white text-left mb-2">
 		<button
 			on:click={async () =>
 				await supabase.auth.signIn(
@@ -44,5 +44,5 @@
 				)}
 			class="uppercase">sign in with youtube <LogInIcon size="1x" /></button
 		>
-	</li> -->
+	</li>
 {/if}
