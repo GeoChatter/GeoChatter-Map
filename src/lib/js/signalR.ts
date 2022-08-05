@@ -85,11 +85,11 @@ const reconnect = async (botName?: string) => {
 }
 
 const listenToProblems = (botName: string) => {
-    connection.onreconnecting = () => {
-        console.log("default reconnecting from singalR")
+    connection.onreconnecting = (e) => {
+        console.log("default reconnecting from singalR",e)
     }
-    connection.onclose = () => {
-        console.log("signalR connection closed trying to reconnect manually")
+    connection.onclose = (e) => {
+        console.log("signalR connection closed trying to reconnect manually", e)
         setTimeout(() => reconnect(botName), 1000)
     }
 }
