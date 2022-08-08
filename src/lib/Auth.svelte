@@ -17,7 +17,7 @@
 		</button>
 	</div>
 {:else}
-	<li class="btn btn-primary mb-2 text-white text-left uppercase">
+	<li class="btn  btn-primary mb-2 text-white text-left uppercase">
 		<button class="uppercase"
 			on:click={async () =>
 				await supabase.auth.signIn(
@@ -31,7 +31,7 @@
 		>
 	</li>
 	{#if $settings.values.testing}
-	 <li class="btn hover:bg-white bg-white text-black text-left mb-2">
+	 <li class="btn w-full h-fit hover:bg-white bg-white text-black text-left mb-2">
 		<button
 			on:click={async () =>
 				await supabase.auth.signIn(
