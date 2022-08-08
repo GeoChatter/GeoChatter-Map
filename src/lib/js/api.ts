@@ -1,9 +1,8 @@
 
-
 import { show } from '$lib/Alert.svelte';
 
 import { writable } from "svelte/store";
-import { getCurrentState, startConnection, sendGuess, type Guess, type Flag, SendFlagToClients, sendColor } from "./signalR";
+import { getCurrentState, startConnection, sendGuess, type Guess, type Flag, SendFlagToClients, sendColor,type Color } from "./signalR";
 import { user, auth, supabase } from '$lib/supabase';
 import { get } from "svelte/store";
 import settings from './settings';
@@ -50,12 +49,12 @@ class Api {
     if (!userStore) return;
     // FIXME: add confirmed guess
     switch (userStore.app_metadata.provider) {
-
       case 'twitch':
         data = {
           bot: this.bot,
           lat: lat,
           lng: lng,
+          sourcePlatform: "Twitch",
           tkn: auth.session()?.access_token,
           id: userStore.user_metadata.sub,
           name: userStore.user_metadata.name,
@@ -71,6 +70,7 @@ class Api {
           bot: this.bot,
           lat: lat,
           lng: lng,
+          sourcePlatform: "YouTube",
           tkn: auth.session()?.access_token,
           id: userStore.user_metadata.sub,
           name: userStore.user_metadata.full_name,
@@ -100,15 +100,35 @@ class Api {
   async sendFlag(flag: string) {
 
     const userStore = get(user)
-    const data = {
-      bot: this._bot,
-      tkn: auth.session()?.access_token,
-      id: userStore.user_metadata.sub,
-      name: userStore.user_metadata.full_name,
-      display: userStore.user_metadata.name,
-      pic: userStore.user_metadata.avatar_url,
+    let data: Flag
+
+    switch (userStore.app_metadata.provider) {
+      case 'twitch':
+        data = {
+          bot: this.bot,
+          sourcePlatform: "Twitch",
+          tkn: auth.session()?.access_token,
+          id: userStore.user_metadata.sub,
+          name: userStore.user_metadata.name,
+          display: userStore.user_metadata.slug,
+          flag: flag,
+          pic: userStore.user_metadata.picture,
+        };
+        break;
+      case 'google':
+        console.log(userStore.user_metadata);
+        data = {
+          bot: this.bot,
+          sourcePlatform: "YouTube",
+          tkn: auth.session()?.access_token,
+          id: userStore.user_metadata.sub,
+          name: userStore.user_metadata.full_name,
+          display: userStore.user_metadata.name,
+          pic: userStore.user_metadata.avatar_url,
       flag: flag,
-    };
+        };
+        break;
+    }
     const res = await SendFlagToClients(data);
 
     return res;
@@ -116,15 +136,36 @@ class Api {
   async sendColor(color: string) {
 
     const userStore = get(user)
-    const data = {
-      bot: this._bot,
-      tkn: auth.session()?.access_token,
-      id: userStore.user_metadata.sub,
-      name: userStore.user_metadata.full_name,
-      display: userStore.user_metadata.name,
-      pic: userStore.user_metadata.avatar_url,
-      color: color,
-    };
+
+    let data: Color
+
+    switch (userStore.app_metadata.provider) {
+      case 'twitch':
+        data = {
+          bot: this.bot,
+          sourcePlatform: "Twitch",
+          tkn: auth.session()?.access_token,
+          id: userStore.user_metadata.sub,
+          name: userStore.user_metadata.name,
+          display: userStore.user_metadata.slug,
+          color,
+          pic: userStore.user_metadata.picture,
+        };
+        break;
+      case 'google':
+        console.log(userStore.user_metadata);
+        data = {
+          bot: this.bot,
+          sourcePlatform: "YouTube",
+          tkn: auth.session()?.access_token,
+          id: userStore.user_metadata.sub,
+          name: userStore.user_metadata.full_name,
+          display: userStore.user_metadata.name,
+          pic: userStore.user_metadata.avatar_url,
+          color,
+        };
+        break;
+    }
     const res = await sendColor(data);
 
     return res;

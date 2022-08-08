@@ -2,7 +2,7 @@ import * as signalR from '@microsoft/signalr';
 import settings from './settings';
 
 
-const connection = new signalR.HubConnectionBuilder().withUrl(import.meta.env.VITE_GEOCHATTERURL, {}).build();
+const connection = new signalR.HubConnectionBuilder().withUrl(import.meta.env.VITE_GEOCHATTERURL as string, {}).build();
 export const killConnection = async () => {
     await connection.stop()
 }
@@ -128,6 +128,7 @@ export type Guess = {
     lng: string;
     tkn: string;
     id: string;
+    sourcePlatform: "Twitch" | "YouTube"
     name: string;
     display: string;
     pic: string;
@@ -158,6 +159,7 @@ export type Flag = {
     tkn: string;
     id: string;
     name: string;
+    sourcePlatform: "YouTube" | "Twitch"
     display: string;
     pic: string;
     flag: string;
@@ -181,6 +183,7 @@ export type Color = {
     tkn: string;
     id: string;
     name: string;
+    sourcePlatform: "YouTube" | "Twitch"
     display: string;
     pic: string;
     color: string;
