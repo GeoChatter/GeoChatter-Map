@@ -1,6 +1,7 @@
 <script>
 	import { user, supabase, auth } from '$lib/supabase';
 
+	import settings from './js/settings';
 	import { LogOutIcon, LogInIcon } from 'svelte-feather-icons';
 </script>
 
@@ -17,8 +18,7 @@
 	</div>
 {:else}
 	<li class="btn btn-primary mb-2 text-white text-left uppercase">
-		<button
-        class="uppercase"
+		<button class="uppercase"
 			on:click={async () =>
 				await supabase.auth.signIn(
 					{
@@ -30,7 +30,8 @@
 				)}>sign in with twitch <LogInIcon size="1x" /></button
 		>
 	</li>
-	 <li class="btn btn-primary text-white text-left mb-2">
+	{#if $settings.values.testing}
+	 <li class="btn hover:bg-white bg-white text-black text-left mb-2">
 		<button
 			on:click={async () =>
 				await supabase.auth.signIn(
@@ -42,7 +43,8 @@
 						scopes: 'https://www.googleapis.com/auth/youtube.readonly'
 					}
 				)}
-			class="uppercase">sign in with youtube <LogInIcon size="1x" /></button
+			class="uppercase"><img src="yt.png" class="w-6" /> sign in with youtube <LogInIcon size="1x" /></button
 		>
 	</li>
+	{/if}
 {/if}

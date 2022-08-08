@@ -179,9 +179,11 @@
 			<li class="sm:mb-0 mb-2 flex sm:hidden">
 				<Feedback />
 			</li>
+	{#if $settings.values.testing}
 			<li>
 				<button class="btn btn-warning" on:click={killConnection}>close socket connection</button>
 			</li>
+			{/if}
 		</ul>
 	</div>
 </div>
