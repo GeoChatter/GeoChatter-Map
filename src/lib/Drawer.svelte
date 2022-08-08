@@ -10,7 +10,9 @@
 	import { close } from './MovableDiv.svelte';
 	import { svgs } from '$lib/js/helpers/getFeature';
 	import api from './js/api';
+	import { killConnection} from "./js/signalR"
 
+	import autoAnimate from '@formkit/auto-animate';
 	let chooseFlag = false;
 </script>
 
@@ -34,7 +36,7 @@
 	</div>
 	<div class="drawer-side ">
 		<label for="my-drawer" class="drawer-overlay" />
-		<ul class="menu p-4 overflow-y-auto w-80 bg-base-100 text-base-content">
+		<ul use:autoAnimate class="menu p-4 overflow-y-auto w-80 bg-base-100 text-base-content">
 			<!-- Sidebar content here -->
 			<div class="dropdown dropdown-end z-[1000]">
 				<li class="mb-2">
@@ -177,6 +179,11 @@
 			<li class="sm:mb-0 mb-2 flex sm:hidden">
 				<Feedback />
 			</li>
+	{#if $settings.values.testing}
+			<li>
+				<button class="btn btn-warning" on:click={killConnection}>close socket connection</button>
+			</li>
+			{/if}
 		</ul>
 	</div>
 </div>

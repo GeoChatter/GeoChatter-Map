@@ -93,7 +93,7 @@ class Api {
     }
 
     if (!sendGuessError && confirmed) {
-      show(1, random ? "random guess send" : 'guess send');
+      show(1, random ? "Random guess sent" : 'Guess sent');
     }
   }
 
@@ -152,7 +152,6 @@ class Api {
     let res: any;
     try {
       res = await sendGuess(data);
-      console.log(res)
     } catch (e) {
       error = e;
     }

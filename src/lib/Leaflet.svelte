@@ -138,7 +138,7 @@
 			if (marker) leaflet.removeLayer(marker);
 			if (copy) {
 				navigator.clipboard.writeText(clipboard);
-				show(0.5, 'guess copied to clipboard');
+				show(1, 'Guess copied to clipboard');
 			}
 			marker = new L.Marker().setLatLng(currentGuess).setIcon(profileIcon).addTo(leaflet);
 		}
