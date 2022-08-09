@@ -118,9 +118,6 @@ export const startConnection = async (botName: string) => {
 
 }
 
-export const getCurrentState = async (botName: string) => {
-    return await connection.invoke("GetClientState", botName)
-}
 
 export type Guess = {
     bot: string;
@@ -137,20 +134,22 @@ export type Guess = {
 };
 
 export const sendGuess = async (guess: Guess) => {
+    let res:Number
     try {
         if (connection.state !== "Connected") {
             console.log("not connected trying to reconnect before sending guess")
-            reconnect(guess.bot).then(() => {
+            reconnect(guess.bot).then(async () => {
                 console.log("sending guess after reconnect")
-                connection.invoke("SendGuessToClients", guess)
+                res = await connection.invoke("SendGuessToClients", guess)
             }).catch(e => {console.log(e)})
         } else{
-            await connection.invoke("SendGuessToClients", guess)
+            res = await connection.invoke("SendGuessToClients", guess)
         }
     }
     catch (err) {
-        return err
+        return [err,""]
     }
+    return ["", res]
 }
 
 
@@ -191,4 +190,9 @@ export type Color = {
 
 export const sendColor = async (data: Color) => {
     await connection.invoke("SendColorToClients", data)
+}
+
+export const getGuessState = async (id:number) => {
+
+    return await connection.invoke("GetGuessState", id)
 }

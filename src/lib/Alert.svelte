@@ -5,9 +5,11 @@
 
 	const showing = writable(false);
 	const text = writable('');
+	const err = writable(false)
 
 	let oldTimout: ReturnType<typeof setTimeout>;
-	export const show = (seconds: number, message: string) => {
+	export const show = (seconds: number, message: string, error=false) => {
+		err.set(error)
 		text.set(message);
 		showing.set(true);
 		// maybe flash once every time so you know its new
@@ -24,7 +26,7 @@
 		out:fly
 		class="absolute bottom-24 lg:bottom-8 pointer-events-none  w-full flex justify-center z-[80000]"
 	>
-		<div class="w-fit alert alert-success shadow-2xl">
+		<div class={`w-fit alert ${!err ? "alert-success" : "alert-error"} shadow-2xl`}>
 			<div>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"

@@ -2,7 +2,7 @@
 import { show } from '$lib/Alert.svelte';
 
 import { writable } from "svelte/store";
-import { getCurrentState, startConnection, sendGuess, type Guess, type Flag, SendFlagToClients, sendColor,type Color } from "./signalR";
+import {getGuessState,  startConnection, sendGuess, type Guess, type Flag, SendFlagToClients, sendColor,type Color } from "./signalR";
 import { user, auth, supabase } from '$lib/supabase';
 import { get } from "svelte/store";
 import settings from './settings';
@@ -87,14 +87,45 @@ class Api {
     console.log(data)
     const [sendGuessError, sendGuessRes] = await this.sendGuess(data);
 
+    console.log(sendGuessRes)
+    
+    // sleep function
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    await sleep(200)
+
+
+
+    if (!sendGuessError) {
+      let state = await getGuessState(Number(sendGuessRes))
+      console.log(state)
+      let counter = 50
+      while (state === "Submitted" || counter <= 0){
+        state = await getGuessState(Number(sendGuessRes))
+        console.log(state)
+        await sleep(300)
+        counter = counter -1 
+      }
+      if (counter <= 0 ){
+        state = "Client couldn't process guess"
+      }
+      if (state === "Success") {
+        show(1, "Guess sent successfully")
+      } else{
+        show(1, `Error: ${state}`,true)
+      }
+    }
+
+    
+
     if (sendGuessError) {
       console.log(sendGuessError);
       alert('some thing went wrong while sending your guess');
     }
 
-    if (!sendGuessError && confirmed) {
-      show(1, random ? "Random guess sent" : 'Guess sent');
-    }
+    // if (!sendGuessError && confirmed) {
+    //   show(1, random ? "Random guess sent" : 'Guess sent');
+    // }
   }
 
   async sendFlag(flag: string) {
@@ -189,13 +220,7 @@ class Api {
 
   // add confirmed or not or random guess?
   async sendGuess(data: Guess): Promise<([string, Response])> {
-    let error: string;
-    let res: any;
-    try {
-      res = await sendGuess(data);
-    } catch (e) {
-      error = e;
-    }
+    let [error, res] = await sendGuess(data);
 
     return [error, res];
   }
