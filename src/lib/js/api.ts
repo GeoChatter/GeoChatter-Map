@@ -48,8 +48,8 @@ class Api {
     const userStore = get(user)
     if (!userStore) return;
     // FIXME: add confirmed guess
-    switch (userStore.app_metadata.provider) {
-      case 'twitch':
+    switch (userStore.user_metadata.iss) {
+      case 'https://api.twitch.tv':
         data = {
           bot: this.bot,
           lat: lat,
@@ -64,7 +64,7 @@ class Api {
           isRandom: random
         };
         break;
-      case 'google':
+      case 'https://www.googleapis.com/userinfo/v2/me':
         console.log(userStore.user_metadata);
         data = {
           bot: this.bot,
@@ -133,8 +133,8 @@ class Api {
     const userStore = get(user)
     let data: Flag
 
-    switch (userStore.app_metadata.provider) {
-      case 'twitch':
+    switch (userStore.user_metadata.iss) {
+      case 'https://api.twitch.tv':
         data = {
           bot: this.bot,
           sourcePlatform: "Twitch",
@@ -146,7 +146,7 @@ class Api {
           pic: userStore.user_metadata.picture,
         };
         break;
-      case 'google':
+      case 'https://www.googleapis.com/userinfo/v2/me':
         console.log(userStore.user_metadata);
         data = {
           bot: this.bot,
@@ -170,8 +170,8 @@ class Api {
 
     let data: Color
 
-    switch (userStore.app_metadata.provider) {
-      case 'twitch':
+    switch (userStore.user_metadata.iss) {
+      case 'https://api.twitch.tv':
         data = {
           bot: this.bot,
           sourcePlatform: "Twitch",
@@ -183,7 +183,7 @@ class Api {
           pic: userStore.user_metadata.picture,
         };
         break;
-      case 'google':
+      case 'https://www.googleapis.com/userinfo/v2/me':
         console.log(userStore.user_metadata);
         data = {
           bot: this.bot,
