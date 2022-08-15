@@ -1,37 +1,48 @@
 
 import { show } from '$lib/Alert.svelte';
 
-import { writable } from "svelte/store";
-import {getGuessState,  startConnection, sendGuess, type Guess, type Flag, SendFlagToClients, sendColor,type Color } from "./signalR";
 import { user, auth, supabase } from '$lib/supabase';
 import { get } from "svelte/store";
 import settings from './settings';
+import GCSocketClient from 'GCSocketClient';
 
-// TODO: REMOVE FOR SIGNALR API 
+const setStreamerSettings = (options) =>
+    Object.entries(options).forEach(([key, value]) => {
 
-// Check if target client is online
-const SERVER_GET = 'https://api.geochatter.tv/guess?botname=';
-
-// Send guess and read guess ID
-const SERVER_POST = 'https://api.geochatter.tv/guess/'; //'https://guess.geochatter.tv/api/' //
-
-// Check guess status : 200 = processed , 100 = being processed , default = failed
-const SERVER_GUESS_CHECK = 'https://api.geochatter.tv/guess?id=';
-
+        key = key.replace("show", "")
+        key = key.charAt(0).toLowerCase() + key.slice(1)
+        if (key === "isUSStreak") {
+            key = "borderAdmin"
+            value = !value
+        }
+        settings.changeStreamerSettings(key, value)
+    })
 class Api {
   _bot: string | undefined;
+  client: GCSocketClient
   constructor(bot?: string | undefined) {
-    this.bot = bot;
-    // this.isButtonEnabled = true
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, this.bot, {
+      onFailedGuess: (_, text) => {
+        
+        show(1, text,true)
+
+      },
+
+      onSuccessfulGuess: () => {
+        show(1, "Guess sent successfully")
+      }
+      , onStreamerSettings: setStreamerSettings 
+    })
   }
 
 
   set bot(bot) {
     this._bot = bot
-    if (this.bot) {
-      startConnection(this.bot)
+    if (bot){
+        this.client.streamerCode = bot
     }
-
   }
   get bot() {
     return this._bot
@@ -82,50 +93,9 @@ class Api {
         break;
     }
 
-    console.log(data);
-    // loading = true;
-    console.log(data)
-    const [sendGuessError, sendGuessRes] = await this.sendGuess(data);
+    this.client.sendGuess(data)
 
-    console.log(sendGuessRes)
-    
-    // sleep function
-    const sleep = ms => new Promise(r => setTimeout(r, ms));
-
-    await sleep(200)
-
-
-
-    if (!sendGuessError) {
-      let state = await getGuessState(Number(sendGuessRes))
-      console.log(state)
-      let counter = 50
-      while (state === "Submitted" || counter <= 0){
-        state = await getGuessState(Number(sendGuessRes))
-        console.log(state)
-        await sleep(300)
-        counter = counter -1 
-      }
-      if (counter <= 0 ){
-        state = "Client couldn't process guess"
-      }
-      if (state === "Success") {
-        show(1, "Guess sent successfully")
-      } else{
-        show(1, `Error: ${state}`,true)
-      }
-    }
-
-    
-
-    if (sendGuessError) {
-      console.log(sendGuessError);
-      alert('some thing went wrong while sending your guess');
-    }
-
-    // if (!sendGuessError && confirmed) {
-    //   show(1, random ? "Random guess sent" : 'Guess sent');
-    // }
+ 
   }
 
   async sendFlag(flag: string) {
@@ -160,9 +130,8 @@ class Api {
         };
         break;
     }
-    const res = await SendFlagToClients(data);
-
-    return res;
+    this.client.sendFlag(data)
+   
   }
   async sendColor(color: string) {
 
@@ -197,32 +166,8 @@ class Api {
         };
         break;
     }
-    const res = await sendColor(data);
-
-    return res;
-  }
-  // might be depreacated soon?
-  // async getCurrentState() {
-  //   let error: string;
-  //   let res
-  //   try {
-  //     res = await getCurrentState(this.bot)
-  //   } catch (e) {
-  //     error = e;
-  //   }
-
-  //   const resObj = await res.json()
-  //   const streamer = resObj?.channelName
-  //   // console.log(this.streamer)
-
-  //   return [error, res];
-  // }
-
-  // add confirmed or not or random guess?
-  async sendGuess(data: Guess): Promise<([string, Response])> {
-    let [error, res] = await sendGuess(data);
-
-    return [error, res];
+   
+    this.client.sendColor(data)
   }
 
 }
