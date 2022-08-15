@@ -2,8 +2,8 @@
   "name": "geochattermap",
   "version": "0.0.1",
   "scripts": {
-    "dev": "vite dev",
-    "build": "vite build  || exit 0",
+    "dev": "vite dev --port 3000",
+    "build": "vite build",
     "package": "vite package",
     "preview": "vite preview",
     "prepare": "vite sync",

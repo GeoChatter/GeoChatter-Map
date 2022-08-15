@@ -20,10 +20,10 @@ const setStreamerSettings = (options) =>
 class Api {
   _bot: string | undefined;
   client: GCSocketClient
-  constructor(bot?: string | undefined) {
+  constructor(bot: string ) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, this.bot, {
+    this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, bot?? "" , {
       onFailedGuess: (_, text) => {
         
         show(1, text,true)
@@ -55,7 +55,7 @@ class Api {
       console.log("temporary guessing is not enabled")
       return
     }
-    let data: Guess;
+    let data: any;
     const userStore = get(user)
     if (!userStore) return;
     // FIXME: add confirmed guess
@@ -101,7 +101,7 @@ class Api {
   async sendFlag(flag: string) {
 
     const userStore = get(user)
-    let data: Flag
+    let data: any
 
     switch (userStore.user_metadata.iss) {
       case 'https://api.twitch.tv':
