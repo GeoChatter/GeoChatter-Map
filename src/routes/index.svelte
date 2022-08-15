@@ -3,9 +3,6 @@
 
 	import { browser, dev } from '$app/env';
 	import { supabase } from '$lib/supabase';
-	// import { senfFlagToClients } from '$lib/js/signalR';
-	// import { createFakeGuess } from '$lib/js/signalR.test';
-
 	if (browser && !dev) {
 		window.console.log = () => {};
 		window.console.warn = () => {};
