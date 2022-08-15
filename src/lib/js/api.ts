@@ -137,7 +137,7 @@ class Api {
 
     const userStore = get(user)
 
-    let data: Color
+    let data: any
 
     switch (userStore.user_metadata.iss) {
       case 'https://api.twitch.tv':
@@ -171,5 +171,5 @@ class Api {
   }
 
 }
-const api = new Api()
+const api = new Api("")
 export default api
