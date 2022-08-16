@@ -56,7 +56,7 @@
     "@types/leaflet": "^1.7.9",
     "d3-geo": "^3.0.1",
     "daisyui": "^2.13.6",
-    "GCSocketClient": "github:GeoChatter/GCSignalRClient",
+    "GCSocketClient": "github:GeoChatter/GCSocketClient",
     "jszip": "^3.10.0",
     "mapbox-gl": "^2.9.1",
     "svelte-color-picker": "^1.0.7",

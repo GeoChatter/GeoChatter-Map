@@ -4,6 +4,7 @@ import { show } from '$lib/Alert.svelte';
 import { user, auth, supabase } from '$lib/supabase';
 import { get } from "svelte/store";
 import settings from './settings';
+
 import GCSocketClient from 'GCSocketClient';
 
 const setStreamerSettings = (options) =>
