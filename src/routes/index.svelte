@@ -6,7 +6,7 @@
 	if (browser && !dev) {
 		window.console.log = () => {};
 		window.console.warn = () => {};
-		window.console.error = () => {};
+		// window.console.error = () => {};
 	}
 	if (browser) {
 		(async () => {
