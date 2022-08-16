@@ -66,7 +66,7 @@
 </script>
 
 {#if api.bot}
-	{#if $settings.values.streamOverlay}
+	{#if $settings.values.ShowStreamOverlay}
 		<MovableDiv><Twitch /></MovableDiv>
 	{/if}
 	<Alert />

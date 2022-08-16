@@ -79,7 +79,7 @@ async function downloadAndUnzipFlags() {
 
 export const svgs = downloadAndUnzipFlags()
 
-let bordersFeatureCollections = downloadAndUnzip()
+const bordersFeatureCollections = downloadAndUnzip()
 // download iso.json
 async function downloadISO() {
   const isoData = await fetch("https://service.geochatter.tv/resources/other/iso.json")
@@ -97,7 +97,7 @@ const alpha3to2 = async (iso: string) => {
 
 async function getFlagName(feat: Feature) {
   const group = await alpha3to2(feat.properties.shapeGroup)
-  if (settings.values.borderAdmin) return group
+  if (settings.values.BorderAdmin) return group
   switch (group) {
     case "US": {
       const isoExists = await alpha3to2(feat.properties.shapeISO)
@@ -123,7 +123,7 @@ const getCountryNameByISO = async (iso: string) => {
 }
 
 export const getCountry = async (lat: number, lng: number) => {
-  // if (!settings.values.borders) return [undefined, undefined, undefined]
+  // if (!settings.values.ShowBorders) return [undefined, undefined, undefined]
   if (!bordersFeatureCollections) return
   // api.getCountry(lat, lng)
   // geometries[country]?.feature?.geometry
@@ -138,9 +138,9 @@ export const getCountry = async (lat: number, lng: number) => {
       if (contains.features.length > 0) {
         const flagIso = await getFlagName(feature)
 
-        const svg = settings.values.flags ? flags[flagIso] : undefined
+        const svg = settings.values.ShowFlags ? flags[flagIso] : undefined
         const countryName = await getCountryNameByISO(flagIso)
-        if (settings.values.borderAdmin) return [borders, svg, countryName]
+        if (settings.values.BorderAdmin) return [borders, svg, countryName]
         else return [feature, svg, countryName]
       }
     }

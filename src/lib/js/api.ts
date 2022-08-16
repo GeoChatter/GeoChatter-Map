@@ -5,18 +5,20 @@ import { user, auth, supabase } from '$lib/supabase';
 import { get } from "svelte/store";
 import settings from './settings';
 
-import { GCSocketClient, z, Guess, Flag, Color} from 'GCSocketClient';
+import { GCSocketClient, z, Guess, Flag, Color, StreamerSettings} from 'GCSocketClient';
 
-const setStreamerSettings = (options) =>
+const setStreamerSettings = (options:z.infer<typeof StreamerSettings>) =>
+
     Object.entries(options).forEach(([key, value]) => {
-
-        key = key.replace("show", "")
-        key = key.charAt(0).toLowerCase() + key.slice(1)
-        if (key === "isUSStreak") {
-            key = "borderAdmin"
+        // FIXME: don"t replace show any more keep streamer settings in sync with streamer settings from server
+        if (key === "IsUSStreak") {
+            key = "BorderAdmin"
             value = !value
         }
-        settings.changeStreamerSettings(key, value)
+        const parseResponse = StreamerSettings.keyof().safeParse(key)
+        if (parseResponse.success){
+          settings.changeStreamerSettings(parseResponse.data, value)
+        }
     })
 class Api {
   _bot: string | undefined;
@@ -52,7 +54,7 @@ class Api {
 
   async sendGuessToBackend(lat: string, lng: string, confirmed = true, random = false) {
     // if temporary and temporaryGuessing is not enabled return early
-    if (!confirmed && !settings.values.temporaryGuesses) {
+    if (!confirmed && !settings.values.EnableTemporaryGuesses) {
       console.log("temporary guessing is not enabled")
       return
     }
@@ -90,9 +92,7 @@ class Api {
           pic: userStore.user_metadata.avatar_url,
           isTemporary: !confirmed,
           isRandom: random
-        };
-        break;
-    }
+        };Flag}
 
     this.client.sendGuess(data)
 

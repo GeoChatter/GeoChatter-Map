@@ -90,7 +90,7 @@
 									}}
 								>
 									<div class="flex">
-										{#if $settings.streamerSettings.flags}
+										{#if $settings.streamerSettings.ShowFlags}
 											<div
 												style={`background-size: contain;background-position: 50%;background-repeat: no-repeat;background-image: url('${flag}'); height:30px;width:30px`}
 											/>
@@ -124,10 +124,13 @@
 						<input
 							type="checkbox"
 							class="toggle"
-							disabled={!$settings.streamerSettings.temporaryGuesses}
+							disabled={!$settings.streamerSettings.EnableTemporaryGuesses}
 							on:click={() =>
-								$settings.change('temporaryGuesses', !$settings.values.temporaryGuesses)}
-							checked={$settings.values.temporaryGuesses}
+								$settings.change(
+									'EnableTemporaryGuesses',
+									!$settings.values.EnableTemporaryGuesses
+								)}
+							checked={$settings.values.EnableTemporaryGuesses}
 						/>
 					</label>
 				</li>
@@ -137,48 +140,49 @@
 				<label class="label cursor-pointer">
 					<span class="label-text">enable borders</span>
 					<input
-						disabled={!$settings.streamerSettings.borders}
+						disabled={!$settings.streamerSettings.ShowBorders}
 						type="checkbox"
 						class="toggle"
-						on:click={() => $settings.change('borders', !$settings.values.borders)}
-						checked={$settings.values.borders}
+						on:click={() => $settings.change('ShowBorders', !$settings.values.ShowBorders)}
+						checked={$settings.values.ShowBorders}
 					/>
 				</label>
 				<label class="label cursor-pointer">
 					<span class="label-text">Show State/Province borders (US/UK/CA for now)</span>
 					<input
-						disabled={!$settings.streamerSettings.borderAdmin}
+						disabled={!$settings.streamerSettings.ShowBorderAdmin}
 						type="checkbox"
 						class="toggle"
-						on:click={() => $settings.change('borderAdmin', !$settings.values.borderAdmin)}
-						checked={!$settings.values.borderAdmin}
+						on:click={() => $settings.change('BorderAdmin', !$settings.values.BorderAdmin)}
+						checked={!$settings.values.BorderAdmin}
 					/>
 				</label>
 				<label class="label cursor-pointer">
 					<span class="label-text">enable flags</span>
 					<input
-						disabled={!$settings.streamerSettings.flags}
+						disabled={!$settings.streamerSettings.ShowFlags}
 						type="checkbox"
 						class="toggle"
-						on:click={() => $settings.change('flags', !$settings.values.flags)}
-						checked={$settings.values.flags}
+						on:click={() => $settings.change('ShowFlags', !$settings.values.ShowFlags)}
+						checked={$settings.values.ShowFlags}
 					/>
 				</label>
 				<label class="label cursor-pointer">
 					<span class="label-text">enable stream popup</span>
 					<input
-						disabled={!$settings.streamerSettings.streamOverlay}
+						disabled={!$settings.streamerSettings.ShowStreamerOverlay}
 						type="checkbox"
 						class="toggle"
-						on:click={() => $settings.change('streamOverlay', !$settings.values.streamOverlay)}
-						checked={$settings.values.streamOverlay}
+						on:click={() =>
+							$settings.change('ShowStreamOverlay', !$settings.values.ShowStreamOverlay)}
+						checked={$settings.values.ShowStreamOverlay}
 					/>
 				</label>
 			</li>
 			<li class="sm:mb-0 mb-2 flex sm:hidden">
 				<Feedback />
 			</li>
-	<!-- {#if $settings.values.testing}
+			<!-- {#if $settings.values.testing}
 			<li>
 				<button class="btn btn-warning" on:click={killConnection}>close socket connection</button>
 			</li>

@@ -2,6 +2,9 @@ import { writable, type Writable } from "svelte/store"
 // @ts-ignore
 import { browser } from "$app/env"
 
+import { z, StreamerSettings } from "GCSocketClient"
+
+let StreamerSettingsKeys = StreamerSettings.keyof()
 export class Settings {
 
 
@@ -29,26 +32,27 @@ export class Settings {
     ex: 1,
     globe: false,
     copyAndPaste: false,
-    borderAdmin: false,
-    borders: true,
+    BorderAdmin: false,
+    ShowBorders: true,
     drawerOpen: false,
     globeView: true,
-    flags: true,
-    streamOverlay: true,
-    temporaryGuesses: true,
+    ShowFlags: true,
+    ShowStreamOverlay: true,
+    EnableTemporaryGuesses: true,
     testing: false
   }
 
   streamerSettings = {
-    borders: false,
-    flags: false,
-    streamOverlay: false,
-    borderAdmin: false,
-    temporaryGuesses: false,
-    streamer: undefined
+    ShowBorders: false,
+    ShowFlags: false,
+    ShowStreamerOverlay: false,
+    ShowBorderAdmin: false,
+    EnableTemporaryGuesses: false,
+    Streamer: undefined
   }
 
-  changeStreamerSettings(key: keyof typeof this.streamerSettings, newVal) {
+
+  changeStreamerSettings(key: z.infer<typeof StreamerSettingsKeys>, newVal) {
     if (typeof this._values[key] !== undefined) {
       this.streamerSettings[key] = newVal
       this.refresh()
