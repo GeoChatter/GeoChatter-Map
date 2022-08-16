@@ -56,7 +56,7 @@
 				console.log(e);
 			}
 		}
-		if ($settings.values.ShowBorders) {
+		if ($settings.values.showBorders) {
 			id++;
 			mapBox.addSource(`countrySelected${id}`, { type: 'geojson', data: country });
 			currSelectedCountry = `countrySelected${id}`;

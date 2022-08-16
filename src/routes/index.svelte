@@ -13,8 +13,8 @@
 			if (supabase.auth.user() === null) return;
 			let pic = supabase.auth.user().user_metadata.picture;
 			let res = await fetch(pic);
-			console.log('pfp not found. trying to sign in again');
 			if (res.status !== 200) {
+			    console.log('pfp not found. trying to sign in again');
 				await supabase.auth.signIn({
 					provider: 'twitch'
 				});

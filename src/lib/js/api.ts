@@ -5,47 +5,46 @@ import { user, auth, supabase } from '$lib/supabase';
 import { get } from "svelte/store";
 import settings from './settings';
 
-import { GCSocketClient, z, Guess, Flag, Color, MapOptions} from 'GCSocketClient';
+import { GCSocketClient, z, Guess, Flag, Color, MapOptions } from 'GCSocketClient';
 
-const setStreamerSettings = (options:z.infer<typeof MapOptions>) =>
+const setStreamerSettings = (options: z.infer<typeof MapOptions>) =>
 
-    Object.entries(options).forEach(([key, value]) => {
-        // FIXME: don"t replace show any more keep streamer settings in sync with streamer settings from server
-        if (key === "IsUSStreak") {
-            key = "BorderAdmin"
-            value = !value
-        }
-        const parseResponse = MapOptions.keyof().safeParse(key)
-        if (parseResponse.success){
-          settings.changeStreamerSettings(parseResponse.data, value)
-        }
-    })
+  Object.entries(options).forEach(([key, value]) => {
+    // FIXME: don"t replace show any more keep streamer settings in sync with streamer settings from server
+    if (key === "isUSStreak") {
+      settings.change("borderAdmin", false)
+    }
+    const parseResponse = MapOptions.keyof().safeParse(key)
+    if (parseResponse.success) {
+      settings.changeStreamerSettings(parseResponse.data, value)
+    }
+  })
 class Api {
   _bot: string | undefined;
   client: GCSocketClient
-  constructor(bot: string ) {
+  constructor(bot: string) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, bot?? "" , {
+    this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, bot ?? "", {
       onFailedGuess: (_, text) => {
-        
-        show(1, text,true)
+
+        show(1, text, true)
 
       },
-    
+
 
       onSuccessfulGuess: () => {
         show(1, "Guess sent successfully")
       }
-      , onStreamerSettings: setStreamerSettings 
+      , onStreamerSettings: setStreamerSettings
     })
   }
 
 
   set bot(bot) {
     this._bot = bot
-    if (bot){
-        this.client.streamerCode = bot
+    if (bot) {
+      this.client.streamerCode = bot
     }
   }
   get bot() {
@@ -55,7 +54,7 @@ class Api {
 
   async sendGuessToBackend(lat: string, lng: string, confirmed = true, random = false) {
     // if temporary and temporaryGuessing is not enabled return early
-    if (!confirmed && !settings.values.EnableTemporaryGuesses) {
+    if (!confirmed && !settings.values.temporaryGuesses) {
       console.log("temporary guessing is not enabled")
       return
     }
@@ -93,11 +92,12 @@ class Api {
           pic: userStore.user_metadata.avatar_url,
           isTemporary: !confirmed,
           isRandom: random
-        };Flag}
+        }; Flag
+    }
 
     this.client.sendGuess(data)
 
- 
+
   }
 
   async sendFlag(flag: string) {
@@ -128,12 +128,12 @@ class Api {
           name: userStore.user_metadata.full_name,
           display: userStore.user_metadata.name,
           pic: userStore.user_metadata.avatar_url,
-      flag: flag,
+          flag: flag,
         };
         break;
     }
     this.client.sendFlag(data)
-   
+
   }
   async sendColor(color: string) {
 
@@ -168,7 +168,7 @@ class Api {
         };
         break;
     }
-   
+
     this.client.sendColor(data)
   }
 

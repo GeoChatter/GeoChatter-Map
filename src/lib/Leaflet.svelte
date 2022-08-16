@@ -76,7 +76,7 @@
 			if (currSelectedCountry) {
 				leaflet.removeLayer(currSelectedCountry);
 			}
-			if ($settings.values.ShowBorders) {
+			if ($settings.values.showBorders) {
 				currSelectedCountry = L.geoJSON(country, { style: { fillOpacity: 0.1 } }).addTo(leaflet);
 			}
 		}
