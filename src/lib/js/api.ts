@@ -5,9 +5,9 @@ import { user, auth, supabase } from '$lib/supabase';
 import { get } from "svelte/store";
 import settings from './settings';
 
-import { GCSocketClient, z, Guess, Flag, Color, StreamerSettings} from 'GCSocketClient';
+import { GCSocketClient, z, Guess, Flag, Color, MapOptions} from 'GCSocketClient';
 
-const setStreamerSettings = (options:z.infer<typeof StreamerSettings>) =>
+const setStreamerSettings = (options:z.infer<typeof MapOptions>) =>
 
     Object.entries(options).forEach(([key, value]) => {
         // FIXME: don"t replace show any more keep streamer settings in sync with streamer settings from server
@@ -15,7 +15,7 @@ const setStreamerSettings = (options:z.infer<typeof StreamerSettings>) =>
             key = "BorderAdmin"
             value = !value
         }
-        const parseResponse = StreamerSettings.keyof().safeParse(key)
+        const parseResponse = MapOptions.keyof().safeParse(key)
         if (parseResponse.success){
           settings.changeStreamerSettings(parseResponse.data, value)
         }
@@ -32,6 +32,7 @@ class Api {
         show(1, text,true)
 
       },
+    
 
       onSuccessfulGuess: () => {
         show(1, "Guess sent successfully")

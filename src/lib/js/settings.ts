@@ -2,9 +2,9 @@ import { writable, type Writable } from "svelte/store"
 // @ts-ignore
 import { browser } from "$app/env"
 
-import { z, StreamerSettings } from "GCSocketClient"
+import { z,  MapOptions } from "GCSocketClient"
 
-let StreamerSettingsKeys = StreamerSettings.keyof()
+const StreamerSettingsKeys = MapOptions.keyof()
 export class Settings {
 
 
@@ -89,7 +89,7 @@ export class Settings {
 
   load() {
     if (browser) {
-      let loadedObj = JSON.parse(localStorage.getItem("settings")) ?? {}
+    let loadedObj = JSON.parse(localStorage.getItem("settings")) ?? {}
       for (const key of Object.keys(loadedObj)) {
         this._values[key] = loadedObj[key]
       }
