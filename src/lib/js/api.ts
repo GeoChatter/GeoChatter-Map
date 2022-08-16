@@ -5,7 +5,7 @@ import { user, auth, supabase } from '$lib/supabase';
 import { get } from "svelte/store";
 import settings from './settings';
 
-import GCSocketClient from 'GCSocketClient';
+import { GCSocketClient, z, Guess, Flag, Color} from 'GCSocketClient';
 
 const setStreamerSettings = (options) =>
     Object.entries(options).forEach(([key, value]) => {
@@ -56,7 +56,7 @@ class Api {
       console.log("temporary guessing is not enabled")
       return
     }
-    let data: any;
+    let data: z.infer<typeof Guess>;
     const userStore = get(user)
     if (!userStore) return;
     // FIXME: add confirmed guess
@@ -102,7 +102,7 @@ class Api {
   async sendFlag(flag: string) {
 
     const userStore = get(user)
-    let data: any
+    let data: z.infer<typeof Flag>
 
     switch (userStore.user_metadata.iss) {
       case 'https://api.twitch.tv':
@@ -138,7 +138,7 @@ class Api {
 
     const userStore = get(user)
 
-    let data: any
+    let data: z.infer<typeof Color>
 
     switch (userStore.user_metadata.iss) {
       case 'https://api.twitch.tv':
