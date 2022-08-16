@@ -42,7 +42,7 @@
 					<a
 						class=" normal-case text-xl font-bold"
 						target="_blank"
-						href="https://www.geochatter.tv/">GeoChatter</a
+						href="https://www.geochatter.tv/"><img class="h-8" src="https://geochatter.tv/icon_smaller.ico"/>GeoChatter</a
 					>
 				</li>
 				<li class="">
