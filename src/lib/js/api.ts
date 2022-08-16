@@ -36,8 +36,22 @@ class Api {
       onSuccessfulGuess: () => {
         show(1, "Guess sent successfully")
       }
-      , onStreamerSettings: setStreamerSettings
-    })
+      , onStreamerSettings: setStreamerSettings,
+      onRoundStart: () => {
+        console.log("round start")
+      },
+      onGameStart: () => {
+        console.log("game start")
+      },
+      onRoundEnd: () => {
+        console.log("round end")
+      },
+      onGameEnd: () => {
+        console.log("game end")
+      },
+      
+    },
+    )
   }
 
 
