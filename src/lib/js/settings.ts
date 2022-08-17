@@ -64,8 +64,8 @@ export class Settings {
 
   get values() {
     // needs node 17 to work
-    const values = structuredClone(this._values)
-    // const values = JSON.parse(JSON.stringify(this._values))
+    // const values = structuredClone(this._values)
+    const values = JSON.parse(JSON.stringify(this._values))
 
     for (const key of Object.keys(this.streamerSettings)) {
       if (this.streamerSettings[key] === false) {
