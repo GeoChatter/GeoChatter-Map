@@ -6,6 +6,7 @@ import { get } from "svelte/store";
 import settings from './settings';
 
 import { GCSocketClient, z, Guess, Flag, Color, MapOptions } from 'GCSocketClient';
+import { downloadAndUnzipFlags } from './helpers/getFeature';
 
 const setStreamerSettings = (options: z.infer<typeof MapOptions>) =>
 
@@ -14,6 +15,22 @@ const setStreamerSettings = (options: z.infer<typeof MapOptions>) =>
     if (key === "isUSStreak") {
       settings.change("borderAdmin", false)
     }
+    // installing flag packs 
+    try {
+    const installedFlagPack = JSON.parse(options.installedFlagPacks)
+
+    for (const url of Object.values(installedFlagPack)) {
+      if (typeof url === "string") {
+        downloadAndUnzipFlags(url)
+      }
+      }
+    }
+    catch (e) {
+      console.log("flagpacks not valid json i think")
+      console.log(e)
+
+    }
+    
     const parseResponse = MapOptions.keyof().safeParse(key)
     if (parseResponse.success) {
       settings.changeStreamerSettings(parseResponse.data, value)

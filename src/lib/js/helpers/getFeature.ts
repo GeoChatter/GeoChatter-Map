@@ -47,10 +47,11 @@ async function downloadAndUnzip() {
 }
 
 
-async function downloadAndUnzipFlags() {
-  const svgs = {}
+export const svgs = {} 
+downloadAndUnzipFlags()
+export async function downloadAndUnzipFlags(flagsUrl = FLAGS_URL) {
   try {
-    const response = await fetch(FLAGS_URL, { cache: "no-cache" })
+    const response = await fetch(flagsUrl, { cache: "no-cache" })
     const blob = await response.blob();
     const loadedZip = await JSZip.loadAsync(blob)
 
@@ -69,15 +70,11 @@ async function downloadAndUnzipFlags() {
   catch (e) {
     console.log(e)
   }
-
-
-
-  // let zipFile = new ZipFile(BORDER_URL)
-  // return result_borders
-  return svgs
 }
 
-export const svgs = downloadAndUnzipFlags()
+
+
+
 
 const bordersFeatureCollections = downloadAndUnzip()
 // download iso.json
@@ -122,12 +119,14 @@ const getCountryNameByISO = async (iso: string) => {
   return isoObj.find(country => country.Alpha2 === iso)?.name
 }
 
+
 export const getCountry = async (lat: number, lng: number) => {
   // if (!settings.values.showBorders) return [undefined, undefined, undefined]
   if (!bordersFeatureCollections) return
   // api.getCountry(lat, lng)
   // geometries[country]?.feature?.geometry
-  const [flags, allBorders, downloadISO] = await Promise.all([svgs, bordersFeatureCollections, isos])
+  const flags = svgs
+  const [ allBorders, downloadISO] = await Promise.all([ bordersFeatureCollections, isos])
   for (const borders of allBorders) {
     // console.log(borders)
     for (const feature of borders.features) {
