@@ -84,7 +84,6 @@ export class Settings {
   constructor() {
     this.load()
     this.makeThisWritable();
-    console.log(this._values)
   }
 
   load() {

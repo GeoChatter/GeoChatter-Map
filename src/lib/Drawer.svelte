@@ -13,6 +13,9 @@
 
 	import autoAnimate from '@formkit/auto-animate';
 	let chooseFlag = false;
+
+
+	let timeout: NodeJS.Timeout;
 </script>
 
 <div
@@ -42,7 +45,8 @@
 					<a
 						class=" normal-case text-xl font-bold"
 						target="_blank"
-						href="https://www.geochatter.tv/"><img class="h-8" src="https://geochatter.tv/icon_smaller.ico"/>GeoChatter</a
+						href="https://www.geochatter.tv/"
+						><img class="h-8" src="https://geochatter.tv/icon_smaller.ico" />GeoChatter</a
 					>
 				</li>
 				<li class="">
@@ -60,10 +64,15 @@
 
 			{#if $user}
 				<div class="flex items-center justify-center h-fit w-fit mb-2">
-					<div>
+					<div >
 						<ColorPicker
 							handleColor={(color) => {
-								api.sendColor(color);
+								if (timeout) {
+									clearTimeout(timeout);
+								}
+								timeout = setTimeout(() => {
+									api.sendColor(color);
+								},5000);
 							}}
 						/>
 					</div>
@@ -126,10 +135,7 @@
 							class="toggle"
 							disabled={!$settings.streamerSettings.temporaryGuesses}
 							on:click={() =>
-								$settings.change(
-									'temporaryGuesses',
-									!$settings.values.temporaryGuesses
-								)}
+								$settings.change('temporaryGuesses', !$settings.values.temporaryGuesses)}
 							checked={$settings.values.temporaryGuesses}
 						/>
 					</label>
