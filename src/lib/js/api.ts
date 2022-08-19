@@ -20,7 +20,9 @@ const setStreamerSettings = (options: z.infer<typeof MapOptions>) =>
     const installedFlagPack = JSON.parse(options.installedFlagPacks)
 
     for (const url of Object.values(installedFlagPack)) {
+
       if (typeof url === "string") {
+        console.log(url)
         downloadAndUnzipFlags(url)
       }
       }
