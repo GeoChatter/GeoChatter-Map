@@ -22,7 +22,7 @@
 	let flag = '';
 	if (browser) {
 		profileIcon = L.icon({
-			iconUrl: $user?.user_metadata?.picture ?? 'test.png',
+			iconUrl: $user?.user_metadata?.picture ?? 'https://geochatter.tv/icon_smaller.ico',
 			iconSize: [30, 30],
 			className: 'rounded-full border-2 border-white'
 		});

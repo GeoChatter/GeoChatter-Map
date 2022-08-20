@@ -167,8 +167,8 @@
 	<div
 		class="w-full h-full text-center uppercase flex flex-col gap-2 items-center justify-center  "
 	>
-		please use the full link from the streamer or fill in the bot name below
-		<input class="input" placeholder="bot_name" bind:value={newBot} />
+		please use the full link from the streamer or fill in the map identifier name below
+		<input class="input input-bordered" placeholder="map identifier..." bind:value={newBot} />
 		<button class="btn btn-primary" on:click={() => (api.bot = newBot)}>go</button>
 	</div>
 {/if}

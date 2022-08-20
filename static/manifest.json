@@ -7,7 +7,7 @@
 	"orientation": "portrait",
 	"icons": [
 		{
-			"src": "test.png",
+			"src": "https://geochatter.tv/icon_smaller.ico",
 			"sizes": "512x512 any"
 		}
 	],
