@@ -174,7 +174,7 @@
 				<label class="label cursor-pointer">
 					<span class="label-text">enable stream popup</span>
 					<input
-						disabled={!$settings.streamerSettings.showStreamerOverlay}
+						disabled={!$settings.streamerSettings.showStreamOverlay}
 						type="checkbox"
 						class="toggle"
 						on:click={() =>

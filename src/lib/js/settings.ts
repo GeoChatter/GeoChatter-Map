@@ -46,7 +46,7 @@ export class Settings {
     showBorders: false,
     showFlags: false,
     borderAdmin: true,
-    showStreamerOverlay: false,
+    showStreamOverlay: false,
     temporaryGuesses: false,
     streamer: undefined
   }
