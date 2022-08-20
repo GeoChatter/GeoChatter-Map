@@ -12,7 +12,6 @@ const alreadyDownloaded = []
 const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
 
   const names = await (await fetch("https://service.geochatter.tv/flagpacks/names.json")).json()
-  console.log(names)
   Object.entries(options).forEach(([key, value]) => {
     // FIXME: don"t replace show any more keep streamer settings in sync with streamer settings from server
     if (key === "isUSStreak") {
@@ -22,10 +21,12 @@ const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
     try {
       const installedFlagPack = JSON.parse(options.installedFlagPacks)
 
-      for (const url of Array.isArray(installedFlagPack) ? installedFlagPack :  Object.keys(installedFlagPack)) {
+      for (const code of  installedFlagPack ) {
 
-        if (typeof url === "string" && !alreadyDownloaded.includes(url)) {
-          downloadAndUnzipFlags("https://service.geochatter.tv/flagpacks/" + names.packs[url] + ".zip")
+        if (typeof code === "string" && !alreadyDownloaded.includes(code)) {
+          alreadyDownloaded.push(code)
+          const [key, _ ] = Object.entries(names.packs).find(([_,value]) => value === code)
+          downloadAndUnzipFlags("https://service.geochatter.tv/flagpacks/" + key + ".zip")
         }
       }
     }
