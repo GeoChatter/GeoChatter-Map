@@ -48,7 +48,8 @@ export class Settings {
     borderAdmin: true,
     showStreamOverlay: false,
     temporaryGuesses: false,
-    streamer: undefined
+    streamer: undefined,
+    twitchChannelName: undefined
   }
 
 
