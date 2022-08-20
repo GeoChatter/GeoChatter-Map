@@ -26,6 +26,15 @@
 			iconSize: [30, 30],
 			className: 'rounded-full border-2 border-white'
 		});
+		user.subscribe(user => {
+			if (user) {
+				profileIcon = L.icon({
+					iconUrl: user.user_metadata.picture,
+					iconSize: [30, 30],
+					className: 'rounded-full border-2 border-white'
+				});
+			}
+		});
 	}
 	let countryName = '';
 	function initLeaflet(node) {

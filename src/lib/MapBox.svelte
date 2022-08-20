@@ -273,6 +273,14 @@
 				el.style.backgroundImage = `url(${
 					$user?.user_metadata?.picture ?? 'https://geochatter.tv/icon_smaller.ico'
 				})`;
+
+				user.subscribe(user => {
+					if (user) {
+						el.style.backgroundImage = `url(${
+							user?.user_metadata?.picture ?? 'https://geochatter.tv/icon_smaller.ico'
+						})`;
+					}
+				});
 				el.style.width = `${width}px`;
 				el.style.height = `${height}px`;
 				el.style.backgroundSize = '100%';
