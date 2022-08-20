@@ -16,6 +16,7 @@ let bordersLoaded = false
 const result_borders = []
 async function downloadAndUnzip() {
   // not really loaded but it like this so it doesn't get called again
+  if (bordersLoaded) return
   bordersLoaded = true
   try {
     const response = await fetch(BORDER_URL, { cache: "no-cache" })
