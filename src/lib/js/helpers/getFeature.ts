@@ -59,13 +59,16 @@ export async function downloadAndUnzipFlags(flagsUrl = FLAGS_URL) {
       try {
 
         const content = await countryFile.async("string")
-        svgs[countryFile.name.toLowerCase().replace(".svg", "").replace("flags/", "")] = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(content)))
+        if (countryFile.name.toLowerCase().endsWith("svg")) {
+          svgs[countryFile.name.toLowerCase().replace(".svg", "").replace("flags/", "")] = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(content)))
+        }
       }
       catch (e) {
         console.log(e)
       }
 
     }
+    
   }
   catch (e) {
     console.log(e)

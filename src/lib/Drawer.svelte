@@ -86,9 +86,8 @@
 					</button>
 				</div>
 
-				{#await svgs then flags}
 					<div class={!chooseFlag ? 'hidden' : 'border-2 rounded-md p-2'}>
-						{#each Object.entries(flags) as [code, flag]}
+						{#each Object.entries(svgs).sort() as [code, flag]}
 							{#if code}
 								<li
 									class={!chooseFlag ? 'hidden' : ''}
@@ -111,7 +110,6 @@
 							{/if}
 						{/each}
 					</div>
-				{/await}
 			{/if}
 			<MapPicker isDrawer={true} />
 

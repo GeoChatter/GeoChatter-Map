@@ -8,8 +8,11 @@ import settings from './settings';
 import { GCSocketClient, z, Guess, Flag, Color, MapOptions } from 'GCSocketClient';
 import { downloadAndUnzipFlags } from './helpers/getFeature';
 
-const setStreamerSettings = (options: z.infer<typeof MapOptions>) =>
+const alreadyDownloaded = []
+const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
 
+  const names = await (await fetch("https://service.geochatter.tv/flagpacks/names.json")).json()
+  console.log(names)
   Object.entries(options).forEach(([key, value]) => {
     // FIXME: don"t replace show any more keep streamer settings in sync with streamer settings from server
     if (key === "isUSStreak") {
@@ -17,14 +20,13 @@ const setStreamerSettings = (options: z.infer<typeof MapOptions>) =>
     }
     // installing flag packs 
     try {
-    const installedFlagPack = JSON.parse(options.installedFlagPacks)
+      const installedFlagPack = JSON.parse(options.installedFlagPacks)
 
-    for (const url of Object.values(installedFlagPack)) {
+      for (const url of Array.isArray(installedFlagPack) ? installedFlagPack :  Object.keys(installedFlagPack)) {
 
-      if (typeof url === "string") {
-        console.log(url)
-        downloadAndUnzipFlags(url)
-      }
+        if (typeof url === "string" && !alreadyDownloaded.includes(url)) {
+          downloadAndUnzipFlags("https://service.geochatter.tv/flagpacks/" + names.packs[url] + ".zip")
+        }
       }
     }
     catch (e) {
@@ -38,6 +40,7 @@ const setStreamerSettings = (options: z.infer<typeof MapOptions>) =>
       settings.changeStreamerSettings(parseResponse.data, value)
     }
   })
+}
 class Api {
   _bot: string | undefined;
   client: GCSocketClient
@@ -128,7 +131,7 @@ class Api {
         }; Flag
     }
 
-    this.client.sendGuess(data)
+    this.client.sendGuess(data, false)
 
 
   }
