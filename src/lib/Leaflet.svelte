@@ -80,6 +80,7 @@
 
 			countryName = country?.properties?.shapeName ?? countryNameResponse;
 
+			console.log(svg)
 			flag = svg;
 
 			if (currSelectedCountry) {

@@ -6,9 +6,10 @@ import { get } from "svelte/store";
 import settings from './settings';
 
 import { GCSocketClient, z, Guess, Flag, Color, MapOptions } from 'GCSocketClient';
-import { downloadAndUnzipFlags } from './helpers/getFeature';
+import { downloadAndUnzipFlags, flagsLoaded, removeFlagPack } from './helpers/getFeature';
 
-const alreadyDownloaded = []
+let old_flag_packs: Set<string> = new Set()
+let new_flag_packs: Set<string> = new Set()
 const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
 
   const names = await (await fetch("https://service.geochatter.tv/flagpacks/names.json")).json()
@@ -21,17 +22,27 @@ const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
     try {
       const installedFlagPack = JSON.parse(options.installedFlagPacks)
 
-      for (const code of  installedFlagPack ) {
+      old_flag_packs = new_flag_packs
+      new_flag_packs = new Set()
+      for (const code of installedFlagPack ) {
+        if (typeof code === "string") {
 
-        if (typeof code === "string" && !alreadyDownloaded.includes(code)) {
-          alreadyDownloaded.push(code)
           const [key, _ ] = Object.entries(names.packs).find(([_,value]) => value === code)
-          downloadAndUnzipFlags("https://service.geochatter.tv/flagpacks/" + key + ".zip")
+          const url = "https://service.geochatter.tv/flagpacks/" + key + ".zip"
+          new_flag_packs.add(url)
+          if(!old_flag_packs.has(url)) {
+             downloadAndUnzipFlags(url)
+          }
         }
       }
+   /* Removing flag packs that are not in the new flag pack list. */
+      old_flag_packs.forEach(url => {
+        if (!new_flag_packs.has(url)) {
+           removeFlagPack(url)
+        }
+      })
     }
     catch (e) {
-      console.log("flagpacks not valid json i think")
       console.log(e)
 
     }
@@ -132,7 +143,7 @@ class Api {
         }; Flag
     }
 
-    this.client.sendGuess(data, false)
+    this.client.sendGuess(data, !random)
 
 
   }

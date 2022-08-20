@@ -8,12 +8,12 @@
 	import settings from './js/settings';
 	import MapPicker from './MapPicker.svelte';
 	import { close } from './MovableDiv.svelte';
-	import { svgs } from '$lib/js/helpers/getFeature';
+	import { downloadAndUnzipFlags, flagsLoaded, svgs } from '$lib/js/helpers/getFeature';
 	import api from './js/api';
 
 	import autoAnimate from '@formkit/auto-animate';
+	import Flag from './Flag.svelte';
 	let chooseFlag = false;
-
 
 	let timeout: NodeJS.Timeout;
 </script>
@@ -64,7 +64,7 @@
 
 			{#if $user}
 				<div class="flex items-center justify-center h-fit w-fit mb-2">
-					<div >
+					<div>
 						<ColorPicker
 							handleColor={(color) => {
 								if (timeout) {
@@ -72,13 +72,16 @@
 								}
 								timeout = setTimeout(() => {
 									api.sendColor(color);
-								},5000);
+								}, 5000);
 							}}
 						/>
 					</div>
 					<button
 						class="btn  w-36"
 						on:click={() => {
+							if (!$flagsLoaded) {
+								downloadAndUnzipFlags();
+							}
 							chooseFlag = !chooseFlag;
 						}}
 					>
@@ -86,7 +89,8 @@
 					</button>
 				</div>
 
-					<div class={!chooseFlag ? 'hidden' : 'border-2 rounded-md p-2'}>
+				<div class={!chooseFlag ? 'hidden' : 'border-2 rounded-md p-2'}>
+					{#if $flagsLoaded}
 						{#each Object.entries(svgs).sort() as [code, flag]}
 							{#if code}
 								<li
@@ -109,7 +113,10 @@
 								</li>
 							{/if}
 						{/each}
-					</div>
+					{:else}
+						loading...
+					{/if}
+				</div>
 			{/if}
 			<MapPicker isDrawer={true} />
 
@@ -154,7 +161,7 @@
 				<label class="label cursor-pointer">
 					<span class="label-text">Show State/Province borders (US/UK/CA for now)</span>
 					<input
-						disabled={!$settings.streamerSettings.ShowborderAdmin}
+						disabled={!$settings.streamerSettings.borderAdmin}
 						type="checkbox"
 						class="toggle"
 						on:click={() => $settings.change('borderAdmin', !$settings.values.borderAdmin)}

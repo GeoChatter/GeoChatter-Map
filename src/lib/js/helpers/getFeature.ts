@@ -1,5 +1,6 @@
 // @ts-ignore
 import JSZip from "jszip";
+import { get, writable } from 'svelte/store';
 
 import settings from "../settings";
 
@@ -11,9 +12,11 @@ const FLAGS_URL = 'https://service.geochatter.tv/resources/flags/content.zip'
 
 // const FLAGS_URL = dev ? "/contentFlags.zip" : "/testing_map/contentFlags.zip"
 
-
+let bordersLoaded = false
+const result_borders = []
 async function downloadAndUnzip() {
-  const result_borders: FeatureCollection<MultiPolygon>[] = []
+  // not really loaded but it like this so it doesn't get called again
+  bordersLoaded = true
   try {
     const response = await fetch(BORDER_URL, { cache: "no-cache" })
     const blob = await response.blob();
@@ -43,13 +46,22 @@ async function downloadAndUnzip() {
   }
 
 
-  return result_borders
 }
 
 
+export const flagsLoaded = writable(false)
 export const svgs = {} 
-downloadAndUnzipFlags()
+
+export const urls_keys = {} 
+export function removeFlagPack(url: string) {
+  console.log(urls_keys)
+  urls_keys[url].for_each(key => {
+    delete svgs[key]
+  })
+  delete urls_keys[url] 
+}
 export async function downloadAndUnzipFlags(flagsUrl = FLAGS_URL) {
+  if (flagsUrl === FLAGS_URL && get(flagsLoaded)) return
   try {
     const response = await fetch(flagsUrl, { cache: "no-cache" })
     const blob = await response.blob();
@@ -60,7 +72,14 @@ export async function downloadAndUnzipFlags(flagsUrl = FLAGS_URL) {
 
         const content = await countryFile.async("string")
         if (countryFile.name.toLowerCase().endsWith("svg")) {
-          svgs[countryFile.name.toLowerCase().replace(".svg", "").replace("flags/", "")] = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(content)))
+          let key = countryFile.name.toLowerCase().replace(".svg", "").replace("flags/", "")
+          if (flagsUrl !== FLAGS_URL) {
+            if (!urls_keys[flagsUrl]) {
+              urls_keys[flagsUrl] = []
+            }
+            urls_keys[flagsUrl].push(key)
+          }
+          svgs[key] = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(content)))
         }
       }
       catch (e) {
@@ -73,13 +92,16 @@ export async function downloadAndUnzipFlags(flagsUrl = FLAGS_URL) {
   catch (e) {
     console.log(e)
   }
+  console.log(flagsUrl, FLAGS_URL)
+  if (flagsUrl === FLAGS_URL) {
+    flagsLoaded.set(true)
+  }
 }
 
 
 
 
 
-const bordersFeatureCollections = downloadAndUnzip()
 // download iso.json
 async function downloadISO() {
   const isoData = await fetch("https://service.geochatter.tv/resources/other/iso.json")
@@ -119,18 +141,25 @@ async function getFlagName(feat: Feature) {
 
 const getCountryNameByISO = async (iso: string) => {
   const isoObj = await isos
-  return isoObj.find(country => country.Alpha2 === iso)?.name
+  return isoObj.find(country => country.Alpha2.toLowerCase() === iso.toLowerCase())?.name
 }
 
 
 export const getCountry = async (lat: number, lng: number) => {
   // if (!settings.values.showBorders) return [undefined, undefined, undefined]
-  if (!bordersFeatureCollections) return
   // api.getCountry(lat, lng)
   // geometries[country]?.feature?.geometry
-  const flags = svgs
-  const [ allBorders, downloadISO] = await Promise.all([ bordersFeatureCollections, isos])
-  for (const borders of allBorders) {
+
+  if (!bordersLoaded && settings.values.showFlags || settings.values.showBorders) {
+    downloadAndUnzip()
+  }
+  if (!get(flagsLoaded) && settings.values.showFlags) {
+    downloadAndUnzipFlags()
+  }
+
+
+  const [ downloadISO] = await Promise.all([ isos])
+  for (const borders of result_borders) {
     // console.log(borders)
     for (const feature of borders.features) {
       let contains: FeatureCollection<Point, { [name: string]: any; }>
@@ -139,8 +168,7 @@ export const getCountry = async (lat: number, lng: number) => {
       }
       if (contains.features.length > 0) {
         const flagIso = await getFlagName(feature)
-
-        const svg = settings.values.showFlags ? flags[flagIso] : undefined
+        const svg = settings.values.showFlags ? svgs[flagIso.toLowerCase()] : undefined
         const countryName = await getCountryNameByISO(flagIso)
         if (settings.values.borderAdmin) return [borders, svg, countryName]
         else return [feature, svg, countryName]
