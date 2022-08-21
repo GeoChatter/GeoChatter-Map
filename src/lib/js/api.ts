@@ -36,7 +36,7 @@ const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
         }
       }
    /* Removing flag packs that are not in the new flag pack list. */
-      old_flag_packs.forEach(url => {
+     Array.from(old_flag_packs).forEach(url => {
         if (!new_flag_packs.has(url)) {
            removeFlagPack(url)
         }

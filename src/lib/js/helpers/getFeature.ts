@@ -55,8 +55,8 @@ export const svgs = {}
 
 export const urls_keys = {} 
 export function removeFlagPack(url: string) {
-  console.log(urls_keys)
-  urls_keys[url].for_each(key => {
+  console.log(url,urls_keys)
+  urls_keys[url].forEach(key => {
     delete svgs[key]
   })
   delete urls_keys[url] 
