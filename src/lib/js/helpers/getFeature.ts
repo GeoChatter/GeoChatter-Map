@@ -1,5 +1,6 @@
-// @ts-ignore
-import JSZip from "jszip";
+
+import * as JSZip from "jszip";
+
 import { get, writable } from 'svelte/store';
 
 import settings from "../settings";
@@ -32,6 +33,7 @@ async function downloadAndUnzip() {
             result_borders.push(json)
 
           } catch {
+            
 
           }
         })()
@@ -73,7 +75,7 @@ export async function downloadAndUnzipFlags(flagsUrl = FLAGS_URL) {
 
         const content = await countryFile.async("string")
         if (countryFile.name.toLowerCase().endsWith("svg")) {
-          let key = countryFile.name.toLowerCase().replace(".svg", "").replace("flags/", "")
+          const key = countryFile.name.toLowerCase().replace(".svg", "").replace("flags/", "")
           if (flagsUrl !== FLAGS_URL) {
             if (!urls_keys[flagsUrl]) {
               urls_keys[flagsUrl] = []
@@ -105,7 +107,7 @@ export async function downloadAndUnzipFlags(flagsUrl = FLAGS_URL) {
 
 // download iso.json
 async function downloadISO() {
-  const isoData = await fetch("https://service.geochatter.tv/resources/other/iso.json")
+  const isoData = await fetch("https://service.geochatter.tv/resources/other/iso.json", { cache: "no-cache" })
   const isoObj = await isoData.json()
 
   return isoObj
@@ -159,7 +161,7 @@ export const getCountry = async (lat: number, lng: number) => {
   }
 
 
-  const [ downloadISO] = await Promise.all([ isos])
+  await isos
   for (const borders of result_borders) {
     // console.log(borders)
     for (const feature of borders.features) {

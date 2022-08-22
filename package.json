@@ -52,6 +52,7 @@
     "@turf/helpers": "^6.5.0",
     "@turf/point-on-feature": "^6.5.0",
     "@turf/points-within-polygon": "^6.5.0",
+    "@types/jszip": "^3.4.1",
     "@types/leaflet": "^1.7.9",
     "d3-geo": "^3.0.1",
     "daisyui": "^2.13.6",
