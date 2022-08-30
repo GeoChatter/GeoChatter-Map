@@ -4,7 +4,7 @@
 	import { browser, dev } from '$app/env';
 	import { supabase } from '$lib/supabase';
 	import Auth from '$lib/Auth.svelte';
-	import settings from '$lib/js/settings';
+	import { user } from '$lib/supabase';
 	if (browser && !dev) {
 		window.console.log = () => {};
 		window.console.warn = () => {};
@@ -32,7 +32,7 @@
 			console.log('flag sent');
 		}}>test flag</button
 	> -->
-	{#if supabase.auth.user() === null}
+	{#if $user === null}
 		<div class="flex justify-center items-center w-full h-full">
 			<div>
 				<div class="text-center p-4">Sign in to play</div>
