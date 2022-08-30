@@ -3,7 +3,7 @@
 	// @ts-ignore
 	import { browser } from '$app/env';
 	import { mapType, styles } from '$lib/MapPicker.svelte';
-	import { LogInIcon, EyeOffIcon } from 'svelte-feather-icons';
+	import { LogInIcon, EyeOffIcon, ListIcon, FlagIcon, AwardIcon } from 'svelte-feather-icons';
 	import Leaflet from './Leaflet.svelte';
 	import MapBox from './MapBox.svelte';
 	import Feedback from '$lib/Feedback.svelte';
@@ -63,12 +63,29 @@
 
 	let loading = false;
 	let newBot;
+	let scoreBoardModal = false
 </script>
 
 {#if api.bot}
+
 	{#if $settings.values.showStreamOverlay && $settings.streamerSettings.twitchChannelName}
 		<MovableDiv><Twitch /></MovableDiv>
 	{/if}
+	<btn on:click={() => {
+		scoreBoardModal = true 
+	}} class="btn btn-primary absolute z-[3900] top-32 left-2"><AwardIcon/></btn>
+	{#if scoreBoardModal}
+	<div class="modal modal-open">
+	<div class="modal-box relative">
+		<label for="my-modal-3" on:click={() => {
+			scoreBoardModal = false
+		}} class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+		<h3 class="text-lg font-bold">Scoreboard</h3>
+		<p class="py-4">Coming soon...</p>
+	</div>
+	</div>
+	{/if}
+
 	<Alert />
 	<div class="hidden sm:flex absolute bottom-8 left-2 ">
 		<Feedback />
