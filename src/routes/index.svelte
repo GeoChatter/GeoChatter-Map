@@ -3,6 +3,8 @@
 
 	import { browser, dev } from '$app/env';
 	import { supabase } from '$lib/supabase';
+	import Auth from '$lib/Auth.svelte';
+	import settings from '$lib/js/settings';
 	if (browser && !dev) {
 		window.console.log = () => {};
 		window.console.warn = () => {};
@@ -14,7 +16,7 @@
 			let pic = supabase.auth.user().user_metadata.picture;
 			let res = await fetch(pic);
 			if (res.status !== 200) {
-			    console.log('pfp not found. trying to sign in again');
+				console.log('pfp not found. trying to sign in again');
 				await supabase.auth.signIn({
 					provider: 'twitch'
 				});
@@ -30,5 +32,15 @@
 			console.log('flag sent');
 		}}>test flag</button
 	> -->
-	<Map />
+	{#if supabase.auth.user() === null}
+		<div class="flex justify-center items-center w-full h-full">
+			<div>
+				<div class="text-center p-4">Sign in to play</div>
+			<div class="w-fit">
+				<Auth />
+			</div></div>
+		</div>
+	{:else}
+		<Map />
+	{/if}
 </main>

@@ -161,7 +161,7 @@
 				<label class="label cursor-pointer">
 					<span class="label-text">Show State/Province borders (US/UK/CA for now)</span>
 					<input
-						disabled={!$settings.streamerSettings.borderAdmin}
+						disabled={!$settings.streamerSettings.borderAdmin }
 						type="checkbox"
 						class="toggle"
 						on:click={() => $settings.change('borderAdmin', !$settings.values.borderAdmin)}

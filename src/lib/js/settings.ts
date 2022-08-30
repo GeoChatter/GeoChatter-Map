@@ -51,6 +51,16 @@ export class Settings {
     streamer: undefined,
     twitchChannelName: undefined
   }
+  streamerSettingsDefaults = {
+    showBorders: false,
+    showFlags: false,
+    borderAdmin: true,
+    showStreamOverlay: false,
+    temporaryGuesses: false,
+    streamer: undefined,
+    twitchChannelName: undefined
+  }
+
 
 
   changeStreamerSettings(key: z.infer<typeof streamerSettingsKeys>, newVal) {
@@ -73,7 +83,7 @@ export class Settings {
     const values = JSON.parse(JSON.stringify(this._values))
 
     for (const key of Object.keys(this.streamerSettings)) {
-      if (this.streamerSettings[key] === false) {
+      if (this.streamerSettings[key] !== this.streamerSettingsDefaults[key]) {
         values[key] = this.streamerSettings[key]
       }
     }
