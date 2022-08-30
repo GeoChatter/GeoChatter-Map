@@ -73,7 +73,7 @@
 	{/if}
 	<btn on:click={() => {
 		scoreBoardModal = true 
-	}} class="btn btn-primary absolute z-[3900] top-32 left-2"><AwardIcon/></btn>
+	}} class="btn btn-warning absolute z-[3900] top-32 left-2"><AwardIcon/></btn>
 	{#if scoreBoardModal}
 	<div class="modal modal-open">
 	<div class="modal-box relative">
