@@ -8,12 +8,14 @@
 	import settings from './js/settings';
 	import MapPicker from './MapPicker.svelte';
 	import { close } from './MovableDiv.svelte';
-	import { svgs } from '$lib/js/helpers/getFeature';
+	import { downloadAndUnzipFlags, flagsLoaded, svgs } from '$lib/js/helpers/getFeature';
 	import api from './js/api';
-	import { killConnection} from "./js/signalR"
 
 	import autoAnimate from '@formkit/auto-animate';
+	import Flag from './Flag.svelte';
 	let chooseFlag = false;
+
+	let timeout: NodeJS.Timeout;
 </script>
 
 <div
@@ -43,7 +45,8 @@
 					<a
 						class=" normal-case text-xl font-bold"
 						target="_blank"
-						href="https://www.geochatter.tv/">GeoChatter</a
+						href="https://www.geochatter.tv/"
+						><img class="h-8" src="https://geochatter.tv/icon_smaller.ico" />GeoChatter</a
 					>
 				</li>
 				<li class="">
@@ -64,13 +67,21 @@
 					<div>
 						<ColorPicker
 							handleColor={(color) => {
-								api.sendColor(color);
+								if (timeout) {
+									clearTimeout(timeout);
+								}
+								timeout = setTimeout(() => {
+									api.sendColor(color);
+								}, 5000);
 							}}
 						/>
 					</div>
 					<button
 						class="btn  w-36"
 						on:click={() => {
+							if (!$flagsLoaded) {
+								downloadAndUnzipFlags();
+							}
 							chooseFlag = !chooseFlag;
 						}}
 					>
@@ -78,9 +89,9 @@
 					</button>
 				</div>
 
-				{#await svgs then flags}
-					<div class={!chooseFlag ? 'hidden' : 'border-2 rounded-md p-2'}>
-						{#each Object.entries(flags) as [code, flag]}
+				<div class={!chooseFlag ? 'hidden' : 'border-2 rounded-md p-2'}>
+					{#if $flagsLoaded}
+						{#each Object.entries(svgs).sort() as [code, flag]}
 							{#if code}
 								<li
 									class={!chooseFlag ? 'hidden' : ''}
@@ -91,7 +102,7 @@
 									}}
 								>
 									<div class="flex">
-										{#if $settings.streamerSettings.flags}
+										{#if $settings.streamerSettings.showFlags}
 											<div
 												style={`background-size: contain;background-position: 50%;background-repeat: no-repeat;background-image: url('${flag}'); height:30px;width:30px`}
 											/>
@@ -102,8 +113,10 @@
 								</li>
 							{/if}
 						{/each}
-					</div>
-				{/await}
+					{:else}
+						loading...
+					{/if}
+				</div>
 			{/if}
 			<MapPicker isDrawer={true} />
 
@@ -138,17 +151,17 @@
 				<label class="label cursor-pointer">
 					<span class="label-text">enable borders</span>
 					<input
-						disabled={!$settings.streamerSettings.borders}
+						disabled={!$settings.streamerSettings.showBorders}
 						type="checkbox"
 						class="toggle"
-						on:click={() => $settings.change('borders', !$settings.values.borders)}
-						checked={$settings.values.borders}
+						on:click={() => $settings.change('showBorders', !$settings.values.showBorders)}
+						checked={$settings.values.showBorders}
 					/>
 				</label>
 				<label class="label cursor-pointer">
 					<span class="label-text">Show State/Province borders (US/UK/CA for now)</span>
 					<input
-						disabled={!$settings.streamerSettings.borderAdmin}
+						disabled={!$settings.streamerSettings.borderAdmin }
 						type="checkbox"
 						class="toggle"
 						on:click={() => $settings.change('borderAdmin', !$settings.values.borderAdmin)}
@@ -158,32 +171,33 @@
 				<label class="label cursor-pointer">
 					<span class="label-text">enable flags</span>
 					<input
-						disabled={!$settings.streamerSettings.flags}
+						disabled={!$settings.streamerSettings.showFlags}
 						type="checkbox"
 						class="toggle"
-						on:click={() => $settings.change('flags', !$settings.values.flags)}
-						checked={$settings.values.flags}
+						on:click={() => $settings.change('showFlags', !$settings.values.showFlags)}
+						checked={$settings.values.showFlags}
 					/>
 				</label>
 				<label class="label cursor-pointer">
 					<span class="label-text">enable stream popup</span>
 					<input
-						disabled={!$settings.streamerSettings.streamOverlay}
+						disabled={!$settings.streamerSettings.showStreamOverlay}
 						type="checkbox"
 						class="toggle"
-						on:click={() => $settings.change('streamOverlay', !$settings.values.streamOverlay)}
-						checked={$settings.values.streamOverlay}
+						on:click={() =>
+							$settings.change('showStreamOverlay', !$settings.values.showStreamOverlay)}
+						checked={$settings.values.showStreamOverlay}
 					/>
 				</label>
 			</li>
 			<li class="sm:mb-0 mb-2 flex sm:hidden">
 				<Feedback />
 			</li>
-	{#if $settings.values.testing}
+			<!-- {#if $settings.values.testing}
 			<li>
 				<button class="btn btn-warning" on:click={killConnection}>close socket connection</button>
 			</li>
-			{/if}
+			{/if} -->
 		</ul>
 	</div>
 </div>

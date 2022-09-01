@@ -3,7 +3,7 @@
 	// @ts-ignore
 	import { browser } from '$app/env';
 	import { mapType, styles } from '$lib/MapPicker.svelte';
-	import { LogInIcon, EyeOffIcon } from 'svelte-feather-icons';
+	import { LogInIcon, EyeOffIcon, ListIcon, FlagIcon, AwardIcon } from 'svelte-feather-icons';
 	import Leaflet from './Leaflet.svelte';
 	import MapBox from './MapBox.svelte';
 	import Feedback from '$lib/Feedback.svelte';
@@ -63,12 +63,29 @@
 
 	let loading = false;
 	let newBot;
+	let scoreBoardModal = false
 </script>
 
 {#if api.bot}
-	{#if $settings.values.streamOverlay}
+
+	{#if $settings.values.showStreamOverlay && $settings.streamerSettings.twitchChannelName}
 		<MovableDiv><Twitch /></MovableDiv>
 	{/if}
+	<btn on:click={() => {
+		scoreBoardModal = true 
+	}} class="btn btn-warning absolute z-[3900] top-32 left-2"><AwardIcon/></btn>
+	{#if scoreBoardModal}
+	<div class="modal modal-open">
+	<div class="modal-box relative">
+		<label for="my-modal-3" on:click={() => {
+			scoreBoardModal = false
+		}} class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+		<h3 class="text-lg font-bold">Scoreboard</h3>
+		<p class="py-4">Coming soon...</p>
+	</div>
+	</div>
+	{/if}
+
 	<Alert />
 	<div class="hidden sm:flex absolute bottom-8 left-2 ">
 		<Feedback />
@@ -167,8 +184,8 @@
 	<div
 		class="w-full h-full text-center uppercase flex flex-col gap-2 items-center justify-center  "
 	>
-		please use the full link from the streamer or fill in the bot name below
-		<input class="input" placeholder="bot_name" bind:value={newBot} />
+		please use the full link from the streamer or fill in the map identifier name below
+		<input class="input input-bordered" placeholder="map identifier..." bind:value={newBot} />
 		<button class="btn btn-primary" on:click={() => (api.bot = newBot)}>go</button>
 	</div>
 {/if}

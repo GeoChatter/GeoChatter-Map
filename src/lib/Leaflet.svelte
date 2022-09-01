@@ -22,9 +22,18 @@
 	let flag = '';
 	if (browser) {
 		profileIcon = L.icon({
-			iconUrl: $user?.user_metadata?.picture ?? 'test.png',
+			iconUrl: $user?.user_metadata?.picture ?? 'https://geochatter.tv/icon_smaller.ico',
 			iconSize: [30, 30],
 			className: 'rounded-full border-2 border-white'
+		});
+		user.subscribe(user => {
+			if (user) {
+				profileIcon = L.icon({
+					iconUrl: user.user_metadata.picture,
+					iconSize: [30, 30],
+					className: 'rounded-full border-2 border-white'
+				});
+			}
 		});
 	}
 	let countryName = '';
@@ -71,12 +80,13 @@
 
 			countryName = country?.properties?.shapeName ?? countryNameResponse;
 
+			console.log(svg)
 			flag = svg;
 
 			if (currSelectedCountry) {
 				leaflet.removeLayer(currSelectedCountry);
 			}
-			if ($settings.values.borders) {
+			if ($settings.values.showBorders) {
 				currSelectedCountry = L.geoJSON(country, { style: { fillOpacity: 0.1 } }).addTo(leaflet);
 			}
 		}

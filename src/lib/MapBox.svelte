@@ -56,7 +56,7 @@
 				console.log(e);
 			}
 		}
-		if ($settings.values.borders) {
+		if ($settings.values.showBorders) {
 			id++;
 			mapBox.addSource(`countrySelected${id}`, { type: 'geojson', data: country });
 			currSelectedCountry = `countrySelected${id}`;
@@ -237,7 +237,9 @@
 				const width = 30;
 				const height = 30;
 				el.className = 'marker rounded-full border-2 border-white';
-				el.style.backgroundImage = `url(${$user?.user_metadata?.picture ?? 'test.png'})`;
+				el.style.backgroundImage = `url(${
+					$user?.user_metadata?.picture ?? 'https://geochatter.tv/icon_smaller.ico'
+				})`;
 				el.style.width = `${width}px`;
 				el.style.height = `${height}px`;
 				el.style.backgroundSize = '100%';
@@ -268,7 +270,17 @@
 				const width = 30;
 				const height = 30;
 				el.className = 'marker rounded-full border-2 border-white';
-				el.style.backgroundImage = `url(${$user?.user_metadata?.picture ?? 'test.png'})`;
+				el.style.backgroundImage = `url(${
+					$user?.user_metadata?.picture ?? 'https://geochatter.tv/icon_smaller.ico'
+				})`;
+
+				user.subscribe(user => {
+					if (user) {
+						el.style.backgroundImage = `url(${
+							user?.user_metadata?.picture ?? 'https://geochatter.tv/icon_smaller.ico'
+						})`;
+					}
+				});
 				el.style.width = `${width}px`;
 				el.style.height = `${height}px`;
 				el.style.backgroundSize = '100%';

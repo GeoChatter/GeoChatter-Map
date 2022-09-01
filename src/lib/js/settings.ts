@@ -2,6 +2,9 @@ import { writable, type Writable } from "svelte/store"
 // @ts-ignore
 import { browser } from "$app/env"
 
+import { z, MapOptions } from "GCSocketClient"
+
+const streamerSettingsKeys = MapOptions.keyof()
 export class Settings {
 
 
@@ -30,25 +33,37 @@ export class Settings {
     globe: false,
     copyAndPaste: false,
     borderAdmin: false,
-    borders: true,
+    showBorders: true,
     drawerOpen: false,
     globeView: true,
-    flags: true,
-    streamOverlay: true,
+    showFlags: true,
+    showStreamOverlay: true,
     temporaryGuesses: true,
     testing: false
   }
 
   streamerSettings = {
-    borders: false,
-    flags: false,
-    streamOverlay: false,
-    borderAdmin: false,
+    showBorders: false,
+    showFlags: false,
+    borderAdmin: true,
+    showStreamOverlay: false,
     temporaryGuesses: false,
-    streamer: undefined
+    streamer: undefined,
+    twitchChannelName: undefined
+  }
+  streamerSettingsDefaults = {
+    showBorders: false,
+    showFlags: false,
+    borderAdmin: true,
+    showStreamOverlay: false,
+    temporaryGuesses: false,
+    streamer: undefined,
+    twitchChannelName: undefined
   }
 
-  changeStreamerSettings(key: keyof typeof this.streamerSettings, newVal) {
+
+
+  changeStreamerSettings(key: z.infer<typeof streamerSettingsKeys>, newVal) {
     if (typeof this._values[key] !== undefined) {
       this.streamerSettings[key] = newVal
       this.refresh()
@@ -68,7 +83,7 @@ export class Settings {
     const values = JSON.parse(JSON.stringify(this._values))
 
     for (const key of Object.keys(this.streamerSettings)) {
-      if (this.streamerSettings[key] === false) {
+      if (this.streamerSettings[key] !== this.streamerSettingsDefaults[key]) {
         values[key] = this.streamerSettings[key]
       }
     }
@@ -80,12 +95,11 @@ export class Settings {
   constructor() {
     this.load()
     this.makeThisWritable();
-    console.log(this._values)
   }
 
   load() {
     if (browser) {
-      let loadedObj = JSON.parse(localStorage.getItem("settings")) ?? {}
+      const loadedObj = JSON.parse(localStorage.getItem("settings")) ?? {}
       for (const key of Object.keys(loadedObj)) {
         this._values[key] = loadedObj[key]
       }
@@ -97,8 +111,10 @@ export class Settings {
       localStorage.setItem("settings", JSON.stringify(this.values))
     }
   }
-  change(key: keyof typeof this._values, newVal) {
-    if (typeof this._values[key] !== undefined && Object.keys(this._values).includes(key)) {
+
+  change(key: keyof typeof this._values, newVal: boolean) {
+    if (typeof this._values[key] !== undefined) {
+      //@ts-ignore
       this._values[key] = newVal
       this.save()
       this.refresh()
@@ -107,8 +123,6 @@ export class Settings {
       console.log(
         "key not found"
       )
-
-
     }
   }
 }

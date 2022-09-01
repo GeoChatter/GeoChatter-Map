@@ -1,38 +1,99 @@
 
-
 import { show } from '$lib/Alert.svelte';
 
-import { writable } from "svelte/store";
-import { getCurrentState, startConnection, sendGuess, type Guess, type Flag, SendFlagToClients, sendColor } from "./signalR";
 import { user, auth, supabase } from '$lib/supabase';
 import { get } from "svelte/store";
 import settings from './settings';
 
-// TODO: REMOVE FOR SIGNALR API 
+import { GCSocketClient, z, Guess, Flag, Color, MapOptions } from 'GCSocketClient';
+import { downloadAndUnzipFlags, flagsLoaded, removeFlagPack } from './helpers/getFeature';
 
-// Check if target client is online
-const SERVER_GET = 'https://api.geochatter.tv/guess?botname=';
+let old_flag_packs: Set<string> = new Set()
+let new_flag_packs: Set<string> = new Set()
+const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
 
-// Send guess and read guess ID
-const SERVER_POST = 'https://api.geochatter.tv/guess/'; //'https://guess.geochatter.tv/api/' //
+  const names = await (await fetch("https://service.geochatter.tv/flagpacks/names.json")).json()
+  Object.entries(options).forEach(([key, value]) => {
+    // FIXME: don"t replace show any more keep streamer settings in sync with streamer settings from server
+    if (key === "isUSStreak") {
+      settings.change("borderAdmin", false)
+    }
+    // installing flag packs 
+    try {
+      const installedFlagPack = JSON.parse(options.installedFlagPacks)
 
-// Check guess status : 200 = processed , 100 = being processed , default = failed
-const SERVER_GUESS_CHECK = 'https://api.geochatter.tv/guess?id=';
+      old_flag_packs = new_flag_packs
+      new_flag_packs = new Set()
+      for (const code of installedFlagPack ) {
+        if (typeof code === "string") {
 
+          const [key, _ ] = Object.entries(names.packs).find(([_,value]) => value === code)
+          const url = "https://service.geochatter.tv/flagpacks/" + key + ".zip"
+          new_flag_packs.add(url)
+          if(!old_flag_packs.has(url)) {
+             downloadAndUnzipFlags(url)
+          }
+        }
+      }
+   /* Removing flag packs that are not in the new flag pack list. */
+     Array.from(old_flag_packs).forEach(url => {
+        if (!new_flag_packs.has(url)) {
+           removeFlagPack(url)
+        }
+      })
+    }
+    catch (e) {
+      console.log(e)
+
+    }
+    
+    const parseResponse = MapOptions.keyof().safeParse(key)
+    if (parseResponse.success) {
+      settings.changeStreamerSettings(parseResponse.data, value)
+    }
+  })
+}
 class Api {
   _bot: string | undefined;
-  constructor(bot?: string | undefined) {
-    this.bot = bot;
-    // this.isButtonEnabled = true
+  client: GCSocketClient
+  constructor(bot: string) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, bot ?? "", {
+      onFailedGuess: (_, text) => {
+
+        show(1, text, true)
+
+      },
+
+
+      onSuccessfulGuess: () => {
+        show(1, "Guess sent successfully")
+      }
+      , onStreamerSettings: setStreamerSettings,
+      onRoundStart: () => {
+        console.log("round start")
+      },
+      onGameStart: () => {
+        console.log("game start")
+      },
+      onRoundEnd: () => {
+        console.log("round end")
+      },
+      onGameEnd: () => {
+        console.log("game end")
+      },
+      
+    },
+    )
   }
 
 
   set bot(bot) {
     this._bot = bot
-    if (this.bot) {
-      startConnection(this.bot)
+    if (bot) {
+      this.client.streamerCode = bot
     }
-
   }
   get bot() {
     return this._bot
@@ -45,17 +106,17 @@ class Api {
       console.log("temporary guessing is not enabled")
       return
     }
-    let data: Guess;
+    let data: z.infer<typeof Guess>;
     const userStore = get(user)
     if (!userStore) return;
     // FIXME: add confirmed guess
-    switch (userStore.app_metadata.provider) {
-
-      case 'twitch':
+    switch (userStore.user_metadata.iss) {
+      case 'https://api.twitch.tv':
         data = {
           bot: this.bot,
           lat: lat,
           lng: lng,
+          sourcePlatform: "Twitch",
           tkn: auth.session()?.access_token,
           id: userStore.user_metadata.sub,
           name: userStore.user_metadata.name,
@@ -65,12 +126,13 @@ class Api {
           isRandom: random
         };
         break;
-      case 'google':
+      case 'https://www.googleapis.com/userinfo/v2/me':
         console.log(userStore.user_metadata);
         data = {
           bot: this.bot,
           lat: lat,
           lng: lng,
+          sourcePlatform: "YouTube",
           tkn: auth.session()?.access_token,
           id: userStore.user_metadata.sub,
           name: userStore.user_metadata.full_name,
@@ -78,87 +140,86 @@ class Api {
           pic: userStore.user_metadata.avatar_url,
           isTemporary: !confirmed,
           isRandom: random
-        };
-        break;
+        }; Flag
     }
 
-    console.log(data);
-    // loading = true;
-    console.log(data)
-    const [sendGuessError, sendGuessRes] = await this.sendGuess(data);
+    this.client.sendGuess(data, !random)
 
-    if (sendGuessError) {
-      console.log(sendGuessError);
-      alert('some thing went wrong while sending your guess');
-    }
 
-    if (!sendGuessError && confirmed) {
-      show(1, random ? "Random guess sent" : 'Guess sent');
-    }
   }
 
   async sendFlag(flag: string) {
 
     const userStore = get(user)
-    const data = {
-      bot: this._bot,
-      tkn: auth.session()?.access_token,
-      id: userStore.user_metadata.sub,
-      name: userStore.user_metadata.full_name,
-      display: userStore.user_metadata.name,
-      pic: userStore.user_metadata.avatar_url,
-      flag: flag,
-    };
-    const res = await SendFlagToClients(data);
+    let data: z.infer<typeof Flag>
 
-    return res;
+    switch (userStore.user_metadata.iss) {
+      case 'https://api.twitch.tv':
+        data = {
+          bot: this.bot,
+          sourcePlatform: "Twitch",
+          tkn: auth.session()?.access_token,
+          id: userStore.user_metadata.sub,
+          name: userStore.user_metadata.name,
+          display: userStore.user_metadata.slug,
+          flag: flag,
+          pic: userStore.user_metadata.picture,
+        };
+        break;
+      case 'https://www.googleapis.com/userinfo/v2/me':
+        console.log(userStore.user_metadata);
+        data = {
+          bot: this.bot,
+          sourcePlatform: "YouTube",
+          tkn: auth.session()?.access_token,
+          id: userStore.user_metadata.sub,
+          name: userStore.user_metadata.full_name,
+          display: userStore.user_metadata.name,
+          pic: userStore.user_metadata.avatar_url,
+          flag: flag,
+        };
+        break;
+    }
+    this.client.sendFlag(data)
+
   }
   async sendColor(color: string) {
 
     const userStore = get(user)
-    const data = {
-      bot: this._bot,
-      tkn: auth.session()?.access_token,
-      id: userStore.user_metadata.sub,
-      name: userStore.user_metadata.full_name,
-      display: userStore.user_metadata.name,
-      pic: userStore.user_metadata.avatar_url,
-      color: color,
-    };
-    const res = await sendColor(data);
 
-    return res;
-  }
-  // might be depreacated soon?
-  // async getCurrentState() {
-  //   let error: string;
-  //   let res
-  //   try {
-  //     res = await getCurrentState(this.bot)
-  //   } catch (e) {
-  //     error = e;
-  //   }
+    let data: z.infer<typeof Color>
 
-  //   const resObj = await res.json()
-  //   const streamer = resObj?.channelName
-  //   // console.log(this.streamer)
-
-  //   return [error, res];
-  // }
-
-  // add confirmed or not or random guess?
-  async sendGuess(data: Guess): Promise<([string, Response])> {
-    let error: string;
-    let res: any;
-    try {
-      res = await sendGuess(data);
-    } catch (e) {
-      error = e;
+    switch (userStore.user_metadata.iss) {
+      case 'https://api.twitch.tv':
+        data = {
+          bot: this.bot,
+          sourcePlatform: "Twitch",
+          tkn: auth.session()?.access_token,
+          id: userStore.user_metadata.sub,
+          name: userStore.user_metadata.name,
+          display: userStore.user_metadata.slug,
+          color,
+          pic: userStore.user_metadata.picture,
+        };
+        break;
+      case 'https://www.googleapis.com/userinfo/v2/me':
+        console.log(userStore.user_metadata);
+        data = {
+          bot: this.bot,
+          sourcePlatform: "YouTube",
+          tkn: auth.session()?.access_token,
+          id: userStore.user_metadata.sub,
+          name: userStore.user_metadata.full_name,
+          display: userStore.user_metadata.name,
+          pic: userStore.user_metadata.avatar_url,
+          color,
+        };
+        break;
     }
 
-    return [error, res];
+    this.client.sendColor(data)
   }
 
 }
-const api = new Api()
+const api = new Api("")
 export default api

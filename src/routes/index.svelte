@@ -3,21 +3,20 @@
 
 	import { browser, dev } from '$app/env';
 	import { supabase } from '$lib/supabase';
-	// import { senfFlagToClients } from '$lib/js/signalR';
-	// import { createFakeGuess } from '$lib/js/signalR.test';
-
+	import Auth from '$lib/Auth.svelte';
+	import { user } from '$lib/supabase';
 	if (browser && !dev) {
 		window.console.log = () => {};
 		window.console.warn = () => {};
-		window.console.error = () => {};
+		// window.console.error = () => {};
 	}
 	if (browser) {
 		(async () => {
 			if (supabase.auth.user() === null) return;
 			let pic = supabase.auth.user().user_metadata.picture;
 			let res = await fetch(pic);
-			console.log('pfp not found. trying to sign in again');
 			if (res.status !== 200) {
+				console.log('pfp not found. trying to sign in again');
 				await supabase.auth.signIn({
 					provider: 'twitch'
 				});
@@ -33,5 +32,15 @@
 			console.log('flag sent');
 		}}>test flag</button
 	> -->
-	<Map />
+	{#if $user === null}
+		<div class="flex justify-center items-center w-full h-full">
+			<div>
+				<div class="text-center p-4">Sign in to play</div>
+			<div class="w-fit">
+				<Auth />
+			</div></div>
+		</div>
+	{:else}
+		<Map />
+	{/if}
 </main>
