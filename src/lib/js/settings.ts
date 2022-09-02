@@ -83,7 +83,7 @@ export class Settings {
     const values = JSON.parse(JSON.stringify(this._values))
 
     for (const key of Object.keys(this.streamerSettings)) {
-      if (this.streamerSettings[key] !== this.streamerSettingsDefaults[key]) {
+      if (this._values[key] !== this.streamerSettingsDefaults[key]) {
         values[key] = this.streamerSettings[key]
       }
     }
