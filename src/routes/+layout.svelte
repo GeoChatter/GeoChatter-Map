@@ -1,6 +1,5 @@
 <script>
 	import Drawer from '$lib/Drawer.svelte';
-
 	import '../app.css';
 </script>
 

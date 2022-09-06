@@ -1,7 +1,9 @@
 <script>
+
+
 	import Map from '$lib/Map.svelte';
 
-	import { browser, dev } from '$app/env';
+	import { browser, dev } from '$app/environment';
 	import { supabase } from '$lib/supabase';
 	import Auth from '$lib/Auth.svelte';
 	import { user } from '$lib/supabase';

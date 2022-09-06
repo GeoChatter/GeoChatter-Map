@@ -2,7 +2,7 @@
 	import { user } from '$lib/supabase';
 	import settings from '$lib/js/settings';
 	// @ts-ignore
-	import { browser, dev } from '$app/env';
+	import { browser, dev } from '$app/environment';
 	import { mapType } from '$lib/MapPicker.svelte';
 	import { getCountry } from '$lib/js/helpers/getFeature';
 	import {

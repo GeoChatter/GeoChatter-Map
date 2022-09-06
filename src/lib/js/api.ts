@@ -59,6 +59,7 @@ class Api {
   constructor(bot: string) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
+    console.log(import.meta.VITE_GEOCHATTERURL)
     this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, bot ?? "", {
       onFailedGuess: (_, text) => {
 
