@@ -121,17 +121,17 @@
 			<MapPicker isDrawer={true} />
 
 			{#if $user}
-				<li class="form-control">
-					<label class="label cursor-pointer">
-						<span class="label-text">enable copy and paste</span>
-						<input
-							type="checkbox"
-							class="toggle"
-							on:click={() => $settings.change('copyAndPaste', !$settings.values.copyAndPaste)}
-							checked={$settings.values.copyAndPaste}
-						/>
-					</label>
-				</li>
+				<!-- <li class="form-control"> -->
+				<!-- 	<label class="label cursor-pointer"> -->
+				<!-- 		<span class="label-text">enable copy and paste</span> -->
+				<!-- 		<input -->
+				<!-- 			type="checkbox" -->
+				<!-- 			class="toggle" -->
+				<!-- 			on:click={() => $settings.change('copyAndPaste', !$settings.values.copyAndPaste)} -->
+				<!-- 			checked={$settings.values.copyAndPaste} -->
+				<!-- 		/> -->
+				<!-- 	</label> -->
+				<!-- </li> -->
 				<li class="form-control">
 					<label class="label cursor-pointer">
 						<span class="label-text">enable temporary guess</span>

@@ -8,7 +8,6 @@ const config = {
   preprocess: preprocess(),
   kit: {
 
-    prerender: { enabled: true, default: true },
     paths: {
       base: dev ? '' : process.env.BASE_PATH
 

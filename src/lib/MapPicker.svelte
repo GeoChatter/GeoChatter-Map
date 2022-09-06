@@ -20,7 +20,7 @@
 </script>
 
 <script lang="ts">
-	import { browser } from '$app/env';
+	import { browser } from '$app/environment';
 	import { MapIcon } from 'svelte-feather-icons';
 
 	const createMostUsedArray = (): string[] => {

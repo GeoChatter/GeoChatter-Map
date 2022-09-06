@@ -1,6 +1,6 @@
 import { writable, type Writable } from "svelte/store"
 // @ts-ignore
-import { browser } from "$app/env"
+import { browser } from "$app/environment"
 
 import { z, MapOptions } from "GCSocketClient"
 
@@ -99,9 +99,11 @@ export class Settings {
 
   load() {
     if (browser) {
-      const loadedObj = JSON.parse(localStorage.getItem("settings")) ?? {}
+      const loadedObj = JSON.parse(localStorage.getItem("settings")) ?? {}  
       for (const key of Object.keys(loadedObj)) {
-        this._values[key] = loadedObj[key]
+        if (key !== "copyAndPaste") {
+          this._values[key] = loadedObj[key]
+        }
       }
     }
   }

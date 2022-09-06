@@ -1,6 +1,6 @@
 <script>
 	import { user } from '$lib/supabase';
-	import { browser } from '$app/env';
+	import { browser } from '$app/environment';
 	import { getCountry } from '$lib/js/helpers/getFeature';
 
 	// import L from 'leaflet';
