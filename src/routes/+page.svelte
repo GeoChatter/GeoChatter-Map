@@ -1,4 +1,6 @@
 <script>
+
+
 	import Map from '$lib/Map.svelte';
 
 	import { browser, dev } from '$app/environment';

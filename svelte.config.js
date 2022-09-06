@@ -10,7 +10,6 @@ const config = {
 
     paths: {
       base: dev ? '' : process.env.BASE_PATH
-
     },
     adapter: adapter({
       // default options are shown

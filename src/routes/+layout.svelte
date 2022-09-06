@@ -1,6 +1,5 @@
 <script>
 	import Drawer from '$lib/Drawer.svelte';
-	export const prerender = true
 	import '../app.css';
 </script>
 
