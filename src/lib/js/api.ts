@@ -9,8 +9,11 @@ import { results } from "$lib/stores/gameResults"
 import { GCSocketClient, z, Guess, Flag, Color, MapOptions } from 'GCSocketClient';
 import { downloadAndUnzipFlags, flagsLoaded, removeFlagPack } from './helpers/getFeature';
 
+import { writable } from 'svelte/store';
+
 let old_flag_packs: Set<string> = new Set()
 let new_flag_packs: Set<string> = new Set()
+export const inRound = writable(false)
 const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
 
   const names = await (await fetch("https://service.geochatter.tv/flagpacks/names.json")).json()
@@ -76,22 +79,24 @@ class Api {
       onStreamerSettings: setStreamerSettings,
       onRoundStart: () => {
         console.log("round start")
+        inRound.set(true)
       },
       onGameStart: (mapGameSettings) => {
         console.log("game start")
+        inRound.set(true)
         console.log(mapGameSettings)
-        setStreamerSettings(mapGameSettings)
       },
       onRoundEnd: (roundEndData) => {
         console.log("round end")
         console.log(roundEndData)
         results.set(roundEndData)
-
+        inRound.set(false)
       },
       onGameEnd: (gameEndData) => {
         console.log("game end")
         console.log(gameEndData)
         results.set(gameEndData)
+        inRound.set(false)
       },
 
     },

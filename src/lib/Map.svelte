@@ -16,6 +16,8 @@
 	import settings from '$lib/js/settings';
 	import ScoreBoard from './ScoreBoard.svelte';
 
+	import {inRound} from '$lib/js/api'
+
 	let lastMapType;
 	let _3DEnabled = false;
 	let exaggeration = 1;
@@ -64,7 +66,7 @@
 
 	let loading = false;
 	let newBot;
-	let scoreBoardModal = false;
+	let openScoreBoardDuringRound = false
 </script>
 
 {#if api.bot}
@@ -73,17 +75,21 @@
 	{/if}
 	<btn
 		on:click={() => {
-			scoreBoardModal = true;
+			openScoreBoardDuringRound = true
 		}}
 		class="btn btn-warning absolute z-[3900] top-32 left-2"><AwardIcon /></btn
 	>
-	{#if scoreBoardModal}
+	{#if openScoreBoardDuringRound || !$inRound}
 		<div class="modal modal-open">
 			<div class="modal-box relative">
 				<label
 					for="my-modal-3"
 					on:click={() => {
-						scoreBoardModal = false;
+						openScoreBoardDuringRound = false
+						// maybe have another variable to indicate the scoreboard was closed 
+						// the variable would have to reset every time the in round was updated or the modal was opened 
+						// but setting inRound to true is good enough right now i think
+						inRound.set(true)
 					}}
 					class="btn btn-sm btn-circle absolute right-2 top-2">✕</label
 				>

@@ -13,6 +13,8 @@
 	const sortDistance = (row1: gamePlayer  | roundPlayer, row2: gamePlayer  | roundPlayer) =>
 		row1.distance - row2.distance;
 
+	const sortStreak = (row1: gamePlayer  | roundPlayer, row2: gamePlayer  | roundPlayer) =>
+		row2.streak - row1.streak;
     type results= z.infer<typeof MapGameEndResult> | z.infer<typeof MapRoundResult> 
     
 
@@ -21,13 +23,14 @@
 	currSort = sortScore;
 </script>
 
-<table class="table w-full h-full">
+<table class="table table-compact w-full h-full">
 	<thead>
 		<tr>
 			<th />
 			<th>Name</th>
 			<th class="cursor-pointer" on:click={() => (currSort = sortDistance)}>Distance</th>
 				<th class="cursor-pointer" on:click={() => (currSort = sortScore)}>Score</th>
+				<th class="cursor-pointer" on:click={() => (currSort = sortStreak)}>Streak</th>
 		</tr>
 	</thead>
     <!--  ignoring this type error i would need to constrain a generic to one or the other type  -->
@@ -49,6 +52,7 @@
 
 				<!-- not showing score in streaks game  -->
 					<th>{player.score} </th>
+					<th>{player.streak} </th>
 			</tr>
 		</tbody>
 	{/each}
