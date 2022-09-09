@@ -13,7 +13,7 @@ import { writable } from 'svelte/store';
 
 let old_flag_packs: Set<string> = new Set()
 let new_flag_packs: Set<string> = new Set()
-export const inRound = writable(false)
+export const inRound = writable(true)
 const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
 
   const names = await (await fetch("https://service.geochatter.tv/flagpacks/names.json")).json()
