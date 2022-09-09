@@ -14,6 +14,7 @@
 	import MovableDiv from '$lib/MovableDiv.svelte';
 	import Twitch from '$lib/Twitch.svelte';
 	import settings from '$lib/js/settings';
+	import ScoreBoard from './ScoreBoard.svelte';
 
 	let lastMapType;
 	let _3DEnabled = false;
@@ -63,27 +64,33 @@
 
 	let loading = false;
 	let newBot;
-	let scoreBoardModal = false
+	let scoreBoardModal = false;
 </script>
 
 {#if api.bot}
-
 	{#if $settings.values.showStreamOverlay && $settings.streamerSettings.twitchChannelName}
 		<MovableDiv><Twitch /></MovableDiv>
 	{/if}
-	<btn on:click={() => {
-		scoreBoardModal = true 
-	}} class="btn btn-warning absolute z-[3900] top-32 left-2"><AwardIcon/></btn>
+	<btn
+		on:click={() => {
+			scoreBoardModal = true;
+		}}
+		class="btn btn-warning absolute z-[3900] top-32 left-2"><AwardIcon /></btn
+	>
 	{#if scoreBoardModal}
-	<div class="modal modal-open">
-	<div class="modal-box relative">
-		<label for="my-modal-3" on:click={() => {
-			scoreBoardModal = false
-		}} class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-		<h3 class="text-lg font-bold">Scoreboard</h3>
-		<p class="py-4">Coming soon...</p>
-	</div>
-	</div>
+		<div class="modal modal-open">
+			<div class="modal-box relative">
+				<label
+					for="my-modal-3"
+					on:click={() => {
+						scoreBoardModal = false;
+					}}
+					class="btn btn-sm btn-circle absolute right-2 top-2">✕</label
+				>
+				<h3 class="text-lg font-bold">Scoreboard</h3>
+				<ScoreBoard />
+			</div>
+		</div>
 	{/if}
 
 	<Alert />

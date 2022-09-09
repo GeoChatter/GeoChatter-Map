@@ -5,6 +5,7 @@ import { user, auth, supabase } from '$lib/supabase';
 import { get } from "svelte/store";
 import settings from './settings';
 
+import { results } from "$lib/stores/gameResults"
 import { GCSocketClient, z, Guess, Flag, Color, MapOptions } from 'GCSocketClient';
 import { downloadAndUnzipFlags, flagsLoaded, removeFlagPack } from './helpers/getFeature';
 
@@ -24,21 +25,21 @@ const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
 
       old_flag_packs = new_flag_packs
       new_flag_packs = new Set()
-      for (const code of installedFlagPack ) {
+      for (const code of installedFlagPack) {
         if (typeof code === "string") {
 
-          const [key, _ ] = Object.entries(names.packs).find(([_,value]) => value === code)
+          const [key, _] = Object.entries(names.packs).find(([_, value]) => value === code)
           const url = "https://service.geochatter.tv/flagpacks/" + key + ".zip"
           new_flag_packs.add(url)
-          if(!old_flag_packs.has(url)) {
-             downloadAndUnzipFlags(url)
+          if (!old_flag_packs.has(url)) {
+            downloadAndUnzipFlags(url)
           }
         }
       }
-   /* Removing flag packs that are not in the new flag pack list. */
-     Array.from(old_flag_packs).forEach(url => {
+      /* Removing flag packs that are not in the new flag pack list. */
+      Array.from(old_flag_packs).forEach(url => {
         if (!new_flag_packs.has(url)) {
-           removeFlagPack(url)
+          removeFlagPack(url)
         }
       })
     }
@@ -46,7 +47,7 @@ const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
       console.log(e)
 
     }
-    
+
     const parseResponse = MapOptions.keyof().safeParse(key)
     if (parseResponse.success) {
       settings.changeStreamerSettings(parseResponse.data, value)
@@ -71,20 +72,28 @@ class Api {
       onSuccessfulGuess: () => {
         show(1, "Guess sent successfully")
       }
-      , onStreamerSettings: setStreamerSettings,
+      ,
+      onStreamerSettings: setStreamerSettings,
       onRoundStart: () => {
         console.log("round start")
       },
-      onGameStart: () => {
+      onGameStart: (mapGameSettings) => {
         console.log("game start")
+        console.log(mapGameSettings)
+        setStreamerSettings(mapGameSettings)
       },
-      onRoundEnd: () => {
+      onRoundEnd: (roundEndData) => {
         console.log("round end")
+        console.log(roundEndData)
+        results.set(roundEndData)
+
       },
-      onGameEnd: () => {
+      onGameEnd: (gameEndData) => {
         console.log("game end")
+        console.log(gameEndData)
+        results.set(gameEndData)
       },
-      
+
     },
     )
   }
