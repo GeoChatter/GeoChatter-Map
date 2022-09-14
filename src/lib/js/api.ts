@@ -67,13 +67,13 @@ class Api {
     this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, bot ?? "", {
       onFailedGuess: (_, text) => {
 
-        show(1, text, true)
+        show(5, text, true)
 
       },
 
 
       onSuccessfulGuess: () => {
-        show(1, "Guess sent successfully")
+        show(5, "Guess sent successfully")
       }
       ,
       onStreamerSettings: setStreamerSettings,
@@ -158,7 +158,7 @@ class Api {
         }; Flag
     }
 
-    this.client.sendGuess(data, !random)
+    this.client.sendGuess(data)
 
 
   }

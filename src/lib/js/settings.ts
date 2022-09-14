@@ -39,6 +39,7 @@ export class Settings {
     showFlags: true,
     showStreamOverlay: true,
     temporaryGuesses: true,
+    confirmedRandomGuess: false,
     testing: false
   }
 
@@ -51,6 +52,7 @@ export class Settings {
     streamer: undefined,
     twitchChannelName: undefined
   }
+
   streamerSettingsDefaults = {
     showBorders: false,
     showFlags: false,

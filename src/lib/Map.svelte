@@ -16,12 +16,20 @@
 	import settings from '$lib/js/settings';
 	import ScoreBoard from './ScoreBoard.svelte';
 
-	import {inRound} from '$lib/js/api'
+	import { inRound } from '$lib/js/api';
 
 	let lastMapType;
 	let _3DEnabled = false;
 	let exaggeration = 1;
 	let zoomSensitivity = 100;
+
+	function randomGuess() {
+		loading = true;
+		setTimeout(() => {
+			loading = false;
+		}, 5000);
+		api.sendGuessToBackend('0', '0', true, true);
+	}
 
 	function setSettingsFromLocalStorage() {
 		if (browser) {
@@ -66,8 +74,54 @@
 
 	let loading = false;
 	let newBot;
-	let openScoreBoardDuringRound = false
+	let openScoreBoardDuringRound = false;
+
+	let randomGuessModal = false;
 </script>
+
+{#if randomGuessModal}
+	<div class="modal modal-open z-[9999]">
+		<div class="modal-box relative w-fit">
+			<div class="flex justify-between">
+				<h3 class="font-bold px-6">Do you want to guess a random country?</h3>
+				<button
+					on:click={() => {
+						randomGuessModal = false;
+					}}
+					class="btn btn-sm btn-circle ">✕</button
+				>
+			</div>
+			<div class="grid">
+				<div class="flex justify-center space-x-3  items-center">
+					<button
+						on:click={() => {
+							randomGuessModal = false;
+						}}
+						class="btn btn-sm btn-secondary">Let me think about it</button
+					>
+					<button
+						on:click={() => {
+							randomGuess();
+							randomGuessModal = false;
+						}}
+						class="btn btn-sm btn-primary">Yes!</button
+					>
+				</div>
+				<div class="flex justify-center space-x-3 items-center pt-2">
+					<input
+						type="checkbox"
+						class="toggle"
+						on:click={() => {
+							settings.change('confirmedRandomGuess', !settings.values.confirmedRandomGuess);
+						}}
+						checked={$settings.values.confirmRandomGuess}
+					/>
+					<span class="text-sm">don't show again</span>
+				</div>
+			</div>
+		</div>
+	</div>
+{/if}
 
 {#if api.bot}
 	{#if $settings.values.showStreamOverlay && $settings.streamerSettings.twitchChannelName}
@@ -75,7 +129,7 @@
 	{/if}
 	<btn
 		on:click={() => {
-			openScoreBoardDuringRound = true
+			openScoreBoardDuringRound = true;
 		}}
 		class="btn btn-warning absolute z-[3900] top-32 left-2"><AwardIcon /></btn
 	>
@@ -85,11 +139,11 @@
 				<label
 					for="my-modal-3"
 					on:click={() => {
-						openScoreBoardDuringRound = false
-						// maybe have another variable to indicate the scoreboard was closed 
-						// the variable would have to reset every time the in round was updated or the modal was opened 
+						openScoreBoardDuringRound = false;
+						// maybe have another variable to indicate the scoreboard was closed
+						// the variable would have to reset every time the in round was updated or the modal was opened
 						// but setting inRound to true is good enough right now i think
-						inRound.set(true)
+						inRound.set(true);
 					}}
 					class="btn btn-sm btn-circle absolute right-2 top-2">✕</label
 				>
@@ -131,11 +185,11 @@
 			<button
 				disabled={loading}
 				on:click={() => {
-					loading = true;
-					setTimeout(() => {
-						loading = false;
-					}, 5000);
-					api.sendGuessToBackend('0', '0', true, true);
+					if ($settings.values.confirmedRandomGuess) {
+						randomGuess();
+					} else {
+						randomGuessModal = true;
+					}
 				}}
 				class="btn pointer-events-auto   z-[3000]  btn-secondary disabled:opacity-100 absolute bottom-8 right-5"
 			>
