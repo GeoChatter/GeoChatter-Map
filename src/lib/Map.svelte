@@ -83,7 +83,7 @@
 	<div class="modal modal-open z-[9999]">
 		<div class="modal-box relative w-fit">
 			<div class="flex justify-between">
-				<h3 class="font-bold px-6">Do you want to guess a random Country?</h3>
+				<h3 class="font-bold px-6">Do you want to guess a random country?</h3>
 				<button
 					on:click={() => {
 						randomGuessModal = false;
