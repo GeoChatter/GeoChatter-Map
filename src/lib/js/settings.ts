@@ -40,7 +40,8 @@ export class Settings {
     showStreamOverlay: true,
     temporaryGuesses: true,
     confirmedRandomGuess: false,
-    testing: false
+    // testing: false,
+    spacePlonking: true,
   }
 
   streamerSettings = {
@@ -101,7 +102,7 @@ export class Settings {
 
   load() {
     if (browser) {
-      const loadedObj = JSON.parse(localStorage.getItem("settings")) ?? {}  
+      const loadedObj = JSON.parse(localStorage.getItem("settings")) ?? {}
       for (const key of Object.keys(loadedObj)) {
         if (key !== "copyAndPaste") {
           this._values[key] = loadedObj[key]

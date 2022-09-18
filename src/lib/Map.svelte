@@ -7,7 +7,7 @@
 	import Leaflet from './Leaflet.svelte';
 	import MapBox from './MapBox.svelte';
 	import Feedback from '$lib/Feedback.svelte';
-	import { shortcut } from '$lib/shortcut';
+	import { spacePlonkShortcut } from '$lib/shortcut';
 	import api from '$lib/js/api';
 	import QuickSwitch from '$lib/QuickSwitch.svelte';
 	import Alert, { show } from '$lib/Alert.svelte';
@@ -162,7 +162,7 @@
 		{#if $user}
 			<button
 				disabled={!currentGuess || !$user || loading}
-				use:shortcut={{ code: 'Space', default: true }}
+				use:spacePlonkShortcut={{ code: 'Space', default: true }}
 				class="btn pointer-events-auto   z-[3000] btn-wide btn-primary disabled:opacity-100   absolute bottom-8 right-24"
 				on:click={() => {
 					loading = true;
@@ -174,7 +174,7 @@
 			>
 				{#if !loading}
 					{#if $user}
-						send guess (SPACE)
+						send guess {#if $settings.values.spacePlonking}(SPACE){/if}
 					{:else}
 						login to guess without pasting in twitch chat
 					{/if}
