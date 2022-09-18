@@ -1,7 +1,7 @@
 <script>
 	import { user, supabase, auth } from '$lib/supabase';
 
-	import settings from './js/settings';
+	// import settings from './js/settings';
 	import { LogOutIcon, LogInIcon } from 'svelte-feather-icons';
 </script>
 
@@ -22,39 +22,42 @@
 		</button>
 	</div>
 {:else}
-	<li class="btn w-full btn-primary mb-2 text-white text-left uppercase">
-		<button
-			class="uppercase"
-			on:click={async () =>
-				await supabase.auth.signIn(
-					{
-						provider: 'twitch'
-					},
-					{
-						redirectTo: window.location.href
-					}
-				)}><div class="flex">sign in with twitch <LogInIcon class="ml-2" size="1x" /></div></button
+	<li
+		on:click={async () =>
+			await supabase.auth.signIn(
+				{
+					provider: 'twitch'
+				},
+				{
+					redirectTo: window.location.href
+				}
+			)}
+		class="btn w-full btn-primary mb-2 text-white text-left uppercase"
+	>
+		<button class="uppercase"
+			><div class="flex">sign in with twitch <LogInIcon class="ml-2" size="1x" /></div></button
 		>
 	</li>
 	<!-- {#if $settings.values.testing} -->
-		<li class="btn w-full btn-primary mb-2 text-white text-left uppercase">
-			<button
-				on:click={async () =>
-					await supabase.auth.signIn(
-						{
-							provider: 'google'
-						},
-						{
-							redirectTo: window.location.href,
-							scopes: 'https://www.googleapis.com/auth/youtube.readonly'
-						}
-					)}
-				class="uppercase"
-				><div class="flex items-center">
-					<!-- <img src="yt.png" class="h-fit w-6" /> -->
-					sign in with youtube <LogInIcon class="ml-2" size="1x" />
-				</div></button
-			>
-		</li>
-	{/if}
+	<li
+		on:click={async () =>
+			await supabase.auth.signIn(
+				{
+					provider: 'google'
+				},
+				{
+					redirectTo: window.location.href,
+					scopes: 'https://www.googleapis.com/auth/youtube.readonly'
+				}
+			)}
+		class="btn w-full btn-primary mb-2 text-white text-left uppercase"
+	>
+		<button class="uppercase"
+			><div class="flex items-center">
+				<!-- <img src="yt.png" class="h-fit w-6" /> -->
+				sign in with youtube <LogInIcon class="ml-2" size="1x" />
+			</div></button
+		>
+	</li>
+{/if}
 <!-- {/if} -->
