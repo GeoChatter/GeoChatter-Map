@@ -17,6 +17,7 @@
 	import ScoreBoard from './ScoreBoard.svelte';
 
 	import { inRound } from '$lib/js/api';
+	import { results } from './stores/gameResults';
 
 	let lastMapType;
 	let _3DEnabled = false;
@@ -147,7 +148,7 @@
 					}}
 					class="btn btn-sm btn-circle absolute right-2 top-2">✕</label
 				>
-				<h3 class="text-lg font-bold">Scoreboard</h3>
+				<h3 class="text-lg font-bold">{$results.title}</h3>
 				<ScoreBoard />
 			</div>
 		</div>
