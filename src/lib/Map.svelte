@@ -18,6 +18,7 @@
 
 	import { inRound } from '$lib/js/api';
 	import { results } from './stores/gameResults';
+	
 
 	let lastMapType;
 	let _3DEnabled = false;
