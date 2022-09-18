@@ -201,6 +201,16 @@
 						checked={$settings.values.showStreamOverlay}
 					/>
 				</label>
+				<label class="label cursor-pointer">
+					<span class="label-text">enable guessing with space</span>
+					<input
+						type="checkbox"
+						class="toggle"
+						on:click={() =>
+							$settings.change('spacePlonking', !$settings.values.spacePlonking)}
+						checked={$settings.values.spacePlonking}
+					/>
+				</label>
 			</li>
 			<li class="sm:mb-0 mb-2 flex sm:hidden">
 				<Feedback />

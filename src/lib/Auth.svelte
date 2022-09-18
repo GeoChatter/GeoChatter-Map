@@ -36,7 +36,7 @@
 				)}><div class="flex">sign in with twitch <LogInIcon class="ml-2" size="1x" /></div></button
 		>
 	</li>
-	{#if $settings.values.testing}
+	<!-- {#if $settings.values.testing} -->
 		<li class="btn w-full btn-primary mb-2 text-white text-left uppercase">
 			<button
 				on:click={async () =>
@@ -57,4 +57,4 @@
 			>
 		</li>
 	{/if}
-{/if}
+<!-- {/if} -->
