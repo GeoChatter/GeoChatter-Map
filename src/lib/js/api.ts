@@ -14,6 +14,7 @@ import { writable } from 'svelte/store';
 let old_flag_packs: Set<string> = new Set()
 let new_flag_packs: Set<string> = new Set()
 export const inRound = writable(true)
+
 const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
 
   const names = await (await fetch("https://service.geochatter.tv/flagpacks/names.json")).json()
@@ -64,6 +65,9 @@ class Api {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     console.log(import.meta.VITE_GEOCHATTERURL)
+
+    let roundCounter = 0
+    let started = false
     this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, bot ?? "", {
       onFailedGuess: (_, text) => {
 
@@ -82,20 +86,24 @@ class Api {
         inRound.set(true)
       },
       onGameStart: (mapGameSettings) => {
+        started = true
+        roundCounter = 0
         console.log("game start")
         inRound.set(true)
         console.log(mapGameSettings)
       },
       onRoundEnd: (roundEndData) => {
+        roundCounter += 1
         console.log("round end")
         console.log(roundEndData)
-        results.set(roundEndData)
+        // not showing 
+        results.set({ data: roundEndData, title: started ? "Round " + roundCounter + " results": "Round results" })
         inRound.set(false)
       },
       onGameEnd: (gameEndData) => {
         console.log("game end")
         console.log(gameEndData)
-        results.set(gameEndData)
+        results.set({ data: gameEndData, title: "Game summary" })
         inRound.set(false)
       },
 

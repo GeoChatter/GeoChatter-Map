@@ -34,7 +34,7 @@
 		</tr>
 	</thead>
     <!--  ignoring this type error i would need to constrain a generic to one or the other type  -->
-	{#each $results.sort(currSort) as player, i}
+	{#each $results.data.sort(currSort) as player, i}
 		<tbody>
 			<tr>
 				<th>{i + 1}</th>
