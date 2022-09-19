@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 	import { user } from '$lib/supabase';
-	import { XIcon, MenuIcon, MonitorIcon } from 'svelte-feather-icons';
+	import { GithubIcon, XIcon, MenuIcon, MonitorIcon } from 'svelte-feather-icons';
 	import Auth from './Auth.svelte';
 	import ColorPicker from './ColorPicker.svelte';
 	import Feedback from './Feedback.svelte';
@@ -57,7 +57,8 @@
 						href="https://github.com/GeoChatter/GeoChatter-Map"
 						data-size="large"
 						data-show-count="true"
-						aria-label="Star GeoChatter/GeoChatter-Map on GitHub">Star GeoChatter-Map on GitHub</a
+						aria-label="Star GeoChatter/GeoChatter-Map on GitHub"
+						><GithubIcon />Star GeoChatter-Map on GitHub</a
 					>
 				</li>
 				<li />
@@ -206,8 +207,7 @@
 					<input
 						type="checkbox"
 						class="toggle"
-						on:click={() =>
-							$settings.change('spacePlonking', !$settings.values.spacePlonking)}
+						on:click={() => $settings.change('spacePlonking', !$settings.values.spacePlonking)}
 						checked={$settings.values.spacePlonking}
 					/>
 				</label>
