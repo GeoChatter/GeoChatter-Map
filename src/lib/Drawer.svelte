@@ -18,6 +18,10 @@
 	let timeout: NodeJS.Timeout;
 </script>
 
+<!-- <svelte:head>
+	<script async defer src="https://buttons.github.io/buttons.js"></script>
+</svelte:head> -->
+
 <div
 	class={`absolute drawer z-[6000] ${
 		$settings.values.drawerOpen ? 'pointer-events-auto' : 'pointer-events-none'
@@ -48,7 +52,15 @@
 						href="https://www.geochatter.tv/"
 						><img class="h-8" src="https://geochatter.tv/icon_smaller.ico" />GeoChatter</a
 					>
+					<a
+						class="github-button"
+						href="https://github.com/GeoChatter/GeoChatter-Map"
+						data-size="large"
+						data-show-count="true"
+						aria-label="Star GeoChatter/GeoChatter-Map on GitHub">Star GeoChatter-Map on GitHub</a
+					>
 				</li>
+				<li />
 				<li class="">
 					<Auth />
 				</li>
@@ -161,7 +173,7 @@
 				<label class="label cursor-pointer">
 					<span class="label-text">Show State/Province borders (US/UK/CA for now)</span>
 					<input
-						disabled={!$settings.streamerSettings.borderAdmin }
+						disabled={!$settings.streamerSettings.borderAdmin}
 						type="checkbox"
 						class="toggle"
 						on:click={() => $settings.change('borderAdmin', !$settings.values.borderAdmin)}
@@ -187,6 +199,16 @@
 						on:click={() =>
 							$settings.change('showStreamOverlay', !$settings.values.showStreamOverlay)}
 						checked={$settings.values.showStreamOverlay}
+					/>
+				</label>
+				<label class="label cursor-pointer">
+					<span class="label-text">enable guessing with space</span>
+					<input
+						type="checkbox"
+						class="toggle"
+						on:click={() =>
+							$settings.change('spacePlonking', !$settings.values.spacePlonking)}
+						checked={$settings.values.spacePlonking}
 					/>
 				</label>
 			</li>

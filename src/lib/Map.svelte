@@ -7,18 +7,31 @@
 	import Leaflet from './Leaflet.svelte';
 	import MapBox from './MapBox.svelte';
 	import Feedback from '$lib/Feedback.svelte';
-	import { shortcut } from '$lib/shortcut';
+	import { spacePlonkShortcut } from '$lib/shortcut';
 	import api from '$lib/js/api';
 	import QuickSwitch from '$lib/QuickSwitch.svelte';
 	import Alert, { show } from '$lib/Alert.svelte';
 	import MovableDiv from '$lib/MovableDiv.svelte';
 	import Twitch from '$lib/Twitch.svelte';
 	import settings from '$lib/js/settings';
+	import ScoreBoard from './ScoreBoard.svelte';
+
+	import { inRound } from '$lib/js/api';
+	import { results } from './stores/gameResults';
+	
 
 	let lastMapType;
 	let _3DEnabled = false;
 	let exaggeration = 1;
 	let zoomSensitivity = 100;
+
+	function randomGuess() {
+		loading = true;
+		setTimeout(() => {
+			loading = false;
+		}, 5000);
+		api.sendGuessToBackend('0', '0', true, true);
+	}
 
 	function setSettingsFromLocalStorage() {
 		if (browser) {
@@ -63,27 +76,83 @@
 
 	let loading = false;
 	let newBot;
-	let scoreBoardModal = false
+	let openScoreBoardDuringRound = false;
+
+	let randomGuessModal = false;
 </script>
 
-{#if api.bot}
+{#if randomGuessModal}
+	<div class="modal modal-open z-[9999]">
+		<div class="modal-box relative w-fit">
+			<div class="flex justify-between">
+				<h3 class="font-bold px-6">Do you want to guess a random country?</h3>
+				<button
+					on:click={() => {
+						randomGuessModal = false;
+					}}
+					class="btn btn-sm btn-circle ">✕</button
+				>
+			</div>
+			<div class="grid">
+				<div class="flex justify-center space-x-3  items-center">
+					<button
+						on:click={() => {
+							randomGuessModal = false;
+						}}
+						class="btn btn-sm btn-secondary">Let me think about it</button
+					>
+					<button
+						on:click={() => {
+							randomGuess();
+							randomGuessModal = false;
+						}}
+						class="btn btn-sm btn-primary">Yes!</button
+					>
+				</div>
+				<div class="flex justify-center space-x-3 items-center pt-2">
+					<input
+						type="checkbox"
+						class="toggle"
+						on:click={() => {
+							settings.change('confirmedRandomGuess', !settings.values.confirmedRandomGuess);
+						}}
+						checked={$settings.values.confirmRandomGuess}
+					/>
+					<span class="text-sm">don't show again</span>
+				</div>
+			</div>
+		</div>
+	</div>
+{/if}
 
+{#if api.bot}
 	{#if $settings.values.showStreamOverlay && $settings.streamerSettings.twitchChannelName}
 		<MovableDiv><Twitch /></MovableDiv>
 	{/if}
-	<btn on:click={() => {
-		scoreBoardModal = true 
-	}} class="btn btn-warning absolute z-[3900] top-32 left-2"><AwardIcon/></btn>
-	{#if scoreBoardModal}
-	<div class="modal modal-open">
-	<div class="modal-box relative">
-		<label for="my-modal-3" on:click={() => {
-			scoreBoardModal = false
-		}} class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-		<h3 class="text-lg font-bold">Scoreboard</h3>
-		<p class="py-4">Coming soon...</p>
-	</div>
-	</div>
+	<btn
+		on:click={() => {
+			openScoreBoardDuringRound = true;
+		}}
+		class="btn btn-warning absolute z-[3900] top-32 left-2"><AwardIcon /></btn
+	>
+	{#if openScoreBoardDuringRound || !$inRound}
+		<div class="modal modal-open">
+			<div class="modal-box relative">
+				<label
+					for="my-modal-3"
+					on:click={() => {
+						openScoreBoardDuringRound = false;
+						// maybe have another variable to indicate the scoreboard was closed
+						// the variable would have to reset every time the in round was updated or the modal was opened
+						// but setting inRound to true is good enough right now i think
+						inRound.set(true);
+					}}
+					class="btn btn-sm btn-circle absolute right-2 top-2">✕</label
+				>
+				<h3 class="text-lg font-bold">{$results.title}</h3>
+				<ScoreBoard />
+			</div>
+		</div>
 	{/if}
 
 	<Alert />
@@ -95,7 +164,7 @@
 		{#if $user}
 			<button
 				disabled={!currentGuess || !$user || loading}
-				use:shortcut={{ code: 'Space', default: true }}
+				use:spacePlonkShortcut={{ code: 'Space', default: true }}
 				class="btn pointer-events-auto   z-[3000] btn-wide btn-primary disabled:opacity-100   absolute bottom-8 right-24"
 				on:click={() => {
 					loading = true;
@@ -107,7 +176,7 @@
 			>
 				{#if !loading}
 					{#if $user}
-						send guess (SPACE)
+						send guess {#if $settings.values.spacePlonking}(SPACE){/if}
 					{:else}
 						login to guess without pasting in twitch chat
 					{/if}
@@ -118,11 +187,11 @@
 			<button
 				disabled={loading}
 				on:click={() => {
-					loading = true;
-					setTimeout(() => {
-						loading = false;
-					}, 5000);
-					api.sendGuessToBackend('0', '0', true, true);
+					if ($settings.values.confirmedRandomGuess) {
+						randomGuess();
+					} else {
+						randomGuessModal = true;
+					}
 				}}
 				class="btn pointer-events-auto   z-[3000]  btn-secondary disabled:opacity-100 absolute bottom-8 right-5"
 			>

@@ -5,11 +5,16 @@ import { user, auth, supabase } from '$lib/supabase';
 import { get } from "svelte/store";
 import settings from './settings';
 
+import { results } from "$lib/stores/gameResults"
 import { GCSocketClient, z, Guess, Flag, Color, MapOptions } from 'GCSocketClient';
 import { downloadAndUnzipFlags, flagsLoaded, removeFlagPack } from './helpers/getFeature';
 
+import { writable } from 'svelte/store';
+
 let old_flag_packs: Set<string> = new Set()
 let new_flag_packs: Set<string> = new Set()
+export const inRound = writable(true)
+
 const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
 
   const names = await (await fetch("https://service.geochatter.tv/flagpacks/names.json")).json()
@@ -24,21 +29,21 @@ const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
 
       old_flag_packs = new_flag_packs
       new_flag_packs = new Set()
-      for (const code of installedFlagPack ) {
+      for (const code of installedFlagPack) {
         if (typeof code === "string") {
 
-          const [key, _ ] = Object.entries(names.packs).find(([_,value]) => value === code)
+          const [key, _] = Object.entries(names.packs).find(([_, value]) => value === code)
           const url = "https://service.geochatter.tv/flagpacks/" + key + ".zip"
           new_flag_packs.add(url)
-          if(!old_flag_packs.has(url)) {
-             downloadAndUnzipFlags(url)
+          if (!old_flag_packs.has(url)) {
+            downloadAndUnzipFlags(url)
           }
         }
       }
-   /* Removing flag packs that are not in the new flag pack list. */
-     Array.from(old_flag_packs).forEach(url => {
+      /* Removing flag packs that are not in the new flag pack list. */
+      Array.from(old_flag_packs).forEach(url => {
         if (!new_flag_packs.has(url)) {
-           removeFlagPack(url)
+          removeFlagPack(url)
         }
       })
     }
@@ -46,7 +51,7 @@ const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
       console.log(e)
 
     }
-    
+
     const parseResponse = MapOptions.keyof().safeParse(key)
     if (parseResponse.success) {
       settings.changeStreamerSettings(parseResponse.data, value)
@@ -60,31 +65,48 @@ class Api {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     console.log(import.meta.VITE_GEOCHATTERURL)
+
+    let roundCounter = 0
+    let started = false
     this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, bot ?? "", {
       onFailedGuess: (_, text) => {
 
-        show(1, text, true)
+        show(5, text, true)
 
       },
 
 
       onSuccessfulGuess: () => {
-        show(1, "Guess sent successfully")
+        show(5, "Guess sent successfully")
       }
-      , onStreamerSettings: setStreamerSettings,
+      ,
+      onStreamerSettings: setStreamerSettings,
       onRoundStart: () => {
         console.log("round start")
+        inRound.set(true)
       },
-      onGameStart: () => {
+      onGameStart: (mapGameSettings) => {
+        started = true
+        roundCounter = 0
         console.log("game start")
+        inRound.set(true)
+        console.log(mapGameSettings)
       },
-      onRoundEnd: () => {
+      onRoundEnd: (roundEndData) => {
+        roundCounter += 1
         console.log("round end")
+        console.log(roundEndData)
+        // not showing 
+        results.set({ data: roundEndData, title: started ? "Round " + roundCounter + " results": "Round results" })
+        inRound.set(false)
       },
-      onGameEnd: () => {
+      onGameEnd: (gameEndData) => {
         console.log("game end")
+        console.log(gameEndData)
+        results.set({ data: gameEndData, title: "Game summary" })
+        inRound.set(false)
       },
-      
+
     },
     )
   }
@@ -144,7 +166,7 @@ class Api {
         }; Flag
     }
 
-    this.client.sendGuess(data, !random)
+    this.client.sendGuess(data)
 
 
   }

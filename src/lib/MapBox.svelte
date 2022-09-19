@@ -274,7 +274,7 @@
 					$user?.user_metadata?.picture ?? 'https://geochatter.tv/icon_smaller.ico'
 				})`;
 
-				user.subscribe(user => {
+				user.subscribe((user) => {
 					if (user) {
 						el.style.backgroundImage = `url(${
 							user?.user_metadata?.picture ?? 'https://geochatter.tv/icon_smaller.ico'
@@ -345,7 +345,7 @@
 		<!-- svelte-ignore a11y-label-has-associated-control -->
 		<label class="text-xs">Exaggeration {exaggeration}x</label>
 		<input
-			on:mouseup={() => changeExaggeration(exaggeration, mapBox)}
+			on:pointerup={() => changeExaggeration(exaggeration, mapBox)}
 			type="range"
 			min="1"
 			max="10"
@@ -354,18 +354,18 @@
 		/>
 		<div
 			class="flex w-full"
-			on:mouseup={() => intervalls.forEach((interval) => clearInterval(interval))}
-			on:mouseleave={() => intervalls.forEach((interval) => clearInterval(interval))}
+			on:pointerup={() => intervalls.forEach((interval) => clearInterval(interval))}
+			on:pointerleave={() => intervalls.forEach((interval) => clearInterval(interval))}
 		>
 			<button
 				class="w-full text-right flex justify-end items-center"
-				on:mousedown={() => {
+				on:pointerdown={() => {
 					intervalls.push(setInterval(() => mapBox.setBearing(mapBox.getBearing() + 0.5), 20));
 				}}><ChevronLeftIcon /></button
 			>
 			<div class="grid w-full justify-center h-12">
 				<button
-					on:mousedown={() => {
+					on:pointerdown={() => {
 						intervalls.push(setInterval(() => mapBox.setPitch(mapBox.getPitch() - 0.5), 20));
 					}}
 				>
@@ -373,7 +373,7 @@
 				</button>
 
 				<button
-					on:mousedown={() => {
+					on:pointerdown={() => {
 						intervalls.push(setInterval(() => mapBox.setPitch(mapBox.getPitch() + 0.5), 20));
 					}}
 				>
@@ -382,7 +382,8 @@
 			</div>
 			<button
 				class="w-full text-right flex justify-start items-center"
-				on:mousedown={() => {
+				on:pointerdown={() => {
+					console.log('click');
 					intervalls.push(setInterval(() => mapBox.setBearing(mapBox.getBearing() - 0.5), 20));
 				}}
 			>
@@ -390,4 +391,38 @@
 			</button>
 		</div>
 	{/if}
+</div>
+
+<div
+	class="sm:hidden grid absolute top-32 right-3 bg-base-100 shadow-md rounded-md p-2 gap-y-2"
+>
+	<div>
+		<button
+			class="btn btn-xs w-full"
+			on:click={() => {
+				if (mapBox.getPitch() !== 45) {
+					mapBox.setPitch(45);
+				} else {
+					mapBox.setPitch(0);
+				}
+			}}>tilt</button
+		>
+	</div>
+
+	<div class="flex">
+		<button
+			class="btn btn-xs btn-ghost w-fit text-right flex justify-end items-center"
+			on:pointerdown={() => {
+				mapBox.setBearing(mapBox.getBearing() + 5);
+			}}><ChevronLeftIcon /></button
+		>
+		<button
+			class="btn btn-xs btn-ghost w-fit text-right flex justify-start items-center"
+			on:pointerdown={() => {
+				mapBox.setBearing(mapBox.getBearing() - 5);
+			}}
+		>
+			<ChevronRightIcon />
+		</button>
+	</div>
 </div>

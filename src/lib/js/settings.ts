@@ -39,7 +39,9 @@ export class Settings {
     showFlags: true,
     showStreamOverlay: true,
     temporaryGuesses: true,
-    testing: false
+    confirmedRandomGuess: false,
+    // testing: false,
+    spacePlonking: true,
   }
 
   streamerSettings = {
@@ -51,6 +53,7 @@ export class Settings {
     streamer: undefined,
     twitchChannelName: undefined
   }
+
   streamerSettingsDefaults = {
     showBorders: false,
     showFlags: false,
@@ -99,7 +102,7 @@ export class Settings {
 
   load() {
     if (browser) {
-      const loadedObj = JSON.parse(localStorage.getItem("settings")) ?? {}  
+      const loadedObj = JSON.parse(localStorage.getItem("settings")) ?? {}
       for (const key of Object.keys(loadedObj)) {
         if (key !== "copyAndPaste") {
           this._values[key] = loadedObj[key]
@@ -110,7 +113,7 @@ export class Settings {
 
   save() {
     if (browser) {
-      localStorage.setItem("settings", JSON.stringify(this.values))
+      localStorage.setItem("settings", JSON.stringify(this._values))
     }
   }
 
