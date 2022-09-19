@@ -113,7 +113,7 @@ export class Settings {
 
   save() {
     if (browser) {
-      localStorage.setItem("settings", JSON.stringify(this.values))
+      localStorage.setItem("settings", JSON.stringify(this._values))
     }
   }
 
