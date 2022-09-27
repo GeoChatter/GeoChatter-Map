@@ -8,11 +8,13 @@
 	import settings from './js/settings';
 	import MapPicker from './MapPicker.svelte';
 	import { close } from './MovableDiv.svelte';
+	import { mockConnectionBuilder} from "$lib/js/api"
 	import { downloadAndUnzipFlags, flagsLoaded, svgs } from '$lib/js/helpers/getFeature';
 	import api from './js/api';
 
 	import autoAnimate from '@formkit/auto-animate';
 	import Flag from './Flag.svelte';
+	import { dev } from '$app/environment';
 	let chooseFlag = false;
 
 	let timeout: NodeJS.Timeout;
@@ -58,6 +60,7 @@
 						data-size="large"
 						data-show-count="true"
 						aria-label="Star GeoChatter/GeoChatter-Map on GitHub"
+						target="_blank"
 						><GithubIcon />Star GeoChatter-Map on GitHub</a
 					>
 				</li>
@@ -215,11 +218,26 @@
 			<li class="sm:mb-0 mb-2 flex sm:hidden">
 				<Feedback />
 			</li>
-			<!-- {#if $settings.values.testing}
-			<li>
-				<button class="btn btn-warning" on:click={killConnection}>close socket connection</button>
-			</li>
-			{/if} -->
+			 {#if dev}
+			 <button on:click={() => {
+				mockConnectionBuilder.startGame()
+			 }}>start game</button>
+			 <button on:click={() => {
+				mockConnectionBuilder.startRound()
+			 }}>start round</button>
+			 <button on:click={() => {
+				mockConnectionBuilder.endRound()
+			 }}>end round</button>
+			 
+			 <button on:click={() => {
+				mockConnectionBuilder.endGame()
+			 }}> end game</button>
+			 <button on:click={() => {
+				mockConnectionBuilder.exitGame()
+			 }}> exit game</button>
+
+
+			{/if} 
 		</ul>
 	</div>
 </div>

@@ -18,7 +18,6 @@
 
 	import { inRound } from '$lib/js/api';
 	import { results } from './stores/gameResults';
-	
 
 	let lastMapType;
 	let _3DEnabled = false;
@@ -136,8 +135,10 @@
 		class="btn btn-warning absolute z-[3900] top-32 left-2"><AwardIcon /></btn
 	>
 	{#if openScoreBoardDuringRound || !$inRound}
-		<div class="modal modal-open">
-			<div class="modal-box relative">
+		<!-- <div class="modal modal-open"> -->
+		<MovableDiv>
+			<!-- <div class="modal-box relative"> -->
+				<div class="overflow-scroll max-h-96">
 				<label
 					for="my-modal-3"
 					on:click={() => {
@@ -151,8 +152,10 @@
 				>
 				<h3 class="text-lg font-bold">{$results.title}</h3>
 				<ScoreBoard />
-			</div>
-		</div>
+</div>
+			<!-- </div> -->
+		</MovableDiv>
+		<!-- </div> -->
 	{/if}
 
 	<Alert />

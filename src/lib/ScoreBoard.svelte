@@ -48,10 +48,10 @@
 						</div>
 					</a>
 				</th>
-				<th>{Math.round(player.distance)} km</th>
+				<th>{player.distance.toLocaleString("en", {style: "unit", unit: "meter", unitDisplay: "narrow", notation: "compact"}).toLowerCase()}</th>
 
 				<!-- not showing score in streaks game  -->
-					<th>{player.score} </th>
+					<th>{player.score.toFixed(0)} </th>
 					<th>{player.streak} </th>
 			</tr>
 		</tbody>

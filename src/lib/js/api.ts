@@ -6,14 +6,16 @@ import { get } from "svelte/store";
 import settings from './settings';
 
 import { results } from "$lib/stores/gameResults"
-import { GCSocketClient, z, Guess, Flag, Color, MapOptions } from 'GCSocketClient';
+import { GCSocketClient, z, Guess, Flag, Color, MapOptions, MockConnectionBuilder } from 'GCSocketClient';
 import { downloadAndUnzipFlags, flagsLoaded, removeFlagPack } from './helpers/getFeature';
 
 import { writable } from 'svelte/store';
+import { dev } from '$app/environment';
 
 let old_flag_packs: Set<string> = new Set()
 let new_flag_packs: Set<string> = new Set()
 export const inRound = writable(true)
+export const mockConnectionBuilder = new MockConnectionBuilder()
 
 const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
 
@@ -68,7 +70,7 @@ class Api {
 
     let roundCounter = 0
     let started = false
-    this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, bot ?? "", {
+    const listeners = {
       onFailedGuess: (_, text) => {
 
         show(5, text, true)
@@ -81,23 +83,22 @@ class Api {
       }
       ,
       onStreamerSettings: setStreamerSettings,
-      onRoundStart: () => {
+      onRoundStart: (roundInfo) => {
+        roundCounter =  roundInfo.roundNumber
         console.log("round start")
         inRound.set(true)
       },
       onGameStart: (mapGameSettings) => {
         started = true
-        roundCounter = 0
         console.log("game start")
         inRound.set(true)
         console.log(mapGameSettings)
       },
       onRoundEnd: (roundEndData) => {
-        roundCounter += 1
         console.log("round end")
         console.log(roundEndData)
         // not showing 
-        results.set({ data: roundEndData, title: started ? "Round " + roundCounter + " results": "Round results" })
+        results.set({ data: roundEndData, title: started ? "Round " + roundCounter + " results" : "Round results" })
         inRound.set(false)
       },
       onGameEnd: (gameEndData) => {
@@ -107,8 +108,12 @@ class Api {
         inRound.set(false)
       },
 
-    },
-    )
+    }
+    if (!dev) {
+      this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, bot ?? "",  listeners)
+    } else {
+      this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, bot?? "", listeners,  mockConnectionBuilder)
+    }
   }
 
 

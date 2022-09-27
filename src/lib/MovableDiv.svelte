@@ -31,9 +31,9 @@
 			e.preventDefault();
 			if (
 				e.clientX < 0 ||
-				e.clientX > window.innerWidth ||
+				e.clientX+100 > window.innerWidth ||
 				e.clientY < 0 ||
-				e.clientY > window.innerHeight
+				e.clientY+100 > window.innerHeight
 			) {
 				console.log('not on screen');
 				return;
