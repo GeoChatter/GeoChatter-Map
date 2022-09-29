@@ -3,8 +3,10 @@ import { writable, type Writable } from "svelte/store"
 import { browser } from "$app/environment"
 
 import { z, MapOptions } from "GCSocketClient"
+import { roundSettings } from "./api";
 
-const streamerSettingsKeys = MapOptions.keyof()
+
+// const streamerSettingsKeys = MapOptions.keyof()
 export class Settings {
 
 
@@ -51,6 +53,7 @@ export class Settings {
     showStreamOverlay: false,
     temporaryGuesses: false,
     streamer: undefined,
+    _3d: true,
     twitchChannelName: undefined
   }
 
@@ -61,12 +64,13 @@ export class Settings {
     showStreamOverlay: false,
     temporaryGuesses: false,
     streamer: undefined,
+    _3d: true,
     twitchChannelName: undefined
   }
 
 
 
-  changeStreamerSettings(key: z.infer<typeof streamerSettingsKeys>, newVal) {
+  changeStreamerSettings(key: keyof typeof this.streamerSettings, newVal) {
     if (typeof this._values[key] !== undefined) {
       this.streamerSettings[key] = newVal
       this.refresh()
@@ -132,4 +136,8 @@ export class Settings {
   }
 }
 const settings = new Settings()
+
+roundSettings.subscribe(s => {
+  settings.changeStreamerSettings("_3d",s.is3dEnabled)
+})
 export default settings

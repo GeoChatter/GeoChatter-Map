@@ -19,10 +19,11 @@
 	];
 </script>
 
-<script lang="ts">
+<script  lang="ts">
 	import { browser } from '$app/environment';
 	import { MapIcon } from 'svelte-feather-icons';
 
+	import {roundSettings} from "../lib/js/api"
 	const createMostUsedArray = (): string[] => {
 		// FIXME: return all styles
 		if (!browser) return [];
@@ -83,6 +84,7 @@
 		}
 	};
 	$: array = createMostUsedArray();
+
 </script>
 
 {#each array as style, i}

@@ -123,6 +123,10 @@
 	export let _3DEnabled = false;
 	export let lastMapType;
 
+	$settings.subscribe(s => {
+		_3DEnabled = s.values._3d
+	})
+
 	$: copy = !$user || $settings.values.copyAndPaste;
 
 	let mapBoxDemSrc = 'mapbox-dem';
@@ -134,7 +138,7 @@
 		mapBox.setTerrain(null);
 		mapBox.setTerrain({ source: mapBoxDemSrc, exaggeration: val });
 	}
-	function toggle3D(enable, mapBox) {
+	function toggle3D(enable: boolean, mapBox) {
 		_3DEnabled = enable;
 		if (enable) {
 			$settings.change('_3d', true);

@@ -138,7 +138,7 @@
 		<!-- <div class="modal modal-open"> -->
 		<MovableDiv>
 			<!-- <div class="modal-box relative"> -->
-				<div class="overflow-scroll max-h-96">
+				<div class="overflow-scroll h-96 ">
 				<label
 					for="my-modal-3"
 					on:click={() => {
@@ -163,7 +163,7 @@
 		<Feedback />
 	</div>
 	<QuickSwitch />
-	<div class=" z-[1000] w-80 h-32 absolute bottom-0 right-0">
+	<div class=" z-[1000] w-80 h-32 absolute bottom-0 right-0 ">
 		{#if $user}
 			<button
 				disabled={!currentGuess || !$user || loading}

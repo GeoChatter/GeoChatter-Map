@@ -8,11 +8,10 @@
 	import settings from './js/settings';
 	import MapPicker from './MapPicker.svelte';
 	import { close } from './MovableDiv.svelte';
-	import { mockConnectionBuilder} from "$lib/js/api"
+	import { mockConnectionBuilder } from '$lib/js/api';
 	import { downloadAndUnzipFlags, flagsLoaded, svgs } from '$lib/js/helpers/getFeature';
 	import api from './js/api';
 
-	import autoAnimate from '@formkit/auto-animate';
 	import Flag from './Flag.svelte';
 	import { dev } from '$app/environment';
 	let chooseFlag = false;
@@ -36,40 +35,37 @@
 		bind:checked={$settings.values.drawerOpen}
 		class="z-[4000] drawer-toggle pointer-events-auto"
 	/>
-	<div class="drawer-content">
+	<div class="drawer-content pointer-events-auto">
 		<!-- Page content here -->
-		<label for="my-drawer" class="m-2 btn btn-circle drawer-button pointer-events-auto "
+
+		<label
+			for="my-drawer"
+			class="z-[3999] absolute m-2 btn btn-circle drawer-button pointer-events-auto "
 			><MenuIcon size="1.5x" /></label
 		>
+		<slot />
 	</div>
 	<div class="drawer-side ">
 		<label for="my-drawer" class="drawer-overlay" />
-		<ul use:autoAnimate class="menu p-4 overflow-y-auto w-80 bg-base-100 text-base-content">
+		<ul class="menu max-w-80 p-4 w-80  bg-base-100 text-base-content">
 			<!-- Sidebar content here -->
-			<div class="dropdown dropdown-end z-[1000]">
-				<li class="mb-2">
-					<a
-						class=" normal-case text-xl font-bold"
-						target="_blank"
-						href="https://www.geochatter.tv/"
-						><img class="h-8" src="https://geochatter.tv/icon_smaller.ico" />GeoChatter</a
-					>
-					<a
-						class="github-button"
-						href="https://github.com/GeoChatter/GeoChatter-Map"
-						data-size="large"
-						data-show-count="true"
-						aria-label="Star GeoChatter/GeoChatter-Map on GitHub"
-						target="_blank"
-						><GithubIcon />Star GeoChatter-Map on GitHub</a
-					>
-				</li>
-				<li />
-				<li class="">
-					<Auth />
-				</li>
-			</div>
-
+			<li class="mb-2">
+				<a class=" normal-case text-xl font-bold" target="_blank" href="https://www.geochatter.tv/"
+					><img class="h-8" src="https://geochatter.tv/icon_smaller.ico" />GeoChatter</a
+				>
+				<a
+					class="github-button"
+					href="https://github.com/GeoChatter/GeoChatter-Map"
+					data-size="large"
+					data-show-count="true"
+					aria-label="Star GeoChatter/GeoChatter-Map on GitHub"
+					target="_blank"><GithubIcon />Star GeoChatter-Map on GitHub</a
+				>
+			</li>
+			<li />
+			<li class="">
+				<Auth />
+			</li>
 			{#if $close}
 				<li>
 					<button class="" on:click={() => ($close = false)}
@@ -79,7 +75,7 @@
 			{/if}
 
 			{#if $user}
-				<div class="flex items-center justify-center h-fit w-fit mb-2">
+				<li class="flex items-center justify-center h-fit w-fit mb-2">
 					<div>
 						<ColorPicker
 							handleColor={(color) => {
@@ -103,9 +99,9 @@
 					>
 						{#if chooseFlag}<XIcon />close{:else} choose flag {/if}
 					</button>
-				</div>
+				</li>
 
-				<div class={!chooseFlag ? 'hidden' : 'border-2 rounded-md p-2'}>
+				<li class={!chooseFlag ? 'hidden' : 'border-2 rounded-md p-2'}>
 					{#if $flagsLoaded}
 						{#each Object.entries(svgs).sort() as [code, flag]}
 							{#if code}
@@ -132,7 +128,7 @@
 					{:else}
 						loading...
 					{/if}
-				</div>
+				</li>
 			{/if}
 			<MapPicker isDrawer={true} />
 
@@ -218,26 +214,38 @@
 			<li class="sm:mb-0 mb-2 flex sm:hidden">
 				<Feedback />
 			</li>
-			 {#if dev}
-			 <button on:click={() => {
-				mockConnectionBuilder.startGame()
-			 }}>start game</button>
-			 <button on:click={() => {
-				mockConnectionBuilder.startRound()
-			 }}>start round</button>
-			 <button on:click={() => {
-				mockConnectionBuilder.endRound()
-			 }}>end round</button>
-			 
-			 <button on:click={() => {
-				mockConnectionBuilder.endGame()
-			 }}> end game</button>
-			 <button on:click={() => {
-				mockConnectionBuilder.exitGame()
-			 }}> exit game</button>
+			{#if dev}
+				<button
+					on:click={() => {
+						mockConnectionBuilder.startGame();
+					}}>start game</button
+				>
+				<button
+					on:click={() => {
+						mockConnectionBuilder.startRound();
+					}}>start round</button
+				>
+				<button
+					on:click={() => {
+						mockConnectionBuilder.endRound();
+					}}>end round</button
+				>
 
-
-			{/if} 
+				<button
+					on:click={() => {
+						mockConnectionBuilder.endGame();
+					}}
+				>
+					end game</button
+				>
+				<button
+					on:click={() => {
+						mockConnectionBuilder.exitGame();
+					}}
+				>
+					exit game</button
+				>
+			{/if}
 		</ul>
 	</div>
 </div>

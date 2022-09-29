@@ -23,7 +23,7 @@
 	currSort = sortScore;
 </script>
 
-<table class="table table-compact w-full h-full">
+<table class="table table-compact w-full h-fit">
 	<thead>
 		<tr>
 			<th />

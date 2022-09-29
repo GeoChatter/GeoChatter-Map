@@ -6,7 +6,7 @@ import { get } from "svelte/store";
 import settings from './settings';
 
 import { results } from "$lib/stores/gameResults"
-import { GCSocketClient, z, Guess, Flag, Color, MapOptions, MockConnectionBuilder } from 'GCSocketClient';
+import { GCSocketClient, z, Guess, Flag, Color, MapOptions, MockConnectionBuilder, type Listeners, MapRoundSettings } from 'GCSocketClient';
 import { downloadAndUnzipFlags, flagsLoaded, removeFlagPack } from './helpers/getFeature';
 
 import { writable } from 'svelte/store';
@@ -15,6 +15,19 @@ import { dev } from '$app/environment';
 let old_flag_packs: Set<string> = new Set()
 let new_flag_packs: Set<string> = new Set()
 export const inRound = writable(true)
+export const roundSettings = writable<z.infer<typeof MapRoundSettings>>({
+  blackAndWhite: false,
+  blurry: false,
+  is3dEnabled: true,
+  isMultiGuess: false,
+  layers: [],
+  maxZoomLevel: 20,
+  mirrored: false,
+  roundNumber: 1,
+  sepia: false,
+  startTime: "",
+  upsideDown: false,
+})
 export const mockConnectionBuilder = new MockConnectionBuilder()
 
 const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
@@ -70,7 +83,7 @@ class Api {
 
     let roundCounter = 0
     let started = false
-    const listeners = {
+    const listeners: Listeners = {
       onFailedGuess: (_, text) => {
 
         show(5, text, true)
@@ -83,9 +96,10 @@ class Api {
       }
       ,
       onStreamerSettings: setStreamerSettings,
-      onRoundStart: (roundInfo) => {
-        roundCounter =  roundInfo.roundNumber
-        console.log("round start")
+      onRoundStart: (mapRoundSettings) => {
+        roundCounter = mapRoundSettings.roundNumber
+        roundSettings.set(mapRoundSettings)
+        console.log("round start", mapRoundSettings)
         inRound.set(true)
       },
       onGameStart: (mapGameSettings) => {
@@ -110,9 +124,9 @@ class Api {
 
     }
     if (!dev) {
-      this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, bot ?? "",  listeners)
+      this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, bot ?? "", listeners)
     } else {
-      this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, bot?? "", listeners,  mockConnectionBuilder)
+      this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, bot ?? "", listeners, mockConnectionBuilder)
     }
   }
 
