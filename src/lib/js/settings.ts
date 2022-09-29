@@ -1,15 +1,13 @@
 import { writable, type Writable } from "svelte/store"
-// @ts-ignore
 import { browser } from "$app/environment"
 
-import { z, MapOptions } from "GCSocketClient"
 import { roundSettings } from "./api";
+import { MapOptions, z } from "GCSocketClient";
 
 
-// const streamerSettingsKeys = MapOptions.keyof()
+const streamerSettingsKeys = MapOptions.keyof()
+type StreamerSettings =  z.infer<typeof MapOptions> & {borderAdmin: boolean, _3d: boolean}
 export class Settings {
-
-
 
   set: Writable<typeof this>['set'];
   subscribe: Writable<typeof this>['subscribe'];
@@ -46,7 +44,18 @@ export class Settings {
     spacePlonking: true,
   }
 
-  streamerSettings = {
+  streamerSettings: StreamerSettings = {
+    showBorders: false,
+    showFlags: false,
+    borderAdmin: true,
+    showStreamOverlay: false,
+    temporaryGuesses: false,
+    streamer: undefined,
+    _3d: true,
+    twitchChannelName: undefined,
+  }
+
+  streamerSettingsDefaults: StreamerSettings  = {
     showBorders: false,
     showFlags: false,
     borderAdmin: true,
@@ -57,20 +66,9 @@ export class Settings {
     twitchChannelName: undefined
   }
 
-  streamerSettingsDefaults = {
-    showBorders: false,
-    showFlags: false,
-    borderAdmin: true,
-    showStreamOverlay: false,
-    temporaryGuesses: false,
-    streamer: undefined,
-    _3d: true,
-    twitchChannelName: undefined
-  }
 
 
-
-  changeStreamerSettings(key: keyof typeof this.streamerSettings, newVal) {
+  changeStreamerSettings(key: z.infer<typeof streamerSettingsKeys> , newVal) {
     if (typeof this._values[key] !== undefined) {
       this.streamerSettings[key] = newVal
       this.refresh()
@@ -121,8 +119,9 @@ export class Settings {
     }
   }
 
-  change(key: keyof typeof this._values, newVal: boolean) {
+  change(key: keyof typeof this._values, newVal: string | number | boolean): void {
     if (typeof this._values[key] !== undefined) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
       this._values[key] = newVal
       this.save()

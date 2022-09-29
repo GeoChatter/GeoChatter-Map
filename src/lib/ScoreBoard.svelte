@@ -18,7 +18,7 @@
     type results= z.infer<typeof MapGameEndResult> | z.infer<typeof MapRoundResult> 
     
 
-	let currSort: (row1: gamePlayer  | roundPlayer, row2: gamePlayer  | roundPlayer) => void;
+	let currSort: (row1: gamePlayer  | roundPlayer, row2: gamePlayer  | roundPlayer) => number;
 
 	currSort = sortScore;
 </script>
@@ -33,7 +33,6 @@
 				<th class="cursor-pointer" on:click={() => (currSort = sortStreak)}>Streak</th>
 		</tr>
 	</thead>
-    <!--  ignoring this type error i would need to constrain a generic to one or the other type  -->
 	{#each $results.data.sort(currSort) as player, i}
 		<tbody>
 			<tr>

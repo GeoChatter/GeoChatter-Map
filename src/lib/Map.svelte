@@ -1,6 +1,5 @@
 <script>
 	import { user, auth, supabase } from '$lib/supabase';
-	// @ts-ignore
 	import { browser } from '$app/environment';
 	import { mapType, styles } from '$lib/MapPicker.svelte';
 	import { LogInIcon, EyeOffIcon, ListIcon, FlagIcon, AwardIcon } from 'svelte-feather-icons';

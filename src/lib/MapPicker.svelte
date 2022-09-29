@@ -90,6 +90,7 @@
 {#each array as style, i}
 	<MediaQuery query={`(min-width: ${getMediaWidth(i)})`}>
 		<li>
+			<!-- svelte-ignore a11y-missing-attribute -->
 			<a
 				class={$mapType === style ? 'bg-secondary rounded-2xl ' : 'rounded-2xl '}
 				disabled={$mapType === style}
