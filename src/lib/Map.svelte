@@ -15,7 +15,7 @@
 	import settings from '$lib/js/settings';
 	import ScoreBoard from './ScoreBoard.svelte';
 
-	import { inRound } from '$lib/js/api';
+	import { scoreBoardOpen } from '$lib/js/api';
 	import { results } from './stores/gameResults';
 
 	let lastMapType;
@@ -64,7 +64,7 @@
 	if (browser) {
 		try {
 			const splitLink = window.location.href.split('?');
-			api.bot = splitLink[1].split('#')[0];
+			api.streamerCode = splitLink[1].split('#')[0];
 		} catch (e) {
 			console.log(e);
 		}
@@ -123,7 +123,7 @@
 	</div>
 {/if}
 
-{#if api.bot}
+{#if api.streamerCode}
 	{#if $settings.values.showStreamOverlay && $settings.streamerSettings.twitchChannelName}
 		<MovableDiv><Twitch /></MovableDiv>
 	{/if}
@@ -133,25 +133,22 @@
 		}}
 		class="btn btn-warning absolute z-[3900] top-32 left-2"><AwardIcon /></btn
 	>
-	{#if openScoreBoardDuringRound || !$inRound}
+	{#if openScoreBoardDuringRound || !$scoreBoardOpen}
 		<!-- <div class="modal modal-open"> -->
 		<MovableDiv>
 			<!-- <div class="modal-box relative"> -->
-				<div class="overflow-scroll h-96 ">
+			<div class="overflow-scroll h-96 ">
 				<label
 					for="my-modal-3"
 					on:click={() => {
 						openScoreBoardDuringRound = false;
-						// maybe have another variable to indicate the scoreboard was closed
-						// the variable would have to reset every time the in round was updated or the modal was opened
-						// but setting inRound to true is good enough right now i think
-						inRound.set(true);
+						scoreBoardOpen.set(true);
 					}}
 					class="btn btn-sm btn-circle absolute right-2 top-2">✕</label
 				>
-				<h3 class="text-lg font-bold">{$results.title}</h3>
+				<h3 class="text-lg font-bold p-2">{$results.title}</h3>
 				<ScoreBoard />
-</div>
+			</div>
 			<!-- </div> -->
 		</MovableDiv>
 		<!-- </div> -->
@@ -229,7 +226,7 @@
 	{#if !$mapType.startsWith('3D')}
 		<Leaflet
 			bind:lastMapType
-			bind:bot={api.bot}
+			bind:bot={api.streamerCode}
 			bind:leaflet
 			bind:mapBox
 			bind:currentGuess
@@ -241,7 +238,7 @@
 				<MapBox
 					bind:mapBox
 					bind:lastMapType
-					bind:bot={api.bot}
+					bind:bot={api.streamerCode}
 					bind:_3DEnabled
 					bind:zoomSensitivity
 					bind:exaggeration
@@ -257,6 +254,6 @@
 	>
 		please use the full link from the streamer or fill in the map identifier name below
 		<input class="input input-bordered" placeholder="map identifier..." bind:value={newBot} />
-		<button class="btn btn-primary" on:click={() => (api.bot = newBot)}>go</button>
+		<button class="btn btn-primary" on:click={() => (api.streamerCode = newBot)}>go</button>
 	</div>
 {/if}

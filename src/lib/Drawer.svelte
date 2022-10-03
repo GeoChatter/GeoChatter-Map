@@ -7,13 +7,11 @@
 	import Feedback from './Feedback.svelte';
 	import settings from './js/settings';
 	import MapPicker from './MapPicker.svelte';
-	import { close } from './MovableDiv.svelte';
 	import { mockConnectionBuilder } from '$lib/js/api';
 	import { downloadAndUnzipFlags, flagsLoaded, svgs } from '$lib/js/helpers/getFeature';
 	import api from './js/api';
 
 	import Flag from './Flag.svelte';
-	import { dev } from '$app/environment';
 	let chooseFlag = false;
 
 	let timeout: NodeJS.Timeout;
@@ -47,7 +45,7 @@
 	</div>
 	<div class="drawer-side ">
 		<label for="my-drawer" class="drawer-overlay" />
-		<ul class="menu max-w-80 p-4 w-80  bg-base-100 text-base-content">
+		<ul class="menu max-w-80 p-4 w-80  bg-base-100 text-base-content justify-center">
 			<!-- Sidebar content here -->
 			<li class="mb-2">
 				<a class=" normal-case text-xl font-bold" target="_blank" href="https://www.geochatter.tv/"
@@ -66,17 +64,18 @@
 			<li class="">
 				<Auth />
 			</li>
-			{#if $close}
+			<!-- FIXME: open stream popup -->
+			<!-- {#if }
 				<li>
 					<button class="" on:click={() => ($close = false)}
 						><MonitorIcon /> open stream popup
 					</button>
 				</li>
-			{/if}
+			{/if} -->
 
 			{#if $user}
-				<li class="flex items-center justify-center h-fit w-fit mb-2">
-					<div>
+				<li class="flex items-center justify-center h-fit  mb-2">
+					<div class="w-fit">
 						<ColorPicker
 							handleColor={(color) => {
 								if (timeout) {
@@ -101,26 +100,25 @@
 					</button>
 				</li>
 
-				<li class={!chooseFlag ? 'hidden' : 'border-2 rounded-md p-2'}>
+				<li class={!chooseFlag ? 'hidden' : ' rounded-md p-2 '}>
 					{#if $flagsLoaded}
 						{#each Object.entries(svgs).sort() as [code, flag]}
 							{#if code}
 								<li
-									class={!chooseFlag ? 'hidden' : ''}
+									class={!chooseFlag ? 'hidden' : 'w-fit'}
 									transition:fade
 									on:click={() => {
 										api.sendFlag(code);
 										chooseFlag = false;
 									}}
 								>
-									<div class="flex">
+									<div class="flex justify-start">
+										<div
+											style={`background-size: contain;background-position: 50%;background-repeat: no-repeat;background-image: url('${flag}'); height:30px;width:30px`}
+										/>
 										{#if $settings.streamerSettings.showFlags}
-											<div
-												style={`background-size: contain;background-position: 50%;background-repeat: no-repeat;background-image: url('${flag}'); height:30px;width:30px`}
-											/>
+											{code}
 										{/if}
-
-										{code}
 									</div>
 								</li>
 							{/if}
@@ -173,11 +171,11 @@
 				<label class="label cursor-pointer">
 					<span class="label-text">Show State/Province borders (US/UK/CA for now)</span>
 					<input
-						disabled={!$settings.streamerSettings.borderAdmin}
+						disabled={$settings.streamerSettings.borderAdmin}
 						type="checkbox"
 						class="toggle"
 						on:click={() => $settings.change('borderAdmin', !$settings.values.borderAdmin)}
-						checked={!$settings.values.borderAdmin}
+						checked={$settings.values.borderAdmin}
 					/>
 				</label>
 				<label class="label cursor-pointer">
@@ -214,7 +212,7 @@
 			<li class="sm:mb-0 mb-2 flex sm:hidden">
 				<Feedback />
 			</li>
-			{#if dev}
+			{#if import.meta.env.VITE_MOCK}
 				<button
 					on:click={() => {
 						mockConnectionBuilder.startGame();

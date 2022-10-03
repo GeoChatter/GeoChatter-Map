@@ -1,12 +1,13 @@
-import { writable, type Writable } from "svelte/store"
+import { get, writable, type Writable } from "svelte/store"
 import { browser } from "$app/environment"
 
-import { roundSettings } from "./api";
-import { MapOptions, z } from "GCSocketClient";
+import { mapOptions } from "./api";
+// import { MapOptions, z } from "GCSocketClient";
 
 
-const streamerSettingsKeys = MapOptions.keyof()
-type StreamerSettings =  z.infer<typeof MapOptions> & {borderAdmin: boolean, _3d: boolean}
+// const streamerSettingsKeys = MapOptions.keyof()
+// type StreamerSettings = z.infer<typeof MapOptions>
+
 export class Settings {
 
   set: Writable<typeof this>['set'];
@@ -44,52 +45,44 @@ export class Settings {
     spacePlonking: true,
   }
 
-  streamerSettings: StreamerSettings = {
-    showBorders: false,
-    showFlags: false,
-    borderAdmin: true,
-    showStreamOverlay: false,
-    temporaryGuesses: false,
-    streamer: undefined,
-    _3d: true,
-    twitchChannelName: undefined,
+
+  mapOptionsToStreamerSettings(): typeof this.streamerSettingsDefaults {
+    const options = get(mapOptions)
+    const streamerSettings = structuredClone(this.streamerSettingsDefaults)
+    for (const key of Object.keys(this.streamerSettingsDefaults) as Array<keyof typeof this.streamerSettingsDefaults>) {
+      streamerSettings[key] = options?.[key]
+    }
+
+    streamerSettings.borderAdmin = options?.isUSStreak 
+
+    return streamerSettings
   }
 
-  streamerSettingsDefaults: StreamerSettings  = {
+  get streamerSettings() {
+    return this.mapOptionsToStreamerSettings()
+  }
+
+  streamerSettingsDefaults = {
     showBorders: false,
     showFlags: false,
     borderAdmin: true,
     showStreamOverlay: false,
     temporaryGuesses: false,
     streamer: undefined,
-    _3d: true,
     twitchChannelName: undefined
   }
 
 
 
-  changeStreamerSettings(key: z.infer<typeof streamerSettingsKeys> , newVal) {
-    if (typeof this._values[key] !== undefined) {
-      this.streamerSettings[key] = newVal
-      this.refresh()
-    }
-    else {
-      console.log(
-        "key not found"
-      )
-
-
-    }
-  }
 
   get values() {
     // needs node 17 to work
-    // const values = structuredClone(this._values)
-    const values = JSON.parse(JSON.stringify(this._values))
-
-    for (const key of Object.keys(this.streamerSettings)) {
+    const values = structuredClone(this._values)
+    // const values = JSON.parse(JSON.stringify(this._values))
+    const streamerSettings = this.mapOptionsToStreamerSettings()
+    for (const key of Object.keys(streamerSettings)) {
       if (this._values[key] !== this.streamerSettingsDefaults[key]) {
-        values[key] = this.streamerSettings[key]
+        values[key] = streamerSettings[key]
       }
     }
     // not sure how to refresh the store here?
@@ -136,7 +129,5 @@ export class Settings {
 }
 const settings = new Settings()
 
-roundSettings.subscribe(s => {
-  settings.changeStreamerSettings("_3d",s.is3dEnabled)
-})
+
 export default settings

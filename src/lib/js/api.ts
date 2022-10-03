@@ -10,11 +10,13 @@ import { GCSocketClient, z, Guess, Flag, Color, MapOptions, MockConnectionBuilde
 import { downloadAndUnzipFlags, flagsLoaded, removeFlagPack } from './helpers/getFeature';
 
 import { writable } from 'svelte/store';
-import { dev } from '$app/environment';
+
+
+export const mapOptions = writable<z.infer<typeof MapOptions>>()
 
 let old_flag_packs: Set<string> = new Set()
 let new_flag_packs: Set<string> = new Set()
-export const inRound = writable(true)
+export const scoreBoardOpen = writable(true)
 export const roundSettings = writable<z.infer<typeof MapRoundSettings>>({
   blackAndWhite: false,
   blurry: false,
@@ -30,14 +32,12 @@ export const roundSettings = writable<z.infer<typeof MapRoundSettings>>({
 })
 export const mockConnectionBuilder = new MockConnectionBuilder()
 
-const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
 
+const setMapOptions = async (options: z.infer<typeof MapOptions>) => {
+  mapOptions.set(options)
   const names = await (await fetch("https://service.geochatter.tv/flagpacks/names.json")).json()
   Object.entries(options).forEach(([key, value]) => {
     // FIXME: don"t replace show any more keep streamer settings in sync with streamer settings from server
-    if (key === "isUSStreak") {
-      settings.change("borderAdmin", false)
-    }
     // installing flag packs 
     try {
       const installedFlagPack = JSON.parse(options.installedFlagPacks)
@@ -67,10 +67,6 @@ const setStreamerSettings = async (options: z.infer<typeof MapOptions>) => {
 
     }
 
-    const parseResponse = MapOptions.keyof().safeParse(key)
-    if (parseResponse.success) {
-      settings.changeStreamerSettings(parseResponse.data, value)
-    }
   })
 }
 class Api {
@@ -95,17 +91,17 @@ class Api {
         show(5, "Guess sent successfully")
       }
       ,
-      onStreamerSettings: setStreamerSettings,
+      onStreamerSettings: setMapOptions,
       onRoundStart: (mapRoundSettings) => {
         roundCounter = mapRoundSettings.roundNumber
         roundSettings.set(mapRoundSettings)
         console.log("round start", mapRoundSettings)
-        inRound.set(true)
+        scoreBoardOpen.set(true)
       },
       onGameStart: (mapGameSettings) => {
         started = true
         console.log("game start")
-        inRound.set(true)
+        scoreBoardOpen.set(true)
         console.log(mapGameSettings)
       },
       onRoundEnd: (roundEndData) => {
@@ -113,17 +109,17 @@ class Api {
         console.log(roundEndData)
         // not showing 
         results.set({ data: roundEndData, title: started ? "Round " + roundCounter + " results" : "Round results" })
-        inRound.set(false)
+        scoreBoardOpen.set(false)
       },
       onGameEnd: (gameEndData) => {
         console.log("game end")
         console.log(gameEndData)
         results.set({ data: gameEndData, title: "Game summary" })
-        inRound.set(false)
+        scoreBoardOpen.set(false)
       },
 
     }
-    if (!dev) {
+    if (!import.meta.env.VITE_MOCK as boolean) {
       this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, bot ?? "", listeners)
     } else {
       this.client = new GCSocketClient(import.meta.env.VITE_GEOCHATTERURL as string, bot ?? "", listeners, mockConnectionBuilder)
@@ -131,13 +127,13 @@ class Api {
   }
 
 
-  set bot(bot) {
+  set streamerCode(bot) {
     this._bot = bot
     if (bot) {
       this.client.streamerCode = bot
     }
   }
-  get bot() {
+  get streamerCode() {
     return this._bot
   }
 
@@ -155,7 +151,7 @@ class Api {
     switch (userStore.user_metadata.iss) {
       case 'https://api.twitch.tv':
         data = {
-          bot: this.bot,
+          bot: this.streamerCode,
           lat: lat,
           lng: lng,
           sourcePlatform: "Twitch",
@@ -171,7 +167,7 @@ class Api {
       case 'https://www.googleapis.com/userinfo/v2/me':
         console.log(userStore.user_metadata);
         data = {
-          bot: this.bot,
+          bot: this.streamerCode,
           lat: lat,
           lng: lng,
           sourcePlatform: "YouTube",
@@ -198,7 +194,7 @@ class Api {
     switch (userStore.user_metadata.iss) {
       case 'https://api.twitch.tv':
         data = {
-          bot: this.bot,
+          bot: this.streamerCode,
           sourcePlatform: "Twitch",
           tkn: auth.session()?.access_token,
           id: userStore.user_metadata.sub,
@@ -211,7 +207,7 @@ class Api {
       case 'https://www.googleapis.com/userinfo/v2/me':
         console.log(userStore.user_metadata);
         data = {
-          bot: this.bot,
+          bot: this.streamerCode,
           sourcePlatform: "YouTube",
           tkn: auth.session()?.access_token,
           id: userStore.user_metadata.sub,
@@ -234,7 +230,7 @@ class Api {
     switch (userStore.user_metadata.iss) {
       case 'https://api.twitch.tv':
         data = {
-          bot: this.bot,
+          bot: this.streamerCode,
           sourcePlatform: "Twitch",
           tkn: auth.session()?.access_token,
           id: userStore.user_metadata.sub,
@@ -247,7 +243,7 @@ class Api {
       case 'https://www.googleapis.com/userinfo/v2/me':
         console.log(userStore.user_metadata);
         data = {
-          bot: this.bot,
+          bot: this.streamerCode,
           sourcePlatform: "YouTube",
           tkn: auth.session()?.access_token,
           id: userStore.user_metadata.sub,
