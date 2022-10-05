@@ -3,6 +3,7 @@
 	import { browser } from '$app/environment';
 	import { mapType, styles } from '$lib/MapPicker.svelte';
 	import { LogInIcon, EyeOffIcon, ListIcon, FlagIcon, AwardIcon } from 'svelte-feather-icons';
+	import { roundSettings } from '$lib/js/api';
 	import Leaflet from './Leaflet.svelte';
 	import MapBox from './MapBox.svelte';
 	import Feedback from '$lib/Feedback.svelte';
@@ -223,31 +224,39 @@
 			>
 		{/if}
 	</div>
-	{#if !$mapType.startsWith('3D')}
-		<Leaflet
-			bind:lastMapType
-			bind:bot={api.streamerCode}
-			bind:leaflet
-			bind:mapBox
-			bind:currentGuess
-			{mapType}
-		/>
-	{:else}
-		{#each styles as style}
-			{#if style === $mapType}
-				<MapBox
-					bind:mapBox
-					bind:lastMapType
-					bind:bot={api.streamerCode}
-					bind:_3DEnabled
-					bind:zoomSensitivity
-					bind:exaggeration
-					bind:currentGuess
-					bind:leaflet
-				/>
-			{/if}
-		{/each}
-	{/if}
+	<div
+		class="relative w-full h-full  {$roundSettings.blurry ? 'blur-md' : ''} {$roundSettings.sepia
+			? 'sepia'
+			: ''} {$roundSettings.blackAndWhite ? 'grayscale' : ''} {$roundSettings.mirrored
+			? 'scale-y-[-1]'
+			: ''} {$roundSettings.mirrored ? 'scale-x-[-1]' : ''} "
+	>
+		{#if !$mapType.startsWith('3D')}
+			<Leaflet
+				bind:lastMapType
+				bind:bot={api.streamerCode}
+				bind:leaflet
+				bind:mapBox
+				bind:currentGuess
+				{mapType}
+			/>
+		{:else}
+			{#each styles as style}
+				{#if style === $mapType}
+					<MapBox
+						bind:mapBox
+						bind:lastMapType
+						bind:bot={api.streamerCode}
+						bind:_3DEnabled
+						bind:zoomSensitivity
+						bind:exaggeration
+						bind:currentGuess
+						bind:leaflet
+					/>
+				{/if}
+			{/each}
+		{/if}
+	</div>
 {:else}
 	<div
 		class="w-full h-full text-center uppercase flex flex-col gap-2 items-center justify-center  "

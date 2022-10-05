@@ -85,9 +85,16 @@
 	};
 	$: array = createMostUsedArray();
 
+	$: {
+	if (browser){
+		if (!$roundSettings.layers.includes($mapType)) {
+			changeStyle($roundSettings.layers[0]?? "STREETS")
+		}
+	}}
+
 </script>
 
-{#each array as style, i}
+{#each array.filter(style => $roundSettings.layers.includes(style)) as style, i}
 	<MediaQuery query={`(min-width: ${getMediaWidth(i)})`}>
 		<li>
 			<!-- svelte-ignore a11y-missing-attribute -->

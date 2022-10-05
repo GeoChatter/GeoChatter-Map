@@ -5,7 +5,6 @@
 	import { supabase } from '$lib/supabase';
 	import Auth from '$lib/Auth.svelte';
 	import { user } from '$lib/supabase';
-	import { roundSettings} from "$lib/js/api"
 
 	if (browser && !dev) {
 		window.console.log = () => {};
@@ -27,7 +26,7 @@
 	}
 </script>
 
-<main class="relative w-full h-full  {$roundSettings.blurry ? "blur-md": ""} {$roundSettings.sepia ? "sepia": ""} {$roundSettings.blackAndWhite ? "grayscale": ""} {$roundSettings.mirrored ? "scale-y-[-1]": ""} {$roundSettings.mirrored ? "scale-x-[-1]": ""} ">
+<main class="relative w-full h-full">
 	<!-- <button
 		on:click={async () => {
 			await senfFlagToClients(createFakeGuess('nobuddyisperfect'));

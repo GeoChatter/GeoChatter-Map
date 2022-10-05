@@ -14,13 +14,33 @@
 	import { show } from '$lib/Alert.svelte';
 	import Flag from '$lib/Flag.svelte';
 	import settings from '$lib/js/settings';
-	import api from './js/api';
+	import api, { roundSettings } from './js/api';
+	import { get } from 'svelte/store';
 
 	$: copy = !$user || $settings.values.copyAndPaste;
 
 	let profileIcon;
 	let flag = '';
 	let countryName = '';
+
+	$: {
+		if (browser && leaflet) {
+			if ($roundSettings) {
+				console.log(leaflet?.getZoom());
+				if (leaflet?.getZoom() > $roundSettings.maxZoom) {
+					leaflet?.setZoom($roundSettings.maxZoom);
+				}
+				console.log($roundSettings.maxZoom);
+
+
+				if ($roundSettings.maxZoom !== 0) {
+					// leaflet.layers.maxZoom = $roundSettings.maxZoom
+				}
+
+			}
+		}
+	}
+
 	function initLeaflet(node) {
 		import('leaflet').then((L) => {
 			if (browser) {
@@ -43,34 +63,40 @@
 			let layers = {
 				STREETS: L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&hl=en', {
 					maxZoom: 20,
+					minZoom: 1,
 					subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
 					attribution: '&copy; Google Maps'
 				}),
 				SATELLITE: L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}&hl=en', {
 					maxZoom: 20,
+					minZoom: 1,
 					subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
 					attribution: '&copy; Google Maps'
 				}),
 				TERRAIN: L.tileLayer('https://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}&hl=en', {
 					maxZoom: 20,
+					minZoom: 1,
 					subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
 					attribution: '&copy; Google Maps'
 				}),
 				OSM: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 					maxZoom: 19,
+					minZoom: 1,
 					attribution:
 						'&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
 				}),
 
 				OPENTOPOMAP: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
 					maxZoom: 17,
+					minZoom: 1,
 					attribution:
 						'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
 				})
 			};
 
 			let center = [0, 0];
-			let zoom = 1;
+			let zoom = get(roundSettings).maxZoom >= 1 ? get(zoom).maxZoom : 1;
+
 			let currSelectedCountry;
 
 			async function selectCountry() {

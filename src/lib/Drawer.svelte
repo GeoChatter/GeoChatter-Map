@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 	import { user } from '$lib/supabase';
-	import { GithubIcon, XIcon, MenuIcon, MonitorIcon } from 'svelte-feather-icons';
+	import { GithubIcon, XIcon, MenuIcon, MonitorIcon, FlagIcon } from 'svelte-feather-icons';
 	import Auth from './Auth.svelte';
 	import ColorPicker from './ColorPicker.svelte';
 	import Feedback from './Feedback.svelte';
@@ -11,7 +11,6 @@
 	import { downloadAndUnzipFlags, flagsLoaded, svgs } from '$lib/js/helpers/getFeature';
 	import api from './js/api';
 
-	import Flag from './Flag.svelte';
 	let chooseFlag = false;
 
 	let timeout: NodeJS.Timeout;
@@ -88,7 +87,7 @@
 						/>
 					</div>
 					<button
-						class="btn  w-36"
+						class="btn "
 						on:click={() => {
 							if (!$flagsLoaded) {
 								downloadAndUnzipFlags();
@@ -96,7 +95,7 @@
 							chooseFlag = !chooseFlag;
 						}}
 					>
-						{#if chooseFlag}<XIcon />close{:else} choose flag {/if}
+						{#if chooseFlag}<XIcon />close{:else}<FlagIcon/> choose flag {/if}
 					</button>
 				</li>
 
@@ -222,6 +221,16 @@
 					on:click={() => {
 						mockConnectionBuilder.startRound();
 					}}>start round</button
+				>
+				<button
+					on:click={() => {
+
+						let val = structuredClone(mockConnectionBuilder.mapRoundSettings);
+						val.blurry = false;
+						val.maxZoomLevel = 16 
+						val.is3dEnabled = false
+						mockConnectionBuilder.registeredHandlers.StartRound(val);;
+					}}>start round custom</button
 				>
 				<button
 					on:click={() => {
