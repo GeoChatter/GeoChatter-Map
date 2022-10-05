@@ -1,37 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<script async defer src="https://buttons.github.io/buttons.js"></script>
 
-<head>
+		<link href="https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css" rel="stylesheet" />
+		<meta charset="utf-8" />
+		<meta name="description" content="" />
+		<title>GeoChatter Map</title>
+		<link rel="icon" type="image/x-icon" href="https://geochatter.tv/icon_smaller.ico" />
 
-	<script async defer src="https://buttons.github.io/buttons.js"></script>
-  <!-- adding map box -->
-  <!-- <link href="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css" rel="stylesheet" /> -->
-  <!-- <script src="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script> -->
+		<!-- <link rel="manifest" crossorigin="use-credentials" href="manifest.json" /> -->
+		<meta name="theme-color" media="(prefers-color-scheme: light)" content="white" />
+		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="black" />
+		<!-- <link rel="icon" href="%sveltekit.assets%/favicon.png" /> -->
+		<meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1" />
+		<!-- old browser warning -->
+		<script>
+			var $buoop = {
+				required: { e: -4, f: -3, o: -3, s: -1, c: -3 },
+				insecure: true,
+				api: 2022.09
+			};
+			function $buo_f() {
+				var e = document.createElement('script');
+				e.src = '//browser-update.org/update.min.js';
+				document.body.appendChild(e);
+			}
+			try {
+				document.addEventListener('DOMContentLoaded', $buo_f, false);
+			} catch (e) {
+				window.attachEvent('onload', $buo_f);
+			}
+		</script>
+		%sveltekit.head%
+	</head>
 
-  <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
-    integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
-    crossorigin="" />
-  <!-- Make sure you put this AFTER Leaflet's CSS -->
-
-  <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
-    integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
-    crossorigin=""></script>
-  <meta charset="utf-8" />
-  <meta name="description" content="" />
-  <title>GeoChatter Map</title>
-  <link rel="icon" type="image/x-icon" href="https://geochatter.tv/icon_smaller.ico" />
-
-  <!-- <link rel="manifest" crossorigin="use-credentials" href="manifest.json" /> -->
-  <meta name="theme-color" media="(prefers-color-scheme: light)" content="white" />
-  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="black" />
-  <!-- <link rel="icon" href="%sveltekit.assets%/favicon.png" /> -->
-  <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1" />
-  %sveltekit.head%
-</head>
-
-<body style="height: 100%">
-  <div>%sveltekit.body%</div>
-</body>
-
+	<body style="height: 100%">
+		<div>%sveltekit.body%</div>
+	</body>
 </html>

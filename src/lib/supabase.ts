@@ -2,10 +2,8 @@ import { createClient } from '@supabase/supabase-js';
 import { readable } from 'svelte/store';
 
 export const supabase = createClient(
-	// @ts-ignore
-	import.meta.env.VITE_SUPABASEURL,
-	// @ts-ignore
-	import.meta.env.VITE_SUPABASEANONKEY,
+	import.meta.env.VITE_SUPABASEURL as string,
+	import.meta.env.VITE_SUPABASEANONKEY as string,
 	{
 		autoRefreshToken: true,
 		persistSession: true,

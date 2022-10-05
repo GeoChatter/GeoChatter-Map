@@ -3,7 +3,8 @@
 	import '../app.css';
 </script>
 
-<div class="absolute inset-0">
-	<Drawer />
+<div class="absolute inset-0 ">
+	<Drawer >
 	<slot class="h-full" />
+	</Drawer>
 </div>

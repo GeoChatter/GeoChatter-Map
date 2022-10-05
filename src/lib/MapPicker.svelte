@@ -19,10 +19,11 @@
 	];
 </script>
 
-<script lang="ts">
+<script  lang="ts">
 	import { browser } from '$app/environment';
 	import { MapIcon } from 'svelte-feather-icons';
 
+	import {roundSettings} from "../lib/js/api"
 	const createMostUsedArray = (): string[] => {
 		// FIXME: return all styles
 		if (!browser) return [];
@@ -83,11 +84,20 @@
 		}
 	};
 	$: array = createMostUsedArray();
+
+	$: {
+	if (browser){
+		if (!$roundSettings.layers.includes($mapType)) {
+			changeStyle($roundSettings.layers[0]?? "STREETS")
+		}
+	}}
+
 </script>
 
-{#each array as style, i}
+{#each array.filter(style => $roundSettings.layers.includes(style)) as style, i}
 	<MediaQuery query={`(min-width: ${getMediaWidth(i)})`}>
 		<li>
+			<!-- svelte-ignore a11y-missing-attribute -->
 			<a
 				class={$mapType === style ? 'bg-secondary rounded-2xl ' : 'rounded-2xl '}
 				disabled={$mapType === style}
