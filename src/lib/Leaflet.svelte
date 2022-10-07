@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { user } from '$lib/supabase';
 	import { browser } from '$app/environment';
 	import { getCountry } from '$lib/js/helpers/getFeature';
@@ -27,13 +27,13 @@
 		if (browser && leaflet) {
 			if ($roundSettings) {
 				console.log(leaflet?.getZoom());
-				if (leaflet?.getZoom() > $roundSettings.maxZoom) {
-					leaflet?.setZoom($roundSettings.maxZoom);
+				if (leaflet?.getZoom() > $roundSettings.maxZoomLevel) {
+					leaflet?.setZoom($roundSettings.maxZoomLevel);
 				}
-				console.log($roundSettings.maxZoom);
+				console.log($roundSettings.maxZoomLevel);
 
 
-				if ($roundSettings.maxZoom !== 0) {
+				if ($roundSettings.maxZoomLevel !== 0) {
 					// leaflet.layers.maxZoom = $roundSettings.maxZoom
 				}
 
@@ -42,6 +42,10 @@
 	}
 
 	function initLeaflet(node) {
+		// node.removeEventListener("click")
+		console.log(node.onclick)
+		console.log(node)
+
 		import('leaflet').then((L) => {
 			if (browser) {
 				profileIcon = L.icon({
@@ -123,7 +127,7 @@
 				center = mapBox.getCenter();
 			}
 			if (browser) {
-				leaflet = L.map(node, { zoomControl: false, worldCopyJump: true }).setView(center, zoom);
+				leaflet = L.map(node, { zoomControl: false, worldCopyJump: true }).setView(center as any, zoom);
 			}
 
 			L.control
@@ -181,6 +185,8 @@
 			}
 
 			leaflet.on('click', onMapClick);
+			console.log(node.onclick)
+
 			lastMapType = 'Leaflet';
 		});
 	}
