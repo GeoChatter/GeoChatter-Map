@@ -83,14 +83,10 @@
 					{#if player.displayName === $user.user_metadata.displayName}<UserIcon />{/if}
 				</th>
 				<th
-					>{player.distance
-						.toLocaleString('en', {
-							style: 'unit',
-							unit: 'meter',
-							unitDisplay: 'narrow',
-							notation: 'compact'
-						})
-						.toLowerCase()}</th
+					>{
+						
+						player.distance > 5 ? player.distance.toFixed(2) + "km" : player.distance.toFixed(2) * 1000 + "m"
+						}</th
 				>
 
 				<!-- not showing score in streaks game  -->
