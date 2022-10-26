@@ -138,7 +138,7 @@
 		<!-- <div class="modal modal-open"> -->
 		<MovableDiv>
 			<!-- <div class="modal-box relative"> -->
-			<div class="overflow-scroll h-96 ">
+			<div class="overflow-auto h-96 ">
 				<label
 					for="my-modal-3"
 					on:click={() => {
@@ -227,7 +227,7 @@
 	<div
 		class="relative w-full h-full  {$roundSettings.blurry ? 'blur-md' : ''} {$roundSettings.sepia
 			? 'sepia'
-			: ''} {$roundSettings.blackAndWhite ? 'grayscale' : ''} {$roundSettings.mirrored
+			: ''} {$roundSettings.blackAndWhite ? 'grayscale' : ''}  {$roundSettings.upsideDown
 			? 'scale-y-[-1]'
 			: ''} {$roundSettings.mirrored ? 'scale-x-[-1]' : ''} "
 	>

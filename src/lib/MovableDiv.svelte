@@ -1,6 +1,5 @@
-
 <script lang="ts">
-	export let close =false;
+	export let close = false;
 	import { XIcon } from 'svelte-feather-icons';
 	let moving = false;
 	function dragElement(node: HTMLDivElement) {
@@ -28,9 +27,9 @@
 			e.preventDefault();
 			if (
 				e.clientX < 0 ||
-				e.clientX+100 > window.innerWidth ||
+				e.clientX + 100 > window.innerWidth ||
 				e.clientY < 0 ||
-				e.clientY+100 > window.innerHeight
+				e.clientY + 100 > window.innerHeight
 			) {
 				console.log('not on screen');
 				return;
@@ -60,10 +59,10 @@
 {#if !close}
 	<div
 		id="popup"
-		class="hidden md:block select-none absolute z-[9000] pb-4 bg-base-200 rounded-xl overflow-hidden resize-x shadow-2xl"
+		class="hidden md:block select-none absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2  bottom-auto  z-[9000] pb-4 bg-base-200 rounded-xl overflow-hidden resize-x shadow-2xl "
 		use:dragElement
 	>
-		<div class="w-full flex justify-between p-2" id="header">
+		<div class="w-full flex justify-between p-2 " id="header">
 			<div>Drag me</div>
 			<button class="btn btn-xs btn-circle" on:click={() => (close = true)}
 				><XIcon size="1x" /></button
