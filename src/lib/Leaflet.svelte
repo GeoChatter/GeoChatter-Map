@@ -15,7 +15,7 @@
 	import Flag from '$lib/Flag.svelte';
 	import settings from '$lib/js/settings';
 	import api, { roundSettings } from './js/api';
-	import { get } from 'svelte/store';
+	import { onDestroy } from 'svelte';
 
 	$: copy = !$user || $settings.values.copyAndPaste;
 
@@ -23,28 +23,12 @@
 	let flag = '';
 	let countryName = '';
 
-	$: {
-		if (browser && leaflet) {
-			if ($roundSettings) {
-				console.log(leaflet?.getZoom());
-				if (leaflet?.getZoom() > $roundSettings.maxZoomLevel) {
-					leaflet?.setZoom($roundSettings.maxZoomLevel);
-				}
-				console.log($roundSettings.maxZoomLevel);
-
-
-				if ($roundSettings.maxZoomLevel !== 0) {
-					// leaflet.layers.maxZoom = $roundSettings.maxZoom
-				}
-
-			}
-		}
-	}
+	let subscriptions = [];
 
 	function initLeaflet(node) {
 		// node.removeEventListener("click")
-		console.log(node.onclick)
-		console.log(node)
+		console.log(node.onclick);
+		console.log(node);
 
 		import('leaflet').then((L) => {
 			if (browser) {
@@ -53,15 +37,17 @@
 					iconSize: [30, 30],
 					className: 'rounded-full border-2 border-white'
 				});
-				user.subscribe((user) => {
-					if (user) {
-						profileIcon = L.icon({
-							iconUrl: user.user_metadata.picture,
-							iconSize: [30, 30],
-							className: 'rounded-full border-2 border-white'
-						});
-					}
-				});
+				subscriptions.push(
+					user.subscribe((user) => {
+						if (user) {
+							profileIcon = L.icon({
+								iconUrl: user.user_metadata.picture,
+								iconSize: [30, 30],
+								className: 'rounded-full border-2 border-white'
+							});
+						}
+					})
+				);
 			}
 			let marker;
 			let layers = {
@@ -99,7 +85,7 @@
 			};
 
 			let center = [0, 0];
-			let zoom = get(roundSettings).maxZoom >= 1 ? get(zoom).maxZoom : 1;
+			let zoom = 0;
 
 			let currSelectedCountry;
 
@@ -127,7 +113,10 @@
 				center = mapBox.getCenter();
 			}
 			if (browser) {
-				leaflet = L.map(node, { zoomControl: false, worldCopyJump: true }).setView(center as any, zoom);
+				leaflet = L.map(node, { zoomControl: false, worldCopyJump: true }).setView(
+					center as any,
+					zoom
+				);
 			}
 
 			L.control
@@ -135,18 +124,40 @@
 					position: 'topright'
 				})
 				.addTo(leaflet);
+
 			layers[$mapType].addTo(leaflet);
 			leaflet.attributionControl.addAttribution('<b>GeoChatter.tv</b>');
 
 			let oldLayer = layers[$mapType];
 
-			mapType.subscribe((type) => {
-				if (!type.startsWith('3D')) {
-					leaflet.removeLayer(oldLayer);
-					layers[type].addTo(leaflet);
-					oldLayer = layers[type];
+			function updateMaxZoom(newZoom = 3) {
+				console.log('setting zoom to ', newZoom);
+				leaflet.removeLayer(oldLayer);
+				for (let layer of Object.values(layers)) {
+					layer.options.maxZoom = newZoom;
 				}
-			});
+				oldLayer.addTo(leaflet);
+			}
+
+			subscriptions.push(
+				roundSettings.subscribe((settings) => {
+					if (settings.maxZoomLevel === 0) {
+						updateMaxZoom(20);
+						return;
+					}
+					updateMaxZoom(settings.maxZoomLevel);
+				})
+			);
+
+			subscriptions.push(
+				mapType.subscribe((type) => {
+					if (!type.startsWith('3D')) {
+						leaflet.removeLayer(oldLayer);
+						layers[type].addTo(leaflet);
+						oldLayer = layers[type];
+					}
+				})
+			);
 
 			if (currentGuess) {
 				selectCountry();
@@ -185,11 +196,14 @@
 			}
 
 			leaflet.on('click', onMapClick);
-			console.log(node.onclick)
+			console.log(node.onclick);
 
 			lastMapType = 'Leaflet';
 		});
 	}
+	onDestroy(() => {
+		subscriptions.forEach((unsub) => unsub());
+	});
 </script>
 
 <svelte:head>
