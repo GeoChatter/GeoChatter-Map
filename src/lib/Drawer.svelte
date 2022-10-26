@@ -95,7 +95,7 @@
 							chooseFlag = !chooseFlag;
 						}}
 					>
-						{#if chooseFlag}<XIcon />close{:else}<FlagIcon/> choose flag {/if}
+						{#if chooseFlag}<XIcon />close{:else}<FlagIcon /> choose flag {/if}
 					</button>
 				</li>
 
@@ -224,12 +224,17 @@
 				>
 				<button
 					on:click={() => {
-
 						let val = structuredClone(mockConnectionBuilder.mapRoundSettings);
 						val.blurry = false;
-						val.maxZoomLevel = 16 
-						val.is3dEnabled = false
-						mockConnectionBuilder.registeredHandlers.StartRound(val);;
+						val.maxZoomLevel = 2;
+						val.is3dEnabled = false;
+						val.sepia = false;
+						val.mirrored = false;
+						val.upsideDown = true;
+						val.blackAndWhite = false;
+						val.layers = ['OSM', 'STREETS', '3D DEFAULT'];
+
+						mockConnectionBuilder.registeredHandlers.StartRound(val);
 					}}>start round custom</button
 				>
 				<button
