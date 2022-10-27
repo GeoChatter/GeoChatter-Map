@@ -47,7 +47,7 @@
 		const container = document.getElementById('map_settings');
 		if (browser) {
 			if (container.className !== classListSettings) {
-				alert('cheater');
+				alert('anti cheat error');
 			}
 		}
 	}, 500);
