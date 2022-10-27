@@ -93,7 +93,16 @@ class Api {
       ,
       onStreamerSettings: setMapOptions,
       onRoundStart: (mapRoundSettings) => {
+
         roundCounter = mapRoundSettings.roundNumber
+        if (mapRoundSettings.mirrored || mapRoundSettings.upsideDown) {
+          mapRoundSettings.layers = mapRoundSettings.layers.filter(layer => {
+            if (layer.startsWith("3D")) {
+              return false
+            }
+            return true
+          })
+        }
         roundSettings.set(mapRoundSettings)
         console.log("round start", mapRoundSettings)
         scoreBoardOpen.set(true)
