@@ -32,6 +32,26 @@
 		api.sendGuessToBackend('0', '0', true, true);
 	}
 
+	let classListSettings = `relative w-full h-full`;
+
+	roundSettings.subscribe((settings) => {
+		classListSettings = `relative w-full h-full  ${settings.blurry ? 'blur-md' : ''} ${
+			settings.sepia ? 'sepia' : ''
+		} ${settings.blackAndWhite ? 'grayscale' : ''}  ${settings.upsideDown ? 'scale-y-[-1]' : ''} ${
+			settings.mirrored ? 'scale-x-[-1]' : ''
+		} `;
+	});
+
+	// checking for cheating
+	setInterval(() => {
+		const container = document.getElementById('map_settings');
+		if (browser) {
+			if (container.className !== classListSettings) {
+				alert('anti cheat error');
+			}
+		}
+	}, 500);
+
 	function setSettingsFromLocalStorage() {
 		if (browser) {
 			let mapTypeCookie = localStorage.getItem('mapType');
@@ -224,13 +244,7 @@
 			>
 		{/if}
 	</div>
-	<div
-		class="relative w-full h-full  {$roundSettings.blurry ? 'blur-md' : ''} {$roundSettings.sepia
-			? 'sepia'
-			: ''} {$roundSettings.blackAndWhite ? 'grayscale' : ''}  {$roundSettings.upsideDown
-			? 'scale-y-[-1]'
-			: ''} {$roundSettings.mirrored ? 'scale-x-[-1]' : ''} "
-	>
+	<div id="map_settings" class={classListSettings}>
 		{#if !$mapType.startsWith('3D')}
 			<Leaflet
 				bind:lastMapType
