@@ -230,7 +230,7 @@
 						val.is3dEnabled = false;
 						val.sepia = false;
 						val.mirrored = false;
-						val.upsideDown = true;
+						val.upsideDown = false;
 						val.blackAndWhite = false;
 						val.layers = ['OSM', 'STREETS', '3D DEFAULT'];
 
