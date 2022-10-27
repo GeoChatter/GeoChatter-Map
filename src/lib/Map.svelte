@@ -46,7 +46,7 @@
 	setInterval(() => {
 		const container = document.getElementById('map_settings');
 		if (browser) {
-			if (container.className !== classListSettings) {
+			if (container?.className && container?.className !== classListSettings) {
 				alert('anti cheat error');
 			}
 		}
