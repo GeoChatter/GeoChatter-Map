@@ -226,13 +226,13 @@
 					on:click={() => {
 						let val = structuredClone(mockConnectionBuilder.mapRoundSettings);
 						val.blurry = false;
-						val.maxZoomLevel = 2;
+						val.maxZoomLevel = 5;
 						val.is3dEnabled = false;
 						val.sepia = false;
 						val.mirrored = false;
 						val.upsideDown = false;
 						val.blackAndWhite = false;
-						val.layers = ['OSM', 'STREETS', '3D DEFAULT'];
+						val.layers = ['OSM', 'SATELLITE', 'STREETS', '3D DEFAULT'];
 
 						mockConnectionBuilder.registeredHandlers.StartRound(val);
 					}}>start round custom</button

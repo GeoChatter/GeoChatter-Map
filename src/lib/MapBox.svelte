@@ -198,16 +198,6 @@
 			attributionControl: false
 		});
 
-		subscriptions.push(
-			roundSettings.subscribe((settings) => {
-				if (settings.maxZoomLevel == 0) {
-					mapBox.setMaxZoom(20);
-					return;
-				}
-				mapBox.setMaxZoom(settings.maxZoomLevel - 1);
-			})
-		);
-
 		mapBox.on('style.load', () => {
 			mapBox.setFog({
 				color: 'rgb(186, 210, 235)', // Lower atmosphere
@@ -235,6 +225,20 @@
 		attributeBtn.classList.add('z-[5000]');
 		console.log(attributeBtn);
 		mapBox.on('load', () => {
+			subscriptions.push(
+				roundSettings.subscribe((settings) => {
+					if (settings.is3dEnabled) {
+						toggle3D(true, mapBox);
+					} else {
+						toggle3D(false, mapBox);
+					}
+					if (settings.maxZoomLevel == 0) {
+						mapBox.setMaxZoom(20);
+						return;
+					}
+					mapBox.setMaxZoom(settings.maxZoomLevel - 1);
+				})
+			);
 			mapBox.addSource(mapBoxDemSrc, {
 				type: 'raster-dem',
 				url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
@@ -332,6 +336,7 @@
 	<button
 		class={_3DEnabled ? 'btn btn-xs' : 'btn btn-xs btn-primary'}
 		on:click={() => toggle3D(!_3DEnabled, mapBox)}
+		disabled={!$roundSettings.is3dEnabled}
 		>{#if _3DEnabled} disable 3d{:else} enable 3d {/if}</button
 	>
 
