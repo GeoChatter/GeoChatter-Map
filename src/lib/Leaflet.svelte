@@ -132,9 +132,18 @@
 
 			function updateMaxZoom(newZoom = 3) {
 				console.log('setting zoom to ', newZoom);
+				if (newZoom > 20) {
+					newZoom = 20;
+				}
 				leaflet.removeLayer(oldLayer);
-				for (let layer of Object.values(layers)) {
-					layer.options.maxZoom = newZoom;
+				for (let [key, layer] of Object.entries(layers)) {
+					if (key == 'OSM' && newZoom > 19) {
+						layer.options.maxZoom = 19;
+					} else if (key == 'OPENTOPOMAP' && newZoom > 17) {
+						layer.options.maxZoom = 17;
+					} else {
+						layer.options.maxZoom = newZoom;
+					}
 				}
 				oldLayer.addTo(leaflet);
 			}
