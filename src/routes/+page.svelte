@@ -1,12 +1,11 @@
 <script>
-
-
 	import Map from '$lib/Map.svelte';
 
 	import { browser, dev } from '$app/environment';
 	import { supabase } from '$lib/supabase';
 	import Auth from '$lib/Auth.svelte';
 	import { user } from '$lib/supabase';
+
 	if (browser && !dev) {
 		window.console.log = () => {};
 		window.console.warn = () => {};
@@ -27,7 +26,7 @@
 	}
 </script>
 
-<main class="relative w-full h-full ">
+<main class="relative w-full h-full">
 	<!-- <button
 		on:click={async () => {
 			await senfFlagToClients(createFakeGuess('nobuddyisperfect'));
@@ -38,9 +37,10 @@
 		<div class="flex justify-center items-center w-full h-full">
 			<div>
 				<div class="text-center p-4">Sign in to play</div>
-			<div class="w-fit">
-				<Auth />
-			</div></div>
+				<div class="w-fit">
+					<Auth />
+				</div>
+			</div>
 		</div>
 	{:else}
 		<Map />

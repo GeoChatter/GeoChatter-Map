@@ -1,9 +1,9 @@
 <script>
 	import { user, auth, supabase } from '$lib/supabase';
-	// @ts-ignore
 	import { browser } from '$app/environment';
 	import { mapType, styles } from '$lib/MapPicker.svelte';
 	import { LogInIcon, EyeOffIcon, ListIcon, FlagIcon, AwardIcon } from 'svelte-feather-icons';
+	import { roundSettings } from '$lib/js/api';
 	import Leaflet from './Leaflet.svelte';
 	import MapBox from './MapBox.svelte';
 	import Feedback from '$lib/Feedback.svelte';
@@ -16,9 +16,8 @@
 	import settings from '$lib/js/settings';
 	import ScoreBoard from './ScoreBoard.svelte';
 
-	import { inRound } from '$lib/js/api';
+	import { scoreBoardOpen } from '$lib/js/api';
 	import { results } from './stores/gameResults';
-	
 
 	let lastMapType;
 	let _3DEnabled = false;
@@ -32,6 +31,26 @@
 		}, 5000);
 		api.sendGuessToBackend('0', '0', true, true);
 	}
+
+	let classListSettings = `relative w-full h-full`;
+
+	roundSettings.subscribe((settings) => {
+		classListSettings = `relative w-full h-full  ${settings.blurry ? 'blur-md' : ''} ${
+			settings.sepia ? 'sepia' : ''
+		} ${settings.blackAndWhite ? 'grayscale' : ''}  ${settings.upsideDown ? 'scale-y-[-1]' : ''} ${
+			settings.mirrored ? 'scale-x-[-1]' : ''
+		} `;
+	});
+
+	// checking for cheating
+	setInterval(() => {
+		const container = document.getElementById('map_settings');
+		if (browser) {
+			if (container?.className && container?.className !== classListSettings) {
+				alert('anti cheat error');
+			}
+		}
+	}, 500);
 
 	function setSettingsFromLocalStorage() {
 		if (browser) {
@@ -66,7 +85,7 @@
 	if (browser) {
 		try {
 			const splitLink = window.location.href.split('?');
-			api.bot = splitLink[1].split('#')[0];
+			api.streamerCode = splitLink[1].split('#')[0];
 		} catch (e) {
 			console.log(e);
 		}
@@ -125,7 +144,7 @@
 	</div>
 {/if}
 
-{#if api.bot}
+{#if api.streamerCode}
 	{#if $settings.values.showStreamOverlay && $settings.streamerSettings.twitchChannelName}
 		<MovableDiv><Twitch /></MovableDiv>
 	{/if}
@@ -135,24 +154,25 @@
 		}}
 		class="btn btn-warning absolute z-[3900] top-32 left-2"><AwardIcon /></btn
 	>
-	{#if openScoreBoardDuringRound || !$inRound}
-		<div class="modal modal-open">
-			<div class="modal-box relative">
+	{#if openScoreBoardDuringRound || !$scoreBoardOpen}
+		<!-- <div class="modal modal-open"> -->
+		<MovableDiv>
+			<!-- <div class="modal-box relative"> -->
+			<div class="overflow-auto h-96 ">
 				<label
 					for="my-modal-3"
 					on:click={() => {
 						openScoreBoardDuringRound = false;
-						// maybe have another variable to indicate the scoreboard was closed
-						// the variable would have to reset every time the in round was updated or the modal was opened
-						// but setting inRound to true is good enough right now i think
-						inRound.set(true);
+						scoreBoardOpen.set(true);
 					}}
 					class="btn btn-sm btn-circle absolute right-2 top-2">✕</label
 				>
-				<h3 class="text-lg font-bold">{$results.title}</h3>
+				<h3 class="text-lg font-bold p-2">{$results.title}</h3>
 				<ScoreBoard />
 			</div>
-		</div>
+			<!-- </div> -->
+		</MovableDiv>
+		<!-- </div> -->
 	{/if}
 
 	<Alert />
@@ -160,7 +180,7 @@
 		<Feedback />
 	</div>
 	<QuickSwitch />
-	<div class=" z-[1000] w-80 h-32 absolute bottom-0 right-0">
+	<div class=" z-[1000] w-80 h-32 absolute bottom-0 right-0 ">
 		{#if $user}
 			<button
 				disabled={!currentGuess || !$user || loading}
@@ -224,37 +244,39 @@
 			>
 		{/if}
 	</div>
-	{#if !$mapType.startsWith('3D')}
-		<Leaflet
-			bind:lastMapType
-			bind:bot={api.bot}
-			bind:leaflet
-			bind:mapBox
-			bind:currentGuess
-			{mapType}
-		/>
-	{:else}
-		{#each styles as style}
-			{#if style === $mapType}
-				<MapBox
-					bind:mapBox
-					bind:lastMapType
-					bind:bot={api.bot}
-					bind:_3DEnabled
-					bind:zoomSensitivity
-					bind:exaggeration
-					bind:currentGuess
-					bind:leaflet
-				/>
-			{/if}
-		{/each}
-	{/if}
+	<div id="map_settings" class={classListSettings}>
+		{#if !$mapType.startsWith('3D')}
+			<Leaflet
+				bind:lastMapType
+				bind:bot={api.streamerCode}
+				bind:leaflet
+				bind:mapBox
+				bind:currentGuess
+				{mapType}
+			/>
+		{:else}
+			{#each styles as style}
+				{#if style === $mapType}
+					<MapBox
+						bind:mapBox
+						bind:lastMapType
+						bind:bot={api.streamerCode}
+						bind:_3DEnabled
+						bind:zoomSensitivity
+						bind:exaggeration
+						bind:currentGuess
+						bind:leaflet
+					/>
+				{/if}
+			{/each}
+		{/if}
+	</div>
 {:else}
 	<div
 		class="w-full h-full text-center uppercase flex flex-col gap-2 items-center justify-center  "
 	>
 		please use the full link from the streamer or fill in the map identifier name below
 		<input class="input input-bordered" placeholder="map identifier..." bind:value={newBot} />
-		<button class="btn btn-primary" on:click={() => (api.bot = newBot)}>go</button>
+		<button class="btn btn-primary" on:click={() => (api.streamerCode = newBot)}>go</button>
 	</div>
 {/if}

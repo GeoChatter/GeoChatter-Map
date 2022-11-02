@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { user } from '$lib/supabase';
-	import settings from '$lib/js/settings';
+	import settings, { Settings } from '$lib/js/settings';
 	// @ts-ignore
 	import { browser, dev } from '$app/environment';
 	import { mapType } from '$lib/MapPicker.svelte';
@@ -14,7 +14,8 @@
 	import mapboxgl from 'mapbox-gl';
 	import { show } from '$lib/Alert.svelte';
 	import Flag from '$lib/Flag.svelte';
-	import api from './js/api';
+	import api, { roundSettings } from './js/api';
+	import { onDestroy } from 'svelte';
 	let currSelectedCountry;
 
 	let globeView = $settings.values.globeView;
@@ -23,6 +24,10 @@
 	let id = 0;
 	let lastCountry;
 	let countryName = '';
+	let subscriptions = [];
+	onDestroy(() => {
+		subscriptions.forEach((unsub) => unsub());
+	});
 	async function selectCountry() {
 		const [country, svg, countryNameResponse] = await getCountry(
 			currentGuess.lat,
@@ -123,6 +128,12 @@
 	export let _3DEnabled = false;
 	export let lastMapType;
 
+	subscriptions.push(
+		$settings.subscribe((s) => {
+			_3DEnabled = s.values._3d;
+		})
+	);
+
 	$: copy = !$user || $settings.values.copyAndPaste;
 
 	let mapBoxDemSrc = 'mapbox-dem';
@@ -134,7 +145,7 @@
 		mapBox.setTerrain(null);
 		mapBox.setTerrain({ source: mapBoxDemSrc, exaggeration: val });
 	}
-	function toggle3D(enable, mapBox) {
+	function toggle3D(enable: boolean, mapBox) {
 		_3DEnabled = enable;
 		if (enable) {
 			$settings.change('_3d', true);
@@ -181,10 +192,12 @@
 			// style: defaultMapStyle, // style URL
 			center, // starting position [lng, lat]
 			zoom, // starting zoom
+			maxZoom: 1,
 			pitch,
 			bearing,
 			attributionControl: false
 		});
+
 		mapBox.on('style.load', () => {
 			mapBox.setFog({
 				color: 'rgb(186, 210, 235)', // Lower atmosphere
@@ -212,6 +225,20 @@
 		attributeBtn.classList.add('z-[5000]');
 		console.log(attributeBtn);
 		mapBox.on('load', () => {
+			subscriptions.push(
+				roundSettings.subscribe((settings) => {
+					if (settings.is3dEnabled) {
+						toggle3D(true, mapBox);
+					} else {
+						toggle3D(false, mapBox);
+					}
+					if (settings.maxZoomLevel == 0) {
+						mapBox.setMaxZoom(20);
+						return;
+					}
+					mapBox.setMaxZoom(settings.maxZoomLevel - 1);
+				})
+			);
 			mapBox.addSource(mapBoxDemSrc, {
 				type: 'raster-dem',
 				url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
@@ -274,13 +301,15 @@
 					$user?.user_metadata?.picture ?? 'https://geochatter.tv/icon_smaller.ico'
 				})`;
 
-				user.subscribe((user) => {
-					if (user) {
-						el.style.backgroundImage = `url(${
-							user?.user_metadata?.picture ?? 'https://geochatter.tv/icon_smaller.ico'
-						})`;
-					}
-				});
+				subscriptions.push(
+					user.subscribe((user) => {
+						if (user) {
+							el.style.backgroundImage = `url(${
+								user?.user_metadata?.picture ?? 'https://geochatter.tv/icon_smaller.ico'
+							})`;
+						}
+					})
+				);
 				el.style.width = `${width}px`;
 				el.style.height = `${height}px`;
 				el.style.backgroundSize = '100%';
@@ -307,6 +336,7 @@
 	<button
 		class={_3DEnabled ? 'btn btn-xs' : 'btn btn-xs btn-primary'}
 		on:click={() => toggle3D(!_3DEnabled, mapBox)}
+		disabled={!$roundSettings.is3dEnabled}
 		>{#if _3DEnabled} disable 3d{:else} enable 3d {/if}</button
 	>
 
@@ -393,9 +423,7 @@
 	{/if}
 </div>
 
-<div
-	class="sm:hidden grid absolute top-32 right-3 bg-base-100 shadow-md rounded-md p-2 gap-y-2"
->
+<div class="sm:hidden grid absolute top-32 right-3 bg-base-100 shadow-md rounded-md p-2 gap-y-2">
 	<div>
 		<button
 			class="btn btn-xs w-full"

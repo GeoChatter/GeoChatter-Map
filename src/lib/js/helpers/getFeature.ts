@@ -32,7 +32,8 @@ async function downloadAndUnzip() {
             const json = JSON.parse(content)
             result_borders.push(json)
 
-          } catch {
+          } catch (e){
+            // console.log(e)
             
 
           }
@@ -122,7 +123,7 @@ const alpha3to2 = async (iso: string) => {
 
 async function getFlagName(feat: Feature) {
   const group = await alpha3to2(feat.properties.shapeGroup)
-  if (settings.values.borderAdmin) return group
+  if (!settings.values.borderAdmin) return group
   switch (group) {
     case "US": {
       const isoExists = await alpha3to2(feat.properties.shapeISO)
@@ -173,7 +174,7 @@ export const getCountry = async (lat: number, lng: number) => {
         const flagIso = await getFlagName(feature)
         const svg = settings.values.showFlags ? svgs[flagIso.toLowerCase()] : undefined
         const countryName = await getCountryNameByISO(flagIso)
-        if (settings.values.borderAdmin) return [borders, svg, countryName]
+        if (!settings.values.borderAdmin) return [borders, svg, countryName]
         else return [feature, svg, countryName]
       }
     }

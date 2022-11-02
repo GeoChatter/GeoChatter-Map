@@ -19,10 +19,11 @@
 	];
 </script>
 
-<script lang="ts">
+<script  lang="ts">
 	import { browser } from '$app/environment';
 	import { MapIcon } from 'svelte-feather-icons';
 
+	import {roundSettings} from "../lib/js/api"
 	const createMostUsedArray = (): string[] => {
 		// FIXME: return all styles
 		if (!browser) return [];
@@ -68,7 +69,7 @@
 		'2xl': '1536px'
 		// => @media (min-width: 1536px) { ... }
 	};
-	const getMediaWidth = (i) => {
+	const getMediaWidth = (i: number) => {
 		if (isDrawer) return '0px'; // should always show all maps
 		if (i <= 1) {
 			return '0px';
@@ -83,16 +84,27 @@
 		}
 	};
 	$: array = createMostUsedArray();
+
+	$: {
+	if (browser){
+		if (!$roundSettings?.layers?.includes($mapType)) {
+			changeStyle($roundSettings?.layers?.[0] ?? "STREETS")
+		}
+	}}
+
 </script>
 
-{#each array as style, i}
+{#each array.filter(style => $roundSettings.layers?.includes(style)) as style, i}
 	<MediaQuery query={`(min-width: ${getMediaWidth(i)})`}>
 		<li>
+			<!-- svelte-ignore a11y-missing-attribute -->
 			<a
 				class={$mapType === style ? 'bg-secondary rounded-2xl ' : 'rounded-2xl '}
 				disabled={$mapType === style}
 				on:click={() => {
-					changeStyle(style);
+					if (style !== null) {
+						changeStyle(style);
+					}
 					// array = createMostUsedArray();
 				}}
 			>
