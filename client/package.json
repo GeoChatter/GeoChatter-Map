@@ -1,0 +1,28 @@
+{
+	"name": "geochatter-map-client",
+	"version": "2.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "vite --port 5173",
+		"build": "vite build",
+		"preview": "vite preview",
+		"check": "svelte-check --tsconfig ./tsconfig.json"
+	},
+	"devDependencies": {
+		"@sveltejs/vite-plugin-svelte": "^5.1.1",
+		"@types/leaflet": "^1.9.21",
+		"autoprefixer": "^10.4.21",
+		"postcss": "^8.5.5",
+		"svelte": "^5.56.3",
+		"svelte-check": "^4.2.1",
+		"tailwindcss": "^3.4.19",
+		"typescript": "^5.9.3",
+		"vite": "^6.4.3"
+	},
+	"dependencies": {
+		"daisyui": "^4.12.24",
+		"leaflet": "^1.9.4",
+		"socket.io-client": "^4.8.3"
+	}
+}
