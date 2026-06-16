@@ -27,6 +27,13 @@
   let historyOpen = $state(false);
   let playerColor = $state('#3b82f6');
   let playerFlag = $state('');
+  let roundResultsX = $state(0);
+  let roundResultsY = $state(16);
+  let draggingRound = $state(false);
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let dragOffsetX = 0;
+  let dragOffsetY = 0;
 
   onMount(() => {
     const cleanup = setupSharedListeners(socket, gameState);
@@ -103,8 +110,30 @@
     </button>
 
     {#if gameState.roundResults.length > 0}
-      <div class="absolute left-1/2 top-4 z-[500] w-11/12 max-w-2xl -translate-x-1/2">
-        <ScoreBoard results={gameState.roundResults} title="Round {gameState.game?.currentRound} Results" />
+      <div
+        class="absolute z-[500] w-11/12 max-w-2xl"
+        style="left:calc(50% + {roundResultsX}px); top:{roundResultsY}px; transform:translateX(-50%)"
+        role="button"
+        tabindex="0"
+        onpointerdown={(e) => {
+          if ((e.target as HTMLElement).closest('.close-btn')) return;
+          draggingRound = true;
+          dragStartX = e.clientX;
+          dragStartY = e.clientY;
+          dragOffsetX = roundResultsX;
+          dragOffsetY = roundResultsY;
+        }}
+        onpointermove={(e) => {
+          if (!draggingRound) return;
+          roundResultsX = dragOffsetX + e.clientX - dragStartX;
+          roundResultsY = dragOffsetY + e.clientY - dragStartY;
+        }}
+        onpointerup={() => { draggingRound = false; }}
+      >
+        <div class="relative">
+          <button class="close-btn btn btn-xs btn-ghost absolute -right-2 -top-2 z-10" onclick={() => (gameState.roundResults = [])}>x</button>
+          <ScoreBoard results={gameState.roundResults} title="Round {gameState.game?.currentRound} Results" />
+        </div>
       </div>
     {/if}
 

@@ -39,7 +39,7 @@
 </script>
 
 <div
-  class="absolute z-30 rounded-lg bg-base-100 p-3 shadow-xl {className}"
+  class="absolute z-[500] bg-base-100 {className}"
   style="left:{x}px; top:{y}px"
 >
   <div

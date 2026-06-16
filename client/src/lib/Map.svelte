@@ -82,6 +82,10 @@
     }
   });
 
+  $effect(() => {
+    map?.invalidateSize();
+  });
+
   function onMapClickHandler(e: L.LeafletMouseEvent) {
     onMapClick?.(e.latlng.lat, e.latlng.lng);
   }
@@ -156,4 +160,6 @@
   });
 </script>
 
-<div bind:this={container} class="h-full w-full {mapClass}"></div>
+<div class="h-full w-full {mapClass}">
+  <div bind:this={container} class="h-full w-full"></div>
+</div>
